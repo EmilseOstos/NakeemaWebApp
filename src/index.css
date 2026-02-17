@@ -22,7 +22,7 @@ body {
 /* Clase global para botones tipo Nakeema */
 .btn-nakeema {
   background-color: var(--verde-primario);
-  color: white;
+  color: greenyellow;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
