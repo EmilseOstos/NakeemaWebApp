@@ -1,0 +1,484 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --nk-primary: #0da766; /* Verde Nakeema */
+    --nk-primary-dark: #0a8451;
+    --nk-primary-light: #d8f3e5;
+    --nk-bg-main: #f0f2f5;
+    --nk-bg-card: #ffffff;
+    --nk-text-main: #2c3e50;
+    --nk-text-muted: #6c757d;
+    --nk-border: #e9ecef;
+    --nk-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --nk-sidebar-width: 250px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--nk-bg-main);
+    color: var(--nk-text-main);
+    overflow-x: hidden;
+}
+
+/* -----------------------------
+   Login Page Styles
+----------------------------- */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+}
+
+.login-card {
+    background-color: var(--nk-bg-card);
+    width: 100%;
+    max-width: 450px;
+    padding: 3rem 2rem;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    position: relative;
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.login-logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.login-logo h1 {
+    font-weight: 700;
+    font-size: 28px;
+    margin: 0;
+    color: var(--nk-primary);
+    letter-spacing: 1px;
+}
+
+.form-floating-custom {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating-custom i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--nk-text-muted);
+    font-size: 1.2rem;
+    z-index: 10;
+}
+
+.form-floating-custom .form-control, .form-floating-custom .form-select {
+    padding-left: 45px !important;
+    height: 55px;
+    background-color: #f8f9fa;
+    border: 1px solid var(--nk-border);
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.form-floating-custom .form-control:focus, .form-floating-custom .form-select:focus {
+    background-color: #fff;
+    border-color: var(--nk-primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 167, 102, 0.15);
+}
+
+.password-toggle-icon {
+    position: absolute !important;
+    right: 15px !important;
+    left: auto !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    cursor: pointer !important;
+    pointer-events: auto;
+}
+
+.btn-nakeema, .btn-success {
+    background: linear-gradient(90deg, #7cce6b, #007253, #007253) !important;
+    color: white !important;
+    border: none !important;
+    height: 55px;
+    border-radius: 12px !important;
+    font-weight: 600;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 114, 83, 0.3) !important;
+}
+
+.btn-nakeema:hover, .btn-success:hover {
+    background: linear-gradient(90deg, #007253, #007253, #7cce6b) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 114, 83, 0.4) !important;
+    color: white !important;
+}
+
+.login-links {
+    margin-top: 1.5rem;
+}
+
+.login-links a {
+    color: var(--nk-text-muted);
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.login-links a:hover {
+    color: var(--nk-primary);
+}
+
+.copyright {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: var(--nk-text-muted);
+}
+
+/* Floating chat button everywhere */
+.floating-chat-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: var(--nk-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 28px;
+    box-shadow: 0 6px 20px rgba(13, 167, 102, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.floating-chat-btn:hover {
+    transform: scale(1.1);
+}
+
+/* -----------------------------
+   Dashboard Layout Styles
+----------------------------- */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--nk-sidebar-width);
+    background-color: var(--nk-bg-card);
+    border-radius: 24px;
+    padding: 2rem 1rem;
+    box-shadow: var(--nk-shadow);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: calc(100vh - 40px);
+    position: sticky;
+    top: 20px;
+    overflow-y: auto;
+}
+
+.sidebar-logo {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.sidebar-logo h2 {
+    color: var(--nk-primary);
+    font-weight: 700;
+    font-size: 24px;
+    margin: 0;
+}
+
+.nav-link-custom {
+    color: var(--nk-text-muted);
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.nav-link-custom:hover, .nav-link-custom.active {
+    background-color: var(--nk-bg-main);
+    color: var(--nk-primary);
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-x: hidden;
+    min-height: calc(100vh - 40px);
+}
+
+/* Topbar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+}
+
+.search-bar {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border-radius: 20px;
+    border: 1px solid var(--nk-border);
+    background-color: var(--nk-bg-card);
+    font-size: 14px;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--nk-text-muted);
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: var(--nk-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--nk-text-muted);
+}
+
+.user-info {
+    text-align: right;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--nk-text-main);
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--nk-text-muted);
+}
+
+/* Cards */
+.nk-card {
+    background-color: var(--nk-bg-card);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: var(--nk-shadow);
+}
+
+.stat-card {
+    text-align: center;
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-card h3 {
+    font-size: 14px;
+    color: var(--nk-text-muted);
+    margin-bottom: 5px;
+}
+
+.stat-card .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--nk-primary);
+}
+
+.panel-btn {
+    background: linear-gradient(135deg, #0da766, #0a8451);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 15px 20px;
+    width: 100%;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.panel-btn:hover {
+    transform: scale(1.02);
+}
+
+.panel-btn .title {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.panel-btn .val {
+    font-size: 20px;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Technical Details Table */
+.table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.table-custom th {
+    color: var(--nk-text-muted);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 0 15px 5px;
+    border-bottom: 2px solid var(--nk-border);
+}
+
+.table-custom td {
+    background-color: #fff;
+    padding: 15px;
+    font-size: 14px;
+    vertical-align: middle;
+    border-top: 1px solid var(--nk-border);
+    border-bottom: 1px solid var(--nk-border);
+}
+
+.table-custom td:first-child {
+    border-left: 1px solid var(--nk-border);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.table-custom td:last-child {
+    border-right: 1px solid var(--nk-border);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Chat Support specific styles */
+.chat-window {
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 500px;
+    border: 1px solid var(--nk-border);
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--nk-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #fafbfc;
+}
+
+.msg-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.msg-bot {
+    background-color: var(--nk-primary);
+    color: white;
+    align-self: flex-start;
+    border-top-left-radius: 0;
+}
+
+.msg-user {
+    background-color: #e2e8f0;
+    color: var(--nk-text-main);
+    align-self: flex-end;
+    margin-left: auto;
+    border-top-right-radius: 0;
+}
+
+.chat-input-area {
+    padding: 15px 20px;
+    border-top: 1px solid var(--nk-border);
+    display: flex;
+    gap: 10px;
+    background: #fff;
+}
+
+.chat-input-area input {
+    flex-grow: 1;
+    border-radius: 20px;
+    border: 1px solid var(--nk-border);
+    padding: 10px 15px;
+    outline: none;
+}
+
+.chat-input-area button {
+    border-radius: 20px;
+    padding: 0 20px;
+}

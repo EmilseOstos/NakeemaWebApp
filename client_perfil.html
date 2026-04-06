@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nakeema - Client Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <style>
+        .activity-list {
+            margin-top: 2rem;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--nk-border);
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        .activity-title {
+            color: var(--nk-text-muted);
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .activity-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+        .btn-ir {
+            background-color: var(--nk-primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-ir:hover {
+            background-color: var(--nk-primary-dark);
+            color: white;
+        }
+        .btn-circ {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--nk-primary);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <img src="img/logo.png" alt="Nakeema Logo" style="max-height: 50px; width: 100%; object-fit: contain;">
+            </div>
+            
+            <nav class="d-flex flex-column gap-1 h-100 pb-3">
+                <a href="client_dashboard.html" class="nav-link-custom">Dashboard</a>
+                <a href="client_registrar.html" class="nav-link-custom">Registrar Servicio</a>
+                <a href="client_consultar.html" class="nav-link-custom">Consultar Servicio</a>
+                <a href="client_satisfaccion.html" class="nav-link-custom text-wrap" style="line-height:1.2;">Reporte de Satisfacción</a>
+                <a href="client_perfil.html" class="nav-link-custom active">Ver Perfil</a>
+
+                <div class="mt-auto">
+                    <a href="index.html" class="nav-link-custom text-danger" style="display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-left fs-5"></i> Salir
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="nk-card flex-grow-1 d-flex flex-column position-relative">
+                
+                <div class="position-absolute end-0 top-0 p-4 z-3">
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="position-relative dropstart" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell-fill fs-5" style="color: var(--nk-text-muted);"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </div>
+                        <ul class="dropdown-menu shadow-sm" style="border-radius: 12px; border: 1px solid var(--nk-border); width: 280px; padding: 0;">
+                            <li class="px-3 py-2 border-bottom fw-bold" style="background-color: #f8f9fa; border-radius: 12px 12px 0 0;">Notificaciones</li>
+                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Nuevo Servicio Solicitado</div><div class="text-muted" style="font-size: 11px;">Hace 5 min</div></a></li>
+                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Actualización de Estado</div><div class="text-muted" style="font-size: 11px;">Hace 2 horas</div></a></li>
+                            <li><hr class="dropdown-divider mb-0 mt-1"></li>
+                            <li><a class="dropdown-item py-2 text-center" href="#" style="font-size: 12px; color: var(--nk-primary); font-weight: 600;">Ver todas</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="text-end" style="line-height:1;">
+                                <div style="font-size:12px; font-weight:600;">Emilse Ostos</div>
+                                <div style="font-size:10px; color:var(--nk-text-muted);">Cliente</div>
+                            </div>
+                            <div class="avatar" style="width:35px; height:35px;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-md-4 py-4 flex-grow-1 w-100">
+                    <h3 class="fw-bold mb-4" style="color: var(--nk-primary); font-size: 24px;">Mi Perfil</h3>
+                    
+                    <div class="row g-4">
+                        <div class="col-lg-4">
+                            <div class="nk-card p-4 text-center bg-white shadow-sm" style="border-radius: 16px;">
+                                <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="updateAvatar(this)">
+                                <div id="avatarPreview" class="avatar mx-auto mb-3 shadow-sm border border-4 border-light position-relative" style="width: 120px; height: 120px; background-color: var(--nk-primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; background-size: cover; background-position: center;">
+                                    <i class="bi bi-person fs-1" id="avatarIcon" style="font-size: 50px !important;"></i>
+                                    <button type="button" class="btn btn-light rounded-circle position-absolute bottom-0 end-0 shadow-sm p-1" style="width: 35px; height: 35px;" onclick="document.getElementById('avatarUpload').click()"><i class="bi bi-camera-fill text-muted"></i></button>
+                                </div>
+                                <h4 class="fw-bold mb-1">Emilse Ostos</h4>
+                                <p class="text-success fw-bold mb-3" style="font-size: 13px;">Cliente Premium <i class="bi bi-patch-check-fill ms-1"></i></p>
+                                
+                                <div class="border-top pt-3 text-start">
+                                    <div class="d-flex align-items-center mb-2 text-muted" style="font-size: 13px;">
+                                        <i class="bi bi-envelope-fill me-2 fs-5" style="width: 25px; color: var(--nk-primary);"></i> emilse.ostos@gmail.com
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2 text-muted" style="font-size: 13px;">
+                                        <i class="bi bi-telephone-fill me-2 fs-5" style="width: 25px; color: var(--nk-primary);"></i> +57 320 123 4567
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2 text-muted" style="font-size: 13px;">
+                                        <i class="bi bi-geo-alt-fill me-2 fs-5" style="width: 25px; color: var(--nk-primary);"></i> Bogotá, Colombia
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-8">
+                            <div class="nk-card p-4 p-md-5 bg-white shadow-sm h-100" style="border-radius: 16px;">
+                                <h5 class="fw-bold mb-4 fs-5 border-bottom pb-3">Actualizar Datos Personales</h5>
+                                
+                                <form>
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Nombre Completo</label>
+                                            <input type="text" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="Emilse Ostos">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Documento de Identidad</label>
+                                            <input type="text" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3 text-muted" value="CC 1.020.345.678" disabled>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Correo Electrónico</label>
+                                            <input type="email" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="emilse.ostos@gmail.com">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Teléfono Móvil</label>
+                                            <input type="tel" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="+57 320 123 4567">
+                                        </div>
+                                        <div class="col-12 mt-5 text-end border-top pt-4">
+                                            <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" style="background-color: var(--nk-primary); border: none;">
+                                                Guardar Cambios
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: none;">
+                <div class="text-center w-100 pt-4">
+                    <h3 class="fw-bold" style="font-size: 22px;">Resumen de Actividad</h3>
+                </div>
+
+                <div class="activity-list px-md-5 mt-4">
+                    
+                    <div class="activity-item">
+                        <div class="activity-title">Registrar Servicio</div>
+                        <div class="activity-status">
+                            <span>Registrado 10:30am</span>
+                            <i class="bi bi-bell-fill text-warning fs-5 position-relative">
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width:6px; height:6px;"></span>
+                            </i>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-title">Registrar Servicio</div>
+                        <div class="activity-status">
+                            <span>Registrado 10:30am</span>
+                            <i class="bi bi-bell-fill text-warning fs-5 position-relative">
+                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width:6px; height:6px;"></span>
+                            </i>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-title">Registrar Servicio</div>
+                        <div class="activity-status gap-3">
+                            <a href="#" class="btn-circ"><i class="bi bi-plus"></i></a>
+                            <button class="btn-ir">Ir</button>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-title">Registrar Servicio</div>
+                        <div class="activity-status">
+                            <span>Registrado 10:30am</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-title">Registrar Servicio</div>
+                        <div class="activity-status">
+                            <span>Registrado 10:30am</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            </div>
+            <div class="text-center mt-3 text-muted" style="font-size: 12px; font-weight: 600;">
+                &copy; 2026 Todos los derechos Reservados. Nakeema
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <a href="support_chat.html" class="floating-chat-btn text-decoration-none" style="z-index: 9999;">
+        <i class="bi bi-chat-dots-fill"></i>
+    </a>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function updateAvatar(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').style.backgroundImage = 'url(' + e.target.result + ')';
+                    document.getElementById('avatarIcon').style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
