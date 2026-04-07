@@ -1101,12 +1101,9 @@ body {
     max-width: fit-content;
 }
 
-/* Esto busca el botón que tiene tanto .btn como .btn-nakeema */
+/* boton login */
 .btn.btn-nakeema {
-    /* Aquí anulas el max-width que te está dando problemas */
     max-width: 100% !important;
-
-    /* Ajustes adicionales para que se vea como en tu diseño de Nakeema */
     width: 100%;
     padding: 12px;
     border-radius: 8px;
