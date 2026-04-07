@@ -3,326 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nakeema - Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <title>Nakeema - Técnicos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <img src="img/logo.png" alt="Nakeema Logo" style="max-height: 50px; width: 100%; object-fit: contain;">
-            </div>
-            
-            <nav class="d-flex flex-column gap-1 h-100 pb-3">
-                <a href="admin_dashboard.html" class="nav-link-custom">Dashboard</a>
-                <a href="admin_gestion.html" class="nav-link-custom">Gestion de Servicios</a>
-                <a href="admin_reportes.html" class="nav-link-custom">Reportes</a>
-                <a href="admin_tecnicos.html" class="nav-link-custom active">Tecnicos</a>
-                <a href="admin_configuracion.html" class="nav-link-custom">Configuración</a>
+        <nk-sidebar role="admin" active="tecnicos"></nk-sidebar>
 
-                <div class="mt-auto">
-                    <a href="index.html" class="nav-link-custom text-danger" style="display: flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-box-arrow-left fs-5"></i> Salir
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Topbar -->
-            <header class="topbar">
-                <div class="search-bar">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Administrador">
-                </div>
-                
-                <div class="d-flex align-items-center gap-4 pe-3">
-                    <div class="position-relative dropstart" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-bell-fill fs-5" style="color: var(--nk-text-muted);"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </div>
-                        <ul class="dropdown-menu shadow-sm" style="border-radius: 12px; border: 1px solid var(--nk-border); width: 280px; padding: 0;">
-                            <li class="px-3 py-2 border-bottom fw-bold" style="background-color: #f8f9fa; border-radius: 12px 12px 0 0;">Notificaciones</li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Nuevo Servicio Solicitado</div><div class="text-muted" style="font-size: 11px;">Hace 5 min</div></a></li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Actualización de Estado</div><div class="text-muted" style="font-size: 11px;">Hace 2 horas</div></a></li>
-                            <li><hr class="dropdown-divider mb-0 mt-1"></li>
-                            <li><a class="dropdown-item py-2 text-center" href="#" style="font-size: 12px; color: var(--nk-primary); font-weight: 600;">Ver todas</a></li>
-                        </ul>
-                    <div class="user-profile m-0">
-                        <div class="user-info">
-                            <div class="user-name">Administrador</div>
-                        </div>
-                        <div class="avatar">
-                            <i class="bi bi-person-fill"></i>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <nk-topbar role="admin" username="Administrador"></nk-topbar>
 
             <div class="px-md-4 py-4 flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold m-0" style="color: var(--nk-primary); font-size: 24px;">Directorio de Técnicos</h3>
-                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" style="background-color: var(--nk-primary); border: none;" data-bs-toggle="modal" data-bs-target="#addTechModal">
+                    <h3 class="fw-bold m-0 text-nk-primary fs-24">Directorio de Técnicos</h3>
+                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm bg-nk-primary border-0" data-bs-toggle="modal" data-bs-target="#addTechModal">
                         <i class="bi bi-person-plus-fill me-2"></i> Nuevo Técnico
                     </button>
                 </div>
 
-                <div class="row g-4">
-                    <!-- Tech Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="nk-card p-4 shadow-sm text-center position-relative bg-white" style="border-radius: 16px;">
-                            <span class="position-absolute top-0 end-0 m-3 badge rounded-pill text-bg-success">Disponible</span>
-                            <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white" style="width: 80px; height: 80px; background-color: var(--nk-primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                <i class="bi bi-person fs-1"></i>
-                            </div>
-                            <h5 class="fw-bold mb-1" style="font-size: 18px;">Carlos Roa</h5>
-                            <p class="text-muted mb-3" style="font-size: 13px;">Especialista Eléctrico</p>
-                            
-                            <div class="d-flex justify-content-between px-3 border-top pt-3 text-muted mb-3" style="font-size: 12px; font-weight: 600;">
-                                <div><i class="bi bi-star-fill text-warning me-1"></i> 4.8/5</div>
-                                <div><i class="bi bi-tools me-1"></i> 124 Serv.</div>
-                            </div>
-                            <div class="d-flex gap-2 w-100">
-                                <a href="admin_tech_profile.html?name=Carlos+Roa&spec=Especialista+El%C3%A9ctrico&status=Disponible&rating=4.8&serv=124" class="btn btn-outline-success btn-sm flex-fill rounded-pill fw-bold" style="border-color: var(--nk-primary); color: var(--nk-primary);">Ver Perfil</a>
-                                <button class="btn btn-success btn-sm flex-fill rounded-pill fw-bold" style="background-color: var(--nk-primary); border: none;">Asignar</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tech Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="nk-card p-4 shadow-sm text-center position-relative bg-white" style="border-radius: 16px;">
-                            <span class="position-absolute top-0 end-0 m-3 badge rounded-pill text-bg-warning">Ocupado</span>
-                            <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white" style="width: 80px; height: 80px; background-color: #6c757d; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                <i class="bi bi-person fs-1"></i>
-                            </div>
-                            <h5 class="fw-bold mb-1" style="font-size: 18px;">Kelly Ramirez</h5>
-                            <p class="text-muted mb-3" style="font-size: 13px;">Soporte Técnico Nivel 2</p>
-                            
-                            <div class="d-flex justify-content-between px-3 border-top pt-3 text-muted mb-3" style="font-size: 12px; font-weight: 600;">
-                                <div><i class="bi bi-star-fill text-warning me-1"></i> 4.9/5</div>
-                                <div><i class="bi bi-tools me-1"></i> 89 Serv.</div>
-                            </div>
-                            <div class="d-flex gap-2 w-100">
-                                <a href="admin_tech_profile.html?name=Kelly+Ramirez&spec=Soporte+T%C3%A9cnico+Nivel+2&status=Ocupado&rating=4.9&serv=89" class="btn btn-outline-success btn-sm flex-fill rounded-pill fw-bold" style="border-color: var(--nk-primary); color: var(--nk-primary);">Ver Perfil</a>
-                                <button class="btn btn-secondary btn-sm flex-fill rounded-pill fw-bold border-0" disabled>Ocupado</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Tech Card -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="nk-card p-4 shadow-sm text-center position-relative bg-white" style="border-radius: 16px;">
-                            <span class="position-absolute top-0 end-0 m-3 badge rounded-pill text-bg-danger">Inactivo</span>
-                            <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white" style="width: 80px; height: 80px; background-color: #dc3545; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                <i class="bi bi-person fs-1"></i>
-                            </div>
-                            <h5 class="fw-bold mb-1" style="font-size: 18px;">Luis Zea</h5>
-                            <p class="text-muted mb-3" style="font-size: 13px;">Mecánico General</p>
-                            
-                            <div class="d-flex justify-content-between px-3 border-top pt-3 text-muted mb-3" style="font-size: 12px; font-weight: 600;">
-                                <div><i class="bi bi-star-fill text-warning me-1"></i> 4.5/5</div>
-                                <div><i class="bi bi-tools me-1"></i> 42 Serv.</div>
-                            </div>
-                            <div class="d-flex gap-2 w-100">
-                                <a href="admin_tech_profile.html?name=Luis+Zea&spec=Mec%C3%A1nico+General&status=Inactivo&rating=4.5&serv=42" class="btn btn-outline-success btn-sm flex-fill rounded-pill fw-bold" style="border-color: var(--nk-primary); color: var(--nk-primary);">Ver Perfil</a>
-                                <button class="btn btn-outline-danger btn-sm flex-fill rounded-pill fw-bold">Contactar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div style="display: none;">
-            <!-- Stats Row -->
-            <div class="row g-3 mt-2">
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Servicios Hoy</h3>
-                        <div class="value">15</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Técnicos Activos</h3>
-                        <div class="value">6</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Alertas</h3>
-                        <div class="value">3</div>
-                    </div>
-                </div>
+                <div class="row g-4" id="techCardsContainer"></div>
             </div>
 
-            <!-- Lower Panels -->
-            <div class="row g-3 mt-1 flex-grow-1">
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="nk-card flex-grow-1 d-flex flex-column">
-                        <h4 class="text-center mb-4 fw-bold pb-2 border-bottom" style="font-size: 16px;">Panel General</h4>
-                        <div class="panels-container mt-2">
-                            <button class="panel-btn">
-                                <span class="title">Registros completados:</span>
-                                <span class="val">400</span>
-                            </button>
-                            <button class="panel-btn">
-                                <span class="title">Servicios Pendientes:</span>
-                                <span class="val">6</span>
-                            </button>
-                            <button class="panel-btn mb-0">
-                                <span class="title">Historial de Servicios</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="nk-card flex-grow-1">
-                        <h4 class="text-center mb-4 fw-bold pb-2 border-bottom" style="font-size: 16px;">Estado Técnicos</h4>
-                        
-                        <div class="tech-list mt-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Carlos Roa</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Luis Zea</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 position-relative">
-                                <span>Camilo Suarez</span>
-                                <div class="position-absolute end-0 top-50 translate-middle-y" style="background:#f1f3f5; padding: 15px 30px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transform: translateX(-20px) translateY(-50%);">
-                                    <span style="color:#adb5bd; font-size: 12px; display:block;">En Progreso</span>
-                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Royer Marin</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Marlon E.</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Enrique M.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            </div>
-            <div class="text-center mt-3 text-muted" style="font-size: 12px; font-weight: 600;">
-                &copy; 2026 Todos los derechos Reservados. Nakeema
-            </div>
+            <div class="nk-footer-inline">&copy; 2026 Todos los derechos Reservados. Nakeema</div>
         </main>
     </div>
-
-    <!-- Floating Chat Button -->
-    <a href="support_chat.html" class="floating-chat-btn text-decoration-none">
-        <i class="bi bi-chat-dots-fill"></i>
-    </a>
 
     <!-- Add Technician Modal -->
     <div class="modal fade" id="addTechModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <div class="modal-content rounded-20 border-0 nk-modal-shadow">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" style="color: var(--nk-primary);">Registrar Nuevo Técnico</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title fw-bold text-nk-primary">Registrar Nuevo Técnico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-4 p-4">
-                    <form id="addTechForm" onsubmit="addTechnician(event)">
+                    <form id="addTechForm" onsubmit="addNewTech(event)">
                         <div class="mb-3">
-                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Nombre Completo</label>
+                            <label class="form-label text-muted fw-bold fs-13">Nombre Completo</label>
                             <input type="text" id="techName" class="form-control bg-light border-0 py-2" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label text-muted fw-bold" style="font-size: 13px;">Especialidad</label>
+                            <label class="form-label text-muted fw-bold fs-13">Especialidad</label>
                             <select id="techSpecialty" class="form-select bg-light border-0 py-2" required>
                                 <option value="" selected disabled>Seleccione...</option>
-                                <option value="1">Especialista Eléctrico</option>
-                                <option value="2">Mecánico General</option>
-                                <option value="3">Soporte Nivel 2</option>
+                                <option value="Especialista Eléctrico">Especialista Eléctrico</option>
+                                <option value="Mecánico General">Mecánico General</option>
+                                <option value="Soporte Técnico Nivel 2">Soporte Técnico Nivel 2</option>
+                                <option value="Técnico de Redes">Técnico de Redes</option>
                             </select>
                         </div>
                         <div class="row mb-4">
                             <div class="col-6">
-                                <label class="form-label text-muted fw-bold" style="font-size: 13px;">Teléfono</label>
+                                <label class="form-label text-muted fw-bold fs-13">Teléfono</label>
                                 <input type="tel" id="techPhone" class="form-control bg-light border-0 py-2" required>
                             </div>
                             <div class="col-6">
-                                <label class="form-label text-muted fw-bold" style="font-size: 13px;">Estado Inicial</label>
+                                <label class="form-label text-muted fw-bold fs-13">Estado Inicial</label>
                                 <select id="techStatus" class="form-select bg-light border-0 py-2">
-                                    <option value="1">Disponible</option>
-                                    <option value="2">Inactivo</option>
+                                    <option value="Disponible">Disponible</option>
+                                    <option value="Inactivo">Inactivo</option>
                                 </select>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-sm" style="background-color: var(--nk-primary); border: none;">Guardar Técnico</button>
+                        <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-sm bg-nk-primary border-0">Guardar Técnico</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle -->
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-20 border-0 nk-modal-shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-nk-primary" id="profileTitle">Perfil del Técnico</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="profileBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <nk-chat-btn></nk-chat-btn>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/main.js"></script>
     <script>
-        function addTechnician(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('techName').value;
-            const spSelect = document.getElementById('techSpecialty');
-            const specialty = spSelect.options[spSelect.selectedIndex].text;
-            const statusBox = document.getElementById('techStatus').value;
-            
-            let badgeClass = 'text-bg-success';
-            let statusText = 'Disponible';
-            let avatarBg = 'var(--nk-primary)';
-            let actionBtn2 = '<button class="btn btn-success btn-sm flex-fill rounded-pill fw-bold" style="background-color: var(--nk-primary); border: none;">Asignar</button>';
-            
-            if(statusBox === '2') {
-                badgeClass = 'text-bg-danger';
-                statusText = 'Inactivo';
-                avatarBg = '#dc3545';
-                actionBtn2 = '<button class="btn btn-outline-danger btn-sm flex-fill rounded-pill fw-bold">Contactar</button>';
-            }
-            
-            const row = document.querySelector('.row.g-4');
-            const newCol = document.createElement('div');
-            newCol.className = 'col-md-6 col-lg-4';
-            newCol.innerHTML = `
-                        <div class="nk-card p-4 shadow-sm text-center position-relative bg-white" style="border-radius: 16px;">
-                            <span class="position-absolute top-0 end-0 m-3 badge rounded-pill ${badgeClass}">${statusText}</span>
-                            <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white" style="width: 80px; height: 80px; background-color: ${avatarBg}; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                <i class="bi bi-person fs-1"></i>
-                            </div>
-                            <h5 class="fw-bold mb-1" style="font-size: 18px;">${name}</h5>
-                            <p class="text-muted mb-3" style="font-size: 13px;">${specialty}</p>
-                            
-                            <div class="d-flex justify-content-between px-3 border-top pt-3 text-muted mb-3" style="font-size: 12px; font-weight: 600;">
-                                <div><i class="bi bi-star-fill text-warning me-1"></i> 5.0/5</div>
-                                <div><i class="bi bi-tools me-1"></i> 0 Serv.</div>
-                            </div>
-                            <div class="d-flex gap-2 w-100">
-                                <a href="admin_tech_profile.html?name=${encodeURIComponent(name)}&spec=${encodeURIComponent(specialty)}&status=${encodeURIComponent(statusText)}&rating=5.0&serv=0" class="btn btn-outline-success btn-sm flex-fill rounded-pill fw-bold" style="border-color: var(--nk-primary); color: var(--nk-primary);">Ver Perfil</a>
-                                ${actionBtn2}
-                            </div>
+        const avatarColors = ['#0da766', '#6c757d', '#dc3545', '#0d6efd', '#fd7e14', '#6f42c1', '#20c997'];
+
+        function renderTechCards() {
+            if (!window.nkStorage) return;
+            const techs = window.nkStorage.getTechnicians();
+            const container = document.getElementById('techCardsContainer');
+            container.innerHTML = techs.map((t, i) => {
+                const badgeClass = t.status === 'Disponible' ? 'text-bg-success' : t.status === 'Ocupado' ? 'text-bg-warning' : 'text-bg-danger';
+                const avatarBg = avatarColors[i % avatarColors.length];
+                const actionBtn = t.status === 'Disponible'
+                    ? `<button class="btn btn-success btn-sm rounded-pill fw-bold bg-nk-primary border-0 btn-tech-card" onclick="assignTech('${t.name}')">Asignar</button>`
+                    : t.status === 'Ocupado'
+                    ? `<button class="btn btn-secondary btn-sm rounded-pill fw-bold border-0 btn-tech-card" disabled>Ocupado</button>`
+                    : `<button class="btn btn-outline-danger btn-sm rounded-pill fw-bold btn-tech-card" onclick="window.nkStorage.showToast('Contactando a ${t.name}...','info')">Contactar</button>`;
+
+                return `
+                <div class="col-md-6 col-lg-4">
+                    <div class="nk-card p-4 shadow-sm text-center position-relative bg-white tech-card h-100 d-flex flex-column">
+                        <span class="position-absolute top-0 end-0 m-3 badge rounded-pill ${badgeClass}">${t.status}</span>
+                        <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white avatar-tech" style="background-color:${avatarBg};">
+                            <i class="bi bi-person fs-1"></i>
                         </div>
+                        <h5 class="fw-bold mb-1 fs-18">${t.name}</h5>
+                        <p class="text-muted mb-3 fs-13 flex-grow-1">${t.specialty}</p>
+                        <div class="d-flex justify-content-between px-3 border-top pt-3 text-muted mb-3 fs-12 fw-600 mt-auto">
+                            <div><i class="bi bi-star-fill text-warning me-1"></i> ${t.rating}/5</div>
+                            <div><i class="bi bi-tools me-1"></i> ${t.services} Serv.</div>
+                        </div>
+                        <div class="d-flex justify-content-center gap-2 w-100">
+                            <button class="btn btn-outline-success btn-sm rounded-pill fw-bold btn-outline-nk btn-tech-card" onclick="viewProfile(${i})">Ver Perfil</button>
+                            ${actionBtn}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function viewProfile(idx) {
+            const techs = window.nkStorage.getTechnicians();
+            const t = techs[idx];
+            if (!t) return;
+            const badgeClass = t.status === 'Disponible' ? 'text-bg-success' : t.status === 'Ocupado' ? 'text-bg-warning' : 'text-bg-danger';
+            document.getElementById('profileTitle').textContent = t.name;
+            document.getElementById('profileBody').innerHTML = `
+                <div class="text-center mb-4">
+                    <div class="avatar mx-auto mb-3 shadow-sm border border-2 border-white avatar-tech" style="background:${avatarColors[idx % avatarColors.length]}"><i class="bi bi-person fs-1"></i></div>
+                    <h5 class="fw-bold">${t.name}</h5>
+                    <p class="text-muted">${t.specialty}</p>
+                    <span class="badge ${badgeClass} rounded-pill px-3 py-2">${t.status}</span>
+                </div>
+                <hr>
+                <div class="mb-2 d-flex justify-content-between"><strong>Rating:</strong><span><i class="bi bi-star-fill text-warning"></i> ${t.rating}/5</span></div>
+                <div class="mb-2 d-flex justify-content-between"><strong>Servicios:</strong><span>${t.services}</span></div>
+                <div class="mb-2 d-flex justify-content-between"><strong>Teléfono:</strong><span>${t.phone || 'N/A'}</span></div>
+                <div class="mb-2 d-flex justify-content-between"><strong>Email:</strong><span>${t.email || 'N/A'}</span></div>
+                <div class="mb-0 d-flex justify-content-between"><strong>Fecha ingreso:</strong><span>${t.joinDate || 'N/A'}</span></div>
             `;
-            
-            row.insertBefore(newCol, row.firstChild);
-            
+            new bootstrap.Modal(document.getElementById('profileModal')).show();
+        }
+
+        function assignTech(name) {
+            window.nkStorage.showToast('Técnico ' + name + ' listo para asignar. Vaya a Gestión de Servicios.', 'info');
+        }
+
+        function addNewTech(e) {
+            e.preventDefault();
+            if (!window.nkStorage) return;
+            const tech = {
+                name: document.getElementById('techName').value,
+                specialty: document.getElementById('techSpecialty').value,
+                status: document.getElementById('techStatus').value,
+                rating: 5.0,
+                services: 0,
+                phone: document.getElementById('techPhone').value,
+                email: '',
+                joinDate: new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' })
+            };
+            window.nkStorage.addTechnician(tech);
+            window.nkStorage.showToast('Técnico ' + tech.name + ' registrado');
             bootstrap.Modal.getInstance(document.getElementById('addTechModal')).hide();
             document.getElementById('addTechForm').reset();
+            renderTechCards();
         }
+
+        document.addEventListener('DOMContentLoaded', renderTechCards);
     </script>
-    <script src="js/main.js"></script>
 </body>
 </html>

@@ -3,231 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nakeema - Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <title>Nakeema - Configuración</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <img src="img/logo.png" alt="Nakeema Logo" style="max-height: 50px; width: 100%; object-fit: contain;">
-            </div>
-            
-            <nav class="d-flex flex-column gap-1 h-100 pb-3">
-                <a href="admin_dashboard.html" class="nav-link-custom">Dashboard</a>
-                <a href="admin_gestion.html" class="nav-link-custom">Gestion de Servicios</a>
-                <a href="admin_reportes.html" class="nav-link-custom">Reportes</a>
-                <a href="admin_tecnicos.html" class="nav-link-custom">Tecnicos</a>
-                <a href="admin_configuracion.html" class="nav-link-custom active">Configuración</a>
+        <nk-sidebar role="admin" active="configuracion"></nk-sidebar>
 
-                <div class="mt-auto">
-                    <a href="index.html" class="nav-link-custom text-danger" style="display: flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-box-arrow-left fs-5"></i> Salir
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Topbar -->
-            <header class="topbar">
-                <div class="search-bar">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Administrador">
-                </div>
-                
-                <div class="d-flex align-items-center gap-4 pe-3">
-                    <div class="position-relative dropstart" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-bell-fill fs-5" style="color: var(--nk-text-muted);"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </div>
-                        <ul class="dropdown-menu shadow-sm" style="border-radius: 12px; border: 1px solid var(--nk-border); width: 280px; padding: 0;">
-                            <li class="px-3 py-2 border-bottom fw-bold" style="background-color: #f8f9fa; border-radius: 12px 12px 0 0;">Notificaciones</li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Nuevo Servicio Solicitado</div><div class="text-muted" style="font-size: 11px;">Hace 5 min</div></a></li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Actualización de Estado</div><div class="text-muted" style="font-size: 11px;">Hace 2 horas</div></a></li>
-                            <li><hr class="dropdown-divider mb-0 mt-1"></li>
-                            <li><a class="dropdown-item py-2 text-center" href="#" style="font-size: 12px; color: var(--nk-primary); font-weight: 600;">Ver todas</a></li>
-                        </ul>
-                    <div class="user-profile m-0">
-                        <div class="user-info">
-                            <div class="user-name">Administrador</div>
-                        </div>
-                        <div class="avatar">
-                            <i class="bi bi-person-fill"></i>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <nk-topbar role="admin" username="Administrador"></nk-topbar>
 
             <div class="px-md-4 py-4 flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold m-0" style="color: var(--nk-primary); font-size: 24px;">Configuración del Sistema</h3>
-                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm" style="background-color: var(--nk-primary); border: none;">
+                    <h3 class="fw-bold m-0 text-nk-primary fs-24">Configuración del Sistema</h3>
+                    <button class="btn btn-success rounded-pill px-4 fw-bold shadow-sm bg-nk-primary border-0" onclick="saveAllConfig()">
                         <i class="bi bi-save me-2"></i> Guardar Cambios
                     </button>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="nk-card p-4 text-center shadow-sm bg-white" style="border-radius: 16px;">
+                        <div class="nk-card p-4 text-center shadow-sm bg-white tech-card">
                             <input type="file" id="logoUpload" accept="image/png, image/jpeg" style="display: none;" onchange="updateLogo(this)">
-                            <div id="logoPreview" class="mx-auto mb-3" style="width: 100px; height: 100px; background-color: #f8f9fa; border: 2px dashed var(--nk-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 50%; background-size: cover; background-position: center;" onclick="document.getElementById('logoUpload').click()">
+                            <div id="logoPreview" class="mx-auto mb-3 logo-preview-box" onclick="document.getElementById('logoUpload').click()">
                                 <i class="bi bi-camera fs-2 text-muted" id="logoIcon"></i>
                             </div>
                             <h5 class="fw-bold fs-6">Logo de la Empresa</h5>
-                            <p class="text-muted" style="font-size: 12px;">Formato PNG o JPG. Max 2MB.</p>
-                            <button class="btn btn-outline-success btn-sm rounded-pill px-4 mt-2 fw-bold" style="border-color: var(--nk-primary); color: var(--nk-primary);" onclick="document.getElementById('logoUpload').click()">Subir Imagen</button>
+                            <p class="text-muted fs-12">Formato PNG o JPG. Max 2MB.</p>
+                            <button class="btn btn-outline-success btn-sm rounded-pill px-4 mt-2 fw-bold btn-outline-nk" onclick="document.getElementById('logoUpload').click()">Subir Imagen</button>
                         </div>
                         
-                        <div class="nk-card p-4 shadow-sm bg-white mt-4" style="border-radius: 16px;">
+                        <div class="nk-card p-4 shadow-sm bg-white mt-4 tech-card">
                             <h5 class="fw-bold fs-6 border-bottom pb-2 mb-3">Estilos</h5>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted fs-6 fw-bold">Modo Oscuro</span>
+                                <span class="text-muted fs-6 fw-bold"><i class="bi bi-moon-stars-fill me-2"></i>Modo Oscuro</span>
                                 <div class="form-check form-switch fs-4 m-0">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="darkModeToggle">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="darkModeToggle" onchange="toggleDarkMode()">
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="col-md-8">
-                        <div class="nk-card p-4 shadow-sm bg-white" style="border-radius: 16px;">
+                        <div class="nk-card p-4 shadow-sm bg-white tech-card">
                             <h5 class="fw-bold mb-4 fs-5 border-bottom pb-2">Información General</h5>
                             
-                            <form>
+                            <form id="configForm">
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label text-muted" style="font-size: 13px; font-weight: 600;">Nombre de la Empresa</label>
-                                        <input type="text" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Nakeema Corp">
+                                        <label class="form-label text-muted fs-13 fw-600">Nombre de la Empresa</label>
+                                        <input type="text" id="cfgCompanyName" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Nakeema Corp">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label text-muted" style="font-size: 13px; font-weight: 600;">Correo de Contacto</label>
-                                        <input type="email" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="admin@nakeema.com">
+                                        <label class="form-label text-muted fs-13 fw-600">Correo de Contacto</label>
+                                        <input type="email" id="cfgCompanyEmail" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="admin@nakeema.com">
                                     </div>
                                     <div class="col-md-12">
-                                        <label class="form-label text-muted" style="font-size: 13px; font-weight: 600;">Dirección Principal</label>
-                                        <input type="text" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Calle Falsa 123, Ciudad de México">
+                                        <label class="form-label text-muted fs-13 fw-600">Dirección Principal</label>
+                                        <input type="text" id="cfgCompanyAddress" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Calle Falsa 123, Ciudad de México">
                                     </div>
                                 </div>
 
                                 <h5 class="fw-bold mb-3 mt-5 fs-5 border-bottom pb-2">Preferencias del Sistema</h5>
                                 
                                 <div class="form-check form-switch mb-3 d-flex align-items-center">
-                                    <input class="form-check-input fs-5 flex-shrink-0" type="checkbox" id="notifEmail" checked style="cursor:pointer; margin-top: 0;">
-                                    <label class="form-check-label ms-3" for="notifEmail" style="font-weight: 600; cursor:pointer;">Enviar notificaciones por correo a los técnicos</label>
+                                    <input class="form-check-input fs-5 flex-shrink-0 cursor-pointer mt-0" type="checkbox" id="notifEmail" onchange="savePrefSwitch()">
+                                    <label class="form-check-label ms-3 fw-600 cursor-pointer" for="notifEmail">Enviar notificaciones por correo a los técnicos</label>
                                 </div>
                                 <div class="form-check form-switch mb-3 d-flex align-items-center">
-                                    <input class="form-check-input fs-5 flex-shrink-0" type="checkbox" id="notifSMS" style="cursor:pointer; margin-top: 0;">
-                                    <label class="form-check-label ms-3" for="notifSMS" style="font-weight: 600; cursor:pointer;">Habilitar alertas SMS para servicios de alta prioridad</label>
+                                    <input class="form-check-input fs-5 flex-shrink-0 cursor-pointer mt-0" type="checkbox" id="notifSMS" onchange="savePrefSwitch()">
+                                    <label class="form-check-label ms-3 fw-600 cursor-pointer" for="notifSMS">Habilitar alertas SMS para servicios de alta prioridad</label>
                                 </div>
                                 <div class="form-check form-switch d-flex align-items-center mt-3">
-                                    <input class="form-check-input fs-5 flex-shrink-0" type="checkbox" id="autoAssign" checked style="cursor:pointer; margin-top: 0;">
-                                    <label class="form-check-label ms-3" for="autoAssign" style="font-weight: 600; cursor:pointer;">Auto-asignar servicios según disponibilidad técnica</label>
+                                    <input class="form-check-input fs-5 flex-shrink-0 cursor-pointer mt-0" type="checkbox" id="autoAssign" onchange="savePrefSwitch()">
+                                    <label class="form-check-label ms-3 fw-600 cursor-pointer" for="autoAssign">Auto-asignar servicios según disponibilidad técnica</label>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="display: none;">
-            <!-- Stats Row -->
-            <div class="row g-3 mt-2">
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Servicios Hoy</h3>
-                        <div class="value">15</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Técnicos Activos</h3>
-                        <div class="value">6</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="nk-card stat-card">
-                        <h3>Alertas</h3>
-                        <div class="value">3</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Lower Panels -->
-            <div class="row g-3 mt-1 flex-grow-1">
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="nk-card flex-grow-1 d-flex flex-column">
-                        <h4 class="text-center mb-4 fw-bold pb-2 border-bottom" style="font-size: 16px;">Panel General</h4>
-                        <div class="panels-container mt-2">
-                            <button class="panel-btn">
-                                <span class="title">Registros completados:</span>
-                                <span class="val">400</span>
-                            </button>
-                            <button class="panel-btn">
-                                <span class="title">Servicios Pendientes:</span>
-                                <span class="val">6</span>
-                            </button>
-                            <button class="panel-btn mb-0">
-                                <span class="title">Historial de Servicios</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="nk-card flex-grow-1">
-                        <h4 class="text-center mb-4 fw-bold pb-2 border-bottom" style="font-size: 16px;">Estado Técnicos</h4>
-                        
-                        <div class="tech-list mt-3">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Carlos Roa</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Luis Zea</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 position-relative">
-                                <span>Camilo Suarez</span>
-                                <div class="position-absolute end-0 top-50 translate-middle-y" style="background:#f1f3f5; padding: 15px 30px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transform: translateX(-20px) translateY(-50%);">
-                                    <span style="color:#adb5bd; font-size: 12px; display:block;">En Progreso</span>
-                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Royer Marin</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Marlon E.</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span>Enrique M.</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            </div>
-            <div class="text-center mt-3 text-muted" style="font-size: 12px; font-weight: 600;">
-                &copy; 2026 Todos los derechos Reservados. Nakeema
-            </div>
+            <div class="nk-footer-inline">&copy; 2026 Todos los derechos Reservados. Nakeema</div>
         </main>
     </div>
 
-    <!-- Floating Chat Button -->
-    <a href="support_chat.html" class="floating-chat-btn text-decoration-none">
-        <i class="bi bi-chat-dots-fill"></i>
-    </a>
-
-    <!-- Bootstrap JS Bundle -->
+    <nk-chat-btn></nk-chat-btn>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
     <script>
         function updateLogo(input) {
             if (input.files && input.files[0]) {
@@ -238,6 +104,49 @@
                 }
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        // Load preferences from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.nkStorage) return;
+            const prefs = window.nkStorage.getPreferences();
+            document.getElementById('darkModeToggle').checked = prefs.darkMode || false;
+            document.getElementById('notifEmail').checked = prefs.emailNotifications !== false;
+            document.getElementById('notifSMS').checked = prefs.smsAlerts || false;
+            document.getElementById('autoAssign').checked = prefs.autoAssign !== false;
+            if (prefs.companyName) document.getElementById('cfgCompanyName').value = prefs.companyName;
+            if (prefs.companyEmail) document.getElementById('cfgCompanyEmail').value = prefs.companyEmail;
+            if (prefs.companyAddress) document.getElementById('cfgCompanyAddress').value = prefs.companyAddress;
+        });
+
+        function toggleDarkMode() {
+            if (!window.nkStorage) return;
+            const isDark = document.getElementById('darkModeToggle').checked;
+            window.nkStorage.updatePreferences({ darkMode: isDark });
+            window.nkStorage.applyTheme();
+            window.nkStorage.showToast(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
+        }
+
+        function savePrefSwitch() {
+            if (!window.nkStorage) return;
+            window.nkStorage.updatePreferences({
+                emailNotifications: document.getElementById('notifEmail').checked,
+                smsAlerts: document.getElementById('notifSMS').checked,
+                autoAssign: document.getElementById('autoAssign').checked
+            });
+        }
+
+        function saveAllConfig() {
+            if (!window.nkStorage) return;
+            window.nkStorage.updatePreferences({
+                companyName: document.getElementById('cfgCompanyName').value,
+                companyEmail: document.getElementById('cfgCompanyEmail').value,
+                companyAddress: document.getElementById('cfgCompanyAddress').value,
+                emailNotifications: document.getElementById('notifEmail').checked,
+                smsAlerts: document.getElementById('notifSMS').checked,
+                autoAssign: document.getElementById('autoAssign').checked
+            });
+            window.nkStorage.showToast('Configuración guardada exitosamente');
         }
     </script>
 </body>

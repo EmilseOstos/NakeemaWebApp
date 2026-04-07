@@ -3,106 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nakeema - Tech Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <title>Nakeema - Solicitar Materiales</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <img src="img/logo.png" alt="Nakeema Logo" style="max-height: 50px; width: 100%; object-fit: contain;">
-            </div>
-            
-            <nav class="d-flex flex-column gap-1 h-100 pb-3">
-                <a href="tech_dashboard.html" class="nav-link-custom"><i class="bi bi-lightning-charge-fill me-2"></i> Dashboard</a>
-                <a href="tech_insertar.html" class="nav-link-custom"><i class="bi bi-plus-circle-fill me-2"></i> Nuevo Reporte</a>
-                <a href="tech_modificar.html" class="nav-link-custom"><i class="bi bi-arrow-repeat me-2"></i> Actualizar Estado</a>
-                <a href="tech_solicitar.html" class="nav-link-custom active text-white" style="background-color: var(--nk-primary);"><i class="bi bi-box-seam-fill me-2"></i> Solicitar</a>
-                <a href="tech_consultar.html" class="nav-link-custom"><i class="bi bi-search me-2"></i> Consultar</a>
+        <nk-sidebar role="tech" active="solicitar"></nk-sidebar>
 
-                <div class="mt-auto">
-                    <a href="index.html" class="nav-link-custom text-danger" style="display: flex; align-items: center; gap: 8px;">
-                        <i class="bi bi-box-arrow-left fs-5"></i> Salir
-                    </a>
-                </div>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <div class="nk-card flex-grow-1 position-relative p-4">
+            <div class="nk-card flex-grow-1 position-relative p-4 d-flex flex-column">
                 
-                <div class="position-absolute end-0 top-0 p-4 z-3">
-                    <div class="d-flex align-items-center gap-4">
-                        <div class="position-relative dropstart" style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-bell-fill fs-5" style="color: var(--nk-text-muted);"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </div>
-                        <ul class="dropdown-menu shadow-sm" style="border-radius: 12px; border: 1px solid var(--nk-border); width: 280px; padding: 0;">
-                            <li class="px-3 py-2 border-bottom fw-bold" style="background-color: #f8f9fa; border-radius: 12px 12px 0 0;">Notificaciones</li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Nuevo Servicio Solicitado</div><div class="text-muted" style="font-size: 11px;">Hace 5 min</div></a></li>
-                            <li><a class="dropdown-item py-2" href="#"><div style="font-size: 13px; font-weight: 600;">Actualización de Estado</div><div class="text-muted" style="font-size: 11px;">Hace 2 horas</div></a></li>
-                            <li><hr class="dropdown-divider mb-0 mt-1"></li>
-                            <li><a class="dropdown-item py-2 text-center" href="#" style="font-size: 12px; color: var(--nk-primary); font-weight: 600;">Ver todas</a></li>
-                        </ul>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="text-end" style="line-height:1;">
-                                <div style="font-size:12px; font-weight:600;">Kelly Ramirez</div>
-                                <div style="font-size:10px; color:var(--nk-text-muted);">Tecnico</div>
-                            </div>
-                            <div class="avatar" style="width:35px; height:35px;">
-                                <i class="bi bi-person-fill"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <nk-topbar role="tech" username="Kelly Ramirez"></nk-topbar>
 
                 <div class="px-md-4 py-4 flex-grow-1 w-100" style="max-width: 800px; margin: 0 auto;">
-                    <h3 class="fw-bold mb-4" style="color: var(--nk-primary); font-size: 24px;">Solicitar Materiales a Bodega</h3>
+                    <h3 class="fw-bold mb-4 text-nk-primary fs-24">Solicitar Materiales a Bodega</h3>
                     
-                    <div class="nk-card p-4 p-md-5 bg-white shadow-sm" style="border-radius: 16px;">
-                        <form>
+                    <div class="nk-card p-4 p-md-5 bg-white shadow-sm rounded-16">
+                        <form id="materialForm" onsubmit="submitMaterial(event)">
                             <div class="row g-4">
                                 <div class="col-md-8">
-                                    <label class="form-label text-muted fw-bold" style="font-size: 13px;">Nombre del Material o Herramienta</label>
-                                    <input type="text" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Rollo de Cable 12AWG">
+                                    <label class="form-label text-muted fw-bold fs-13">Nombre del Material o Herramienta</label>
+                                    <input type="text" id="matName" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Rollo de Cable 12AWG" required>
                                 </div>
                                 
                                 <div class="col-md-4">
-                                    <label class="form-label text-muted fw-bold" style="font-size: 13px;">Cantidad Necesaria</label>
-                                    <input type="number" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="1" min="1">
+                                    <label class="form-label text-muted fw-bold fs-13">Cantidad Necesaria</label>
+                                    <input type="number" id="matQty" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="1" min="1" required>
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label class="form-label text-muted fw-bold" style="font-size: 13px;">Servicio Asociado (Opcional)</label>
-                                    <select class="form-select bg-light border-0 py-2 px-3 shadow-none rounded-3 text-muted">
-                                        <option selected>Ninguno / Uso General</option>
-                                        <option value="1">#O.R.24567 - Reparación Eléctrica</option>
+                                    <label class="form-label text-muted fw-bold fs-13">Servicio Asociado (Opcional)</label>
+                                    <select id="matService" class="form-select bg-light border-0 py-2 px-3 shadow-none rounded-3 text-muted">
+                                        <option selected value="">Ninguno / Uso General</option>
+                                        <option value="#O.R.24567">#O.R.24567 - Reparación Eléctrica</option>
                                     </select>
                                 </div>
                                 
                                 <div class="col-md-6">
-                                    <label class="form-label text-muted fw-bold" style="font-size: 13px;">Nivel de Urgencia</label>
-                                    <select class="form-select bg-light border-0 py-2 px-3 shadow-none rounded-3 text-danger fw-bold">
-                                        <option value="baja" class="text-dark">Normal (Bodega general)</option>
-                                        <option value="alta">Urgente (Detiene el servicio actual)</option>
+                                    <label class="form-label text-muted fw-bold fs-13">Nivel de Urgencia</label>
+                                    <select id="matUrgency" class="form-select bg-light border-0 py-2 px-3 shadow-none rounded-3 text-danger fw-bold">
+                                        <option value="Normal" class="text-dark">Normal (Bodega general)</option>
+                                        <option value="Urgente">Urgente (Detiene el servicio actual)</option>
                                     </select>
                                 </div>
                                 
                                 <div class="col-md-12">
-                                    <label class="form-label text-muted fw-bold" style="font-size: 13px;">Justificación de la Solicitud</label>
-                                    <textarea class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="3" placeholder="Explique brevemente por qué requiere estos materiales..."></textarea>
+                                    <label class="form-label text-muted fw-bold fs-13">Justificación de la Solicitud</label>
+                                    <textarea id="matJustification" class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="3" placeholder="Explique brevemente por qué requiere estos materiales..."></textarea>
                                 </div>
                                 
-                                <div class="col-12 mt-4 text-end border-top pt-4">
-                                    <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm" style="background-color: var(--nk-primary); border: none;">
+                                <div class="col-12 mt-4 d-flex justify-content-center border-top pt-4">
+                                    <button type="submit" class="btn btn-success rounded-pill fw-bold shadow-sm bg-nk-primary border-0 btn-form-action">
                                         Enviar Solicitud a Bodega
                                     </button>
                                 </div>
@@ -110,93 +64,30 @@
                         </form>
                     </div>
                 </div>
-                <div style="display: none;">
-                <div class="text-center mb-5 w-100 pt-3">
-                    <h2 class="fw-bold" style="color: var(--nk-primary); font-size: 26px;">Hola Kelly!</h2>
-                    <p class="mb-0 text-muted fw-bold" style="font-size: 16px;">Resumen de tu jornada</p>
-                </div>
 
-                <!-- Stats Row -->
-                <div class="row g-3 px-md-4 mb-5">
-                    <div class="col-md-4">
-                        <div class="nk-card stat-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-                            <h3>Servicios Asignados</h3>
-                            <div class="value" style="color: #000; font-size: 36px;">5</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="nk-card stat-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-                            <h3>En Proceso</h3>
-                            <div class="value" style="color: #000; font-size: 36px;">2</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="nk-card stat-card" style="box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-                            <h3>Cerrados Hoy</h3>
-                            <div class="value" style="color: #000; font-size: 36px;">8</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="px-md-4">
-                    <h4 class="fw-bold mb-3" style="font-size: 16px; color: var(--nk-text-muted);">Proximos Servicios Asignados</h4>
-                    
-                    <div class="table-responsive">
-                        <table class="table-custom text-center">
-                            <thead>
-                                <tr>
-                                    <th>Id Servicio</th>
-                                    <th>Prioridad</th>
-                                    <th>Cliente</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span style="color:var(--nk-text-muted); font-size:12px;">O.R.24567</span></td>
-                                    <td><span class="text-danger">Alta</span></td>
-                                    <td>Emilse Ostos</td>
-                                    <td><button class="btn btn-sm btn-outline-success rounded-pill px-3" style="font-size: 12px; padding: 2px 10px;">Ver Detalles</button></td>
-                                </tr>
-                                <tr>
-                                    <td><span style="color:var(--nk-text-muted); font-size:12px;">O.R.24567</span></td>
-                                    <td><span style="color: #fd7e14;">Media</span></td>
-                                    <td>Marcos Suarez</td>
-                                    <td><button class="btn btn-sm btn-outline-success rounded-pill px-3" style="font-size: 12px; padding: 2px 10px;">Ver Detalles</button></td>
-                                </tr>
-                                <tr>
-                                    <td><span style="color:var(--nk-text-muted); font-size:12px;">O.R.24567</span></td>
-                                    <td><span class="text-dark fw-bold">Baja</span></td>
-                                    <td>Luis Muñoz</td>
-                                    <td><button class="btn btn-sm btn-outline-success rounded-pill px-3" style="font-size: 12px; padding: 2px 10px;">Ver Detalles</button></td>
-                                </tr>
-                                <tr>
-                                    <td><span style="color:var(--nk-text-muted); font-size:12px;">O.R.24567</span></td>
-                                    <td><span style="color: #fd7e14;">Media</span></td>
-                                    <td>Sonia Hernandez</td>
-                                    <td><button class="btn btn-sm btn-outline-success rounded-pill px-3" style="font-size: 12px; padding: 2px 10px;">Ver Detalles</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-            
-            </div>
-            <div class="text-center mt-3 text-muted" style="font-size: 12px; font-weight: 600;">
-                &copy; 2026 Todos los derechos Reservados. Nakeema
+                <div class="nk-footer-inline">&copy; 2026 Todos los derechos Reservados. Nakeema</div>
             </div>
         </main>
     </div>
 
-    <!-- Floating Chat Button -->
-    <a href="support_chat.html" class="floating-chat-btn text-decoration-none" style="z-index: 1000;">
-        <i class="bi bi-chat-dots-fill"></i>
-    </a>
-
-    <!-- Bootstrap JS Bundle -->
+    <nk-chat-btn></nk-chat-btn>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script>
+        function submitMaterial(e) {
+            e.preventDefault();
+            if (!window.nkStorage) return;
+            const mat = {
+                name: document.getElementById('matName').value,
+                quantity: document.getElementById('matQty').value,
+                serviceId: document.getElementById('matService').value || 'Uso General',
+                urgency: document.getElementById('matUrgency').value,
+                justification: document.getElementById('matJustification').value || ''
+            };
+            window.nkStorage.addMaterial(mat);
+            window.nkStorage.showToast('Solicitud de ' + mat.name + ' enviada a bodega');
+            document.getElementById('materialForm').reset();
+        }
+    </script>
 </body>
 </html>
