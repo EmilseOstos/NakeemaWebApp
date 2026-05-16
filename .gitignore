@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -17,8 +18,36 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
+=======
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs and Editors
+.vscode/
+.idea/
+>>>>>>> df49eca10a177a235459f59339744f707965389c
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
+=======
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# NodeJS (In case you eventually use NPM for building packages)
+node_modules/
+npm-debug.log
+yarn-error.log
+>>>>>>> df49eca10a177a235459f59339744f707965389c
