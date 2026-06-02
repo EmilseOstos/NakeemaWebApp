@@ -1,0 +1,16 @@
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/conexion/Conexion.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/ClienteServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/LoginServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/LogoutServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/RegistroServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/ServicioServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/TecnicoServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/controlador/TestServlet.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/dao/ClienteDAO.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/dao/ServicioDAO.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/dao/TecnicoDAO.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/dao/UsuarioDAO.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/modelo/Cliente.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/modelo/Servicio.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/modelo/Tecnico.java
+/home/marlondelaroch3/Documentos/NakeemaWebApp/src/main/java/com/nakeema/modelo/Usuario.java
