@@ -34,3 +34,4 @@ Este proyecto no requiere ninguna instalación en servidores complejos para las 
 
 ---
 © 2026 Nakeema - Todos los derechos reservados.
+>>>>>>> df49eca10a177a235459f59339744f707965389c
