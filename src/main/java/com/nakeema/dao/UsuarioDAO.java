@@ -15,7 +15,7 @@ public class UsuarioDAO {
         String sql = "SELECT id, username, email, password, rol FROM usuarios WHERE (username = ? OR email = ?) AND password = ?";
         
         try (Connection cn = Conexion.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+            PreparedStatement ps = cn.prepareStatement(sql)) {
             
             ps.setString(1, usernameOEmail);
             ps.setString(2, usernameOEmail);
@@ -50,7 +50,7 @@ public class UsuarioDAO {
         String sql = "INSERT INTO usuarios (username, email, password, rol) VALUES (?, ?, ?, ?)";
         
         try (Connection cn = Conexion.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+            PreparedStatement ps = cn.prepareStatement(sql)) {
             
             ps.setString(1, username);
             ps.setString(2, email);
@@ -73,7 +73,7 @@ public class UsuarioDAO {
         String sql = "SELECT id, username, email, password, rol FROM usuarios WHERE id = ?";
         
         try (Connection cn = Conexion.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
+            PreparedStatement ps = cn.prepareStatement(sql)) {
             
             ps.setInt(1, id);
             
@@ -93,5 +93,60 @@ public class UsuarioDAO {
         }
         
         return usuario;
+    }
+    // ==========================================
+    // MÉTODOS FALTANTES PARA CRUD COMPLETO
+    // ==========================================
+
+    // Método para actualizar un usuario existente (Update)
+    public boolean actualizarUsuario(Usuario usuario) {
+        String sql = "UPDATE usuarios SET username = ?, email = ?, password = ?, rol = ? WHERE id = ?";
+        
+        try (Connection cn = Conexion.getConexion();
+            PreparedStatement ps = cn.prepareStatement(sql)) {
+            
+            ps.setString(1, usuario.getUsername());
+            ps.setString(2, usuario.getEmail());
+            ps.setString(3, usuario.getPassword());
+            ps.setString(4, usuario.getRol());
+            ps.setInt(5, usuario.getId());
+            
+            int filasAfectadas = ps.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("[DAO] ✅ Usuario actualizado con éxito: " + usuario.getUsername());
+                return true;
+            } else {
+                System.out.println("[DAO] ⚠️ No se encontró el usuario para actualizar.");
+                return false;
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("[DAO] ❌ Error al actualizar usuario: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Método para eliminar un usuario por su ID (Delete)
+    public boolean eliminarUsuario(int id) {
+        String sql = "DELETE FROM usuarios WHERE id = ?";
+        
+        try (Connection cn = Conexion.getConexion();
+            PreparedStatement ps = cn.prepareStatement(sql)) {
+            
+            ps.setInt(1, id);
+            
+            int filasAfectadas = ps.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("[DAO] ✅ Usuario con ID " + id + " eliminado con éxito.");
+                return true;
+            } else {
+                System.out.println("[DAO] ⚠️ No se encontró ningún usuario con el ID especificado.");
+                return false;
+            }
+            
+        } catch (SQLException e) {
+            System.out.println("[DAO] ❌ Error al eliminar usuario: " + e.getMessage());
+            return false;
+        }
     }
 }
