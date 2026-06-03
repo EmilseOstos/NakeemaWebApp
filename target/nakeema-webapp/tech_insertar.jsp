@@ -22,7 +22,7 @@
 <body>
 
     <div class="dashboard-wrapper">
-        <nk-sidebar role="tech" active="insertar"></nk-sidebar>
+        <nk-sidebar role="tech" active="insertar" context="${pageContext.request.contextPath}"></nk-sidebar>
 
         <main class="main-content">
             <div class="nk-card flex-grow-1 position-relative p-4 d-flex flex-column">

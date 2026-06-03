@@ -56,17 +56,17 @@
                             <h4 class="text-center mb-4 fw-bold pb-2 border-bottom fs-16">Panel General</h4>
                             <div class="panels-container mt-2">
                                 <button class="panel-btn"
-                                    onclick="window.location='${pageContext.request.contextPath}/admin_gestion_servicios.jsp'">
+                                    onclick="window.location='${pageContext.request.contextPath}/admin_gestion.jsp'">
                                     <span class="title">Registros completados:</span><span class="val">400</span>
                                 </button>
 
                                 <button class="panel-btn"
-                                    onclick="window.location='${pageContext.request.contextPath}/admin_gestion_servicios.jsp'">
+                                    onclick="window.location='${pageContext.request.contextPath}/admin_gestion.jsp'">
                                     <span class="title">Servicios Pendientes:</span><span class="val">6</span>
                                 </button>
 
                                 <button class="panel-btn mb-0"
-                                    onclick="window.location='${pageContext.request.contextPath}/admin_historial.jsp'">
+                                    onclick="window.location='${pageContext.request.contextPath}/admin_reportes.jsp'">
                                     <span class="title">Historial de Servicios</span>
                                 </button>
                             </div>

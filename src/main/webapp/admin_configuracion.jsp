@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
     jakarta.servlet.http.HttpSession miSesion = request.getSession(false);
     String usuarioLogueado = (miSesion != null) ? (String) miSesion.getAttribute("usuarioLogueado") : null;
     String rolUsuario = (miSesion != null) ? (String) miSesion.getAttribute("rolUsuario") : null;
@@ -21,7 +22,7 @@
 <body>
 
     <div class="dashboard-wrapper">
-        <nk-sidebar role="admin" active="configuracion"></nk-sidebar>
+        <nk-sidebar role="admin" active="configuracion" context="${pageContext.request.contextPath}"></nk-sidebar>
 
         <main class="main-content">
             <nk-topbar role="admin" username="Administrador"></nk-topbar>

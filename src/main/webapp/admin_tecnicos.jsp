@@ -22,7 +22,7 @@
 <body>
 
     <div class="dashboard-wrapper">
-        <nk-sidebar role="admin" active="tecnicos"></nk-sidebar>
+        <nk-sidebar role="admin" active="tecnicos" context="${pageContext.request.contextPath}"></nk-sidebar>
 
         <main class="main-content">
             <nk-topbar role="admin" username="Administrador"></nk-topbar>

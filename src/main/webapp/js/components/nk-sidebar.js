@@ -30,8 +30,8 @@ export class NkSidebar extends HTMLElement {
         
         if (role === 'admin') {
             return `
-                <a href="${context}/dashboard" class="nav-link-custom ${activeClass('dashboard')}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                <a href="${context}/admin_gestion_servicios.jsp" class="nav-link-custom ${activeClass('gestion')}"><i class="bi bi-clipboard-data me-2"></i> Gestión de Servicios</a>
+                <a href="${context}/admin_dashboard.jsp" class="nav-link-custom ${activeClass('dashboard')}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+                <a href="${context}/admin_gestion.jsp" class="nav-link-custom ${activeClass('gestion')}"><i class="bi bi-clipboard-data me-2"></i> Gestión de Servicios</a>
                 <a href="${context}/admin_reportes.jsp" class="nav-link-custom ${activeClass('reportes')}"><i class="bi bi-bar-chart-line me-2"></i> Reportes</a>
                 <a href="${context}/admin_tecnicos.jsp" class="nav-link-custom ${activeClass('tecnicos')}"><i class="bi bi-people-fill me-2"></i> Técnicos</a>
                 <a href="${context}/admin_configuracion.jsp" class="nav-link-custom ${activeClass('configuracion')}"><i class="bi bi-gear-fill me-2"></i> Configuración</a>
@@ -47,8 +47,8 @@ export class NkSidebar extends HTMLElement {
         } else {
             return `
                 <a href="${context}/client_dashboard.jsp" class="nav-link-custom ${activeClass('dashboard')}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
-                <a href="${context}/client_registrar_servicio.jsp" class="nav-link-custom ${activeClass('registrar')}"><i class="bi bi-plus-circle-fill me-2"></i> Registrar Servicio</a>
-                <a href="${context}/client_servicios_activos.jsp" class="nav-link-custom ${activeClass('consultar')}"><i class="bi bi-clock-history me-2"></i> Servicios Activos</a>
+                <a href="${context}/client_registrar.jsp" class="nav-link-custom ${activeClass('registrar')}"><i class="bi bi-plus-circle-fill me-2"></i> Registrar Servicio</a>
+                <a href="${context}/client_consultar.jsp" class="nav-link-custom ${activeClass('consultar')}"><i class="bi bi-clock-history me-2"></i> Servicios Activos</a>
                 <a href="${context}/client_satisfaccion.jsp" class="nav-link-custom ${activeClass('satisfaccion')}"><i class="bi bi-emoji-smile-fill me-2"></i> Reporte de Satisfacción</a>
                 <a href="${context}/client_perfil.jsp" class="nav-link-custom ${activeClass('perfil')}"><i class="bi bi-person-circle me-2"></i> Mi Perfil</a>
             `;

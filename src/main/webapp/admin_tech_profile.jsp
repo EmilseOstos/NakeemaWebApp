@@ -26,7 +26,7 @@
 
     <div class="dashboard-wrapper">
         <!-- Sidebar -->
-        <nk-sidebar role="admin" active="tecnicos"></nk-sidebar>
+        <nk-sidebar role="admin" active="tecnicos" context="${pageContext.request.contextPath}"></nk-sidebar>
 
         <!-- Main Content -->
         <main class="main-content">
