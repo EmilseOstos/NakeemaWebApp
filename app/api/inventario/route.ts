@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Inicialización del cliente de Supabase
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 // Límite para considerar que un material tiene "stock bajo"
 const LIMITE_STOCK_BAJO = 5;
 
 // GET: Listar todos los materiales del inventario
 export async function GET() {
+  // Inicialización del cliente de Supabase ADENTRO de la función
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
     const { data: inventario, error } = await supabase
       .from('inventario')
@@ -43,6 +43,11 @@ export async function GET() {
 
 // POST: Actualizar / Solicitar materiales (restar del inventario)
 export async function POST(request: Request) {
+  // Inicialización del cliente de Supabase ADENTRO de la función
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   try {
     const body = await request.json();
     const { id, cantidad_a_restar } = body;
