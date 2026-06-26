@@ -1,4 +1,4 @@
-# NAKEEMAF
+# NAKEEMA
 
 Plataforma web para la gestión integral de servicios, técnicos, inventario y experiencia del cliente. El sistema está diseñado para centralizar procesos operativos y brindar una experiencia más organizada tanto para administradores, técnicos como para usuarios finales.
 
@@ -6,7 +6,7 @@ Plataforma web para la gestión integral de servicios, técnicos, inventario y e
 
 Puedes probar la aplicación aquí:
 
-- [Netlify - NAKEEMAF](https://nakeemawebapp.netlify.app)
+- [Netlify - NAKEEMA](https://nakeemawebapp.netlify.app)
 
 ## ✨ Características principales
 
