@@ -12,6 +12,18 @@
 
 # testing
 /coverage
+/cypress/videos/
+/cypress/screenshots/
+
+# documentation artifacts
+README_TESTING.md
+RESUMEN_PRUEBAS.md
+TESTING_REPORT.md
+ESTRATEGIA_PRUEBAS.md
+DELIVERABLES.md
+CUMPLIMIENTO_GFPI_F135.md
+DOCUMENTO_MAESTRO.md
+PLAN_PRUEBAS_NAKEEMAF.pdf
 
 # next.js
 /.next/

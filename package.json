@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "cypress run",
+    "test:open": "cypress open"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.107.0",
@@ -19,6 +21,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cypress": "^15.17.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
     "supabase": "^2.105.0",
