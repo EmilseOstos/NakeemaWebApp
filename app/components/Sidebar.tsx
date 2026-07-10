@@ -71,6 +71,8 @@ const MENUS: Record<string, MenuItem[]> = {
   admin: [
     { label: "Dashboard", href: "/dashboard/admin", icon: <IconLightning /> },
     { label: "Gestión", href: "/dashboard/admin/gestion", icon: <IconPlusCircle /> },
+    { label: "Proveedores", href: "/dashboard/admin/proveedores", icon: <IconBox /> },
+    { label: "Clientes", href: "/dashboard/admin/clientes", icon: <IconSearch /> },
     { label: "Reportes", href: "/dashboard/admin/reportes", icon: <IconBox /> },
     { label: "Técnicos", href: "/dashboard/admin/tecnicos", icon: <IconRefresh /> },
     { label: "Configuración", href: "/dashboard/admin/configuracion", icon: <IconSearch /> },
