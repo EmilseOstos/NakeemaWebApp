@@ -1,25 +1,12 @@
-<<<<<<< HEAD
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# ===========================
+# NakeemaWebApp - .gitignore
+# Proyecto Java / Maven / Jakarta EE
+# ===========================
 
-node_modules
-dist
-dist-ssr
-*.local
+# --- Compilación Maven ---
+target/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-=======
-# OS generated files
+# --- OS generated files ---
 .DS_Store
 .DS_Store?
 ._*
@@ -29,25 +16,23 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# IDEs and Editors
+# --- IDEs and Editors ---
 .vscode/
 .idea/
->>>>>>> df49eca10a177a235459f59339744f707965389c
+*.iml
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-<<<<<<< HEAD
-=======
+.vs/
 
-# Logs and databases
+# --- Logs ---
 *.log
-*.sql
-*.sqlite
 
-# NodeJS (In case you eventually use NPM for building packages)
+# --- Java compiled ---
+*.class
+
+# --- Node (no aplica, pero por seguridad) ---
 node_modules/
-npm-debug.log
-yarn-error.log
->>>>>>> df49eca10a177a235459f59339744f707965389c
+package-lock.json

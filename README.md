@@ -1,37 +1,133 @@
 # Nakeema Web App
 
-Plataforma integral web enfocada en la gestión de servicios técnicos, atención al cliente, generación de reportes y flujos de trabajo en campo. Diseñada con una arquitectura limpia basada en HTML, CSS y JS puro con Bootstrap 5 para una respuesta veloz y responsiva.
-
-## Características Principales
-
-* **Portal Administrativo:** Gestión visual de servicios (CRUD funcional en JS), reportes gerenciales con gráficas simuladas, directorio jerárquico de técnicos y configuración corporativa personalizable.
-* **Portal de Cliente:** Dashboard amigable para registrar servicios, ver estado del parque automotor, subir avatar y acceder al chat de soporte técnico.
-* **Interfaz de Técnicos (Adaptativa):** Dashboard para uso vertical a una mano. Incluye botones de acción rápida directos en tablas para enrutar a WhatsApp o Google Maps en campo, permitiendo actualizar estados sin latencia.
-* **Componentes Dinámicos Globales:** Un sistema de notificaciones expandible general para todos los tipos de perfiles (dropstart). Panel lateral predictivo e iconografía de alto nivel para usabilidad rápida.
+Plataforma web integral para la gestión de servicios técnicos, atención al cliente, administración de técnicos y generación de reportes. Desarrollada con **Java (Jakarta EE)** bajo el patrón de arquitectura **MVC (Modelo-Vista-Controlador)** y empaquetada con **Apache Maven**.
 
 ## Tecnologías Empleadas
 
-* **HTML5** (Semántico)
-* **CSS3** (Personalización Vanilla con variables globales nativas)
-* **JavaScript** (Lógica de interacción frontend sin dependencias pesadas JS)
-* **Bootstrap 5.3.0** (Estructura, grids y componentes UI)
-* **Bootstrap Icons** (Iconografía ligera y escalable)
+| Capa | Tecnología |
+|------|-----------|
+| **Lenguaje** | Java 17 |
+| **Framework** | Jakarta Servlet API 6.0 (Jakarta EE) |
+| **Servidor** | Apache Tomcat 11 |
+| **Base de Datos** | MySQL / MariaDB |
+| **Conector BD** | MySQL Connector/J 8.3.0 |
+| **Serialización JSON** | Gson 2.10.1 |
+| **Construcción** | Apache Maven (empaquetado WAR) |
+| **Frontend** | JSP, HTML5, CSS3, JavaScript, Bootstrap 5.3 |
+| **Versionamiento** | Git & GitHub |
 
-## Instalación y Uso Local
+## Arquitectura del Proyecto (MVC)
 
-Este proyecto no requiere ninguna instalación en servidores complejos para las vistas frontales iniciales:
+```
+NakeemaWebApp/
+├── pom.xml                          # Configuración Maven y dependencias
+├── database_scripts/                # Scripts SQL para crear la base de datos
+│   ├── nakeemadb_ciudad.sql
+│   ├── nakeemadb_cliente.sql
+│   ├── nakeemadb_compra.sql
+│   ├── nakeemadb_tecnico.sql
+│   ├── nakeemadb_servicios.sql
+│   └── ... (14 tablas en total)
+└── src/main/
+    ├── java/com/nakeema/
+    │   ├── conexion/                # Capa de conexión JDBC a la base de datos
+    │   │   └── Conexion.java
+    │   ├── modelo/                  # Capa Modelo - POJOs / Entidades
+    │   │   ├── Usuario.java
+    │   │   ├── Cliente.java
+    │   │   ├── Tecnico.java
+    │   │   └── Servicio.java
+    │   ├── dao/                     # Capa DAO - Acceso a datos (CRUD)
+    │   │   ├── UsuarioDAO.java
+    │   │   ├── ClienteDAO.java
+    │   │   ├── TecnicoDAO.java
+    │   │   └── ServicioDAO.java
+    │   └── controlador/             # Capa Controlador - Servlets HTTP
+    │       ├── LoginServlet.java
+    │       ├── LogoutServlet.java
+    │       ├── RegistroServlet.java
+    │       ├── ClienteServlet.java
+    │       ├── TecnicoServlet.java
+    │       ├── ServicioServlet.java
+    │       └── TestServlet.java
+    └── webapp/                      # Capa Vista - Interfaz de usuario
+        ├── WEB-INF/web.xml          # Descriptor de despliegue Jakarta EE
+        ├── index.jsp                # Página de inicio / Login
+        ├── css/styles.css           # Estilos globales
+        ├── js/                      # Lógica frontend
+        │   ├── main.js
+        │   ├── components/          # Componentes reutilizables (sidebar, topbar, chat)
+        │   └── features/            # Módulos funcionales (auth, chat, storage)
+        ├── img/logo.png             # Logo corporativo
+        ├── admin_dashboard.jsp      # Panel administrador
+        ├── admin_gestion.jsp        # Gestión administrativa
+        ├── admin_reportes.jsp       # Reportes gerenciales
+        ├── admin_tecnicos.jsp       # Directorio de técnicos
+        ├── client_dashboard.jsp     # Panel del cliente
+        ├── client_registrar.jsp     # Registro de clientes
+        ├── client_consultar.jsp     # Consulta de servicios
+        ├── tech_dashboard.jsp       # Panel del técnico
+        ├── tech_insertar.jsp        # Alta de servicios técnicos
+        ├── tech_consultar.jsp       # Consulta de servicios asignados
+        └── tech_modificar.jsp       # Actualización de servicios
+```
 
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/TU-USUARIO/NakeemaWebApp.git
-   ```
-2. Accede a la carpeta raíz:
-   ```bash
-   cd NakeemaWebApp
-   ```
-3. Ejecución:
-   Al ser tecnologías nativas del navegador, solo necesitas abrir el archivo `index.html` en Firefox, Chrome, Edge o Safari. Alternativamente, puedes usar extensiones como *Live Server* en tu editor de código.
+## Módulos Funcionales
+
+- **Autenticación:** Login y registro de usuarios con validación por rol (admin, técnico, cliente).
+- **Gestión de Clientes:** CRUD completo (crear, leer, actualizar, eliminar) vía API REST con Servlets.
+- **Gestión de Técnicos:** Administración del directorio de técnicos y asignación de servicios.
+- **Gestión de Servicios:** Registro, seguimiento y actualización de estados de servicios técnicos.
+- **Reportes:** Visualización de reportes gerenciales y estadísticas.
+- **Soporte:** Chat de soporte técnico integrado.
+
+## Requisitos Previos
+
+- **Java JDK 17** o superior
+- **Apache Maven 3.8+**
+- **Apache Tomcat 11**
+- **MySQL / MariaDB** (incluido en XAMPP)
+
+## Instalación y Despliegue Local
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/EmilseOstos/NakeemaWebApp.git
+cd NakeemaWebApp
+```
+
+### 2. Crear la base de datos
+Iniciar MySQL (por ejemplo con XAMPP) y crear la base de datos `nakeemadb`. Luego importar los scripts SQL ubicados en la carpeta `database_scripts/`:
+```bash
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS nakeemadb;"
+mysql -u root nakeemadb < database_scripts/nakeemadb_ciudad.sql
+mysql -u root nakeemadb < database_scripts/nakeemadb_cliente.sql
+# ... importar el resto de archivos .sql
+```
+
+### 3. Compilar el proyecto
+```bash
+mvn clean package
+```
+Esto genera el archivo `target/nakeema-webapp.war`.
+
+### 4. Desplegar en Tomcat
+Copiar el archivo `nakeema-webapp.war` a la carpeta `webapps/` de Apache Tomcat 11 e iniciar el servidor.
+
+### 5. Acceder a la aplicación
+Abrir el navegador en: **http://localhost:8080/nakeema-webapp**
 
 ---
+
+## Estándares de Codificación
+
+- Nomenclatura de clases en **PascalCase** (`ClienteServlet`, `UsuarioDAO`).
+- Nomenclatura de métodos y variables en **camelCase** (`obtenerPorId`, `validarLogin`).
+- Paquetes organizados por responsabilidad: `modelo`, `dao`, `controlador`, `conexion`.
+- Código documentado con comentarios descriptivos en cada método.
+- Patrón DAO para separación de la lógica de acceso a datos.
+- API RESTful con respuestas en formato JSON.
+
+---
+
 © 2026 Nakeema - Todos los derechos reservados.
->>>>>>> df49eca10a177a235459f59339744f707965389c
