@@ -33,12 +33,12 @@
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Actualizar Estado de Servicio</h3>
                     
                     <div class="nk-card p-4 p-md-5 bg-white shadow-sm rounded-16">
-                        <form id="modifyForm" onsubmit="submitModify(event)">
+                        <form id="modifyForm" onsubmit="return submitModify(event)">
                             <div class="row g-4">
                                 <div class="col-md-8">
                                     <label class="form-label text-muted fw-bold fs-13">Buscar O.R. / Servicio</label>
                                     <div class="input-group overflow-hidden rounded-3">
-                                        <input type="text" id="modSearch" class="form-control bg-light border-0 py-2 shadow-none px-3" placeholder="Ingrese ID (Ej. #O.R.24567)">
+                                        <input type="text" id="modSearch" class="form-control bg-light border-0 py-2 shadow-none px-3" placeholder="Ingrese ID (Ej. #O.R.24567)" pattern="^#?O\.R\.\d+$">
                                         <button class="btn border-0 py-2 text-white px-4 fw-bold bg-nk-primary" type="button" onclick="searchService()">Buscar</button>
                                     </div>
                                 </div>
@@ -58,8 +58,9 @@
                                 
                                 <div class="col-md-12 mt-4">
                                     <label class="form-label text-muted fw-bold fs-13">Nuevo Estado</label>
-                                    <select id="modNewStatus" class="form-select bg-light border-0 py-3 px-3 shadow-none rounded-3 text-dark fw-bold fs-6">
-                                        <option value="En Proceso">En Proceso</option>
+                                    <select id="modNewStatus" class="form-select bg-light border-0 py-3 px-3 shadow-none rounded-3 text-dark fw-bold fs-6" required>
+                                        <option value="" disabled>Seleccione un estado...</option>
+                                        <option value="En Proceso" selected>En Proceso</option>
                                         <option value="Esperando Repuestos">Esperando Repuestos</option>
                                         <option value="Requiere Aprobación del Cliente">Requiere Aprobación del Cliente</option>
                                         <option value="Finalizado">Finalizado Exitosamente</option>
@@ -69,7 +70,7 @@
                                 
                                 <div class="col-md-12">
                                     <label class="form-label text-muted fw-bold fs-13">Notas Técnicas (Visibles internamente)</label>
-                                    <textarea id="modNotes" class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="4" placeholder="Escriba los detalles de la actualización, hallazgos o recomendaciones..."></textarea>
+                                    <textarea id="modNotes" class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="4" placeholder="Escriba los detalles de la actualización, hallazgos o recomendaciones..." maxlength="500"></textarea>
                                 </div>
                                 
                                 <div class="col-12 mt-4 d-flex justify-content-center">

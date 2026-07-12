@@ -51,10 +51,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-4 p-4">
-                    <form id="addTechForm" onsubmit="addNewTech(event)">
+                    <form id="addTechForm" onsubmit="return addNewTech(event)">
                         <div class="mb-3">
                             <label class="form-label text-muted fw-bold fs-13">Nombre Completo</label>
-                            <input type="text" id="techName" class="form-control bg-light border-0 py-2" required>
+                            <input type="text" id="techName" class="form-control bg-light border-0 py-2" required minlength="3" maxlength="100">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted fw-bold fs-13">Especialidad</label>
@@ -69,7 +70,8 @@
                         <div class="row mb-4">
                             <div class="col-6">
                                 <label class="form-label text-muted fw-bold fs-13">Teléfono</label>
-                                <input type="tel" id="techPhone" class="form-control bg-light border-0 py-2" required>
+                                <input type="tel" id="techPhone" class="form-control bg-light border-0 py-2" required pattern="^\+?[0-9\s\-()]{7,15}$">
+                                <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-6">
                                 <label class="form-label text-muted fw-bold fs-13">Estado Inicial</label>
@@ -167,8 +169,42 @@
             window.nkStorage.showToast('Técnico ' + name + ' listo para asignar. Vaya a Gestión de Servicios.', 'info');
         }
 
+        function validateTechForm() {
+            const name = document.getElementById('techName');
+            const specialty = document.getElementById('techSpecialty');
+            const phone = document.getElementById('techPhone');
+            let valid = true;
+
+            name.classList.remove('is-invalid');
+            phone.classList.remove('is-invalid');
+
+            if (!name.value.trim() || name.value.trim().length < 3) {
+                name.classList.add('is-invalid');
+                name.nextElementSibling.textContent = 'Nombre debe tener al menos 3 caracteres';
+                valid = false;
+            }
+            if (/[<>"';()&%]/.test(name.value)) {
+                name.classList.add('is-invalid');
+                name.nextElementSibling.textContent = 'Caracteres no permitidos';
+                valid = false;
+            }
+            if (!specialty.value) { valid = false; }
+            if (!phone.value.trim()) {
+                phone.classList.add('is-invalid');
+                phone.nextElementSibling.textContent = 'Teléfono es requerido';
+                valid = false;
+            } else if (!/^\+?[\d\s\-()]{7,15}$/.test(phone.value)) {
+                phone.classList.add('is-invalid');
+                phone.nextElementSibling.textContent = 'Formato de teléfono inválido (7-15 dígitos)';
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function addNewTech(e) {
             e.preventDefault();
+            if (!validateTechForm()) return;
             if (!window.nkStorage) return;
             const tech = {
                 name: document.getElementById('techName').value,

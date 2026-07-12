@@ -1,21 +1,19 @@
-// Web Components
 import './components/nk-sidebar.js';
 import './components/nk-topbar.js';
 import './components/nk-chat-btn.js';
 
-// Features
 import { initAuth } from './features/auth.js?v=2';
 import { initChat } from './features/chat.js';
 import { initSidebarToggle } from './features/sidebar-toggle.js';
 import { initStorage, applyTheme } from './features/storage.js';
+import './features/validation.js';
 
-// --- FUNCIONES GLOBALES PARA QUE EL HTML LAS PUEDA LLAMAR ---
 window.toggleAuthSection = function(sectionId) {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('registerSection').style.display = 'none';
     document.getElementById('forgotSection').style.display = 'none';
     document.getElementById('successSection').style.display = 'none';
-    
+
     const target = document.getElementById(sectionId);
     if (target) {
         target.style.display = 'block';
@@ -33,7 +31,6 @@ window.togglePassword = function(inputId, iconElement) {
     }
 };
 
-// --- INICIALIZACIÓN ---
 initStorage();
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -42,14 +39,23 @@ document.addEventListener("DOMContentLoaded", () => {
     initSidebarToggle();
     applyTheme();
 
-    // Comprobación de parámetros en la URL
     const urlParams = new URLSearchParams(window.location.search);
-    
-    if (urlParams.get('registro') === 'ok') {
-        console.log("Detectado registro exitoso, cambiando vista...");
+
+    if (urlParams.get('registro') === 'exitoso') {
         window.toggleAuthSection('successSection');
-    } else if (urlParams.get('error') === 'registro_fallido') {
-        alert('Hubo un error al registrar tu cuenta.');
-        window.toggleAuthSection('registerSection');
+    } else if (urlParams.get('error')) {
+        const errorMsg = urlParams.get('error');
+        const form = urlParams.get('form');
+        if (form === 'register') {
+            window.toggleAuthSection('registerSection');
+        }
+        const errorDiv = document.getElementById('loginError');
+        if (errorDiv) {
+            errorDiv.textContent = decodeURIComponent(errorMsg);
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+        } else {
+            alert(decodeURIComponent(errorMsg));
+        }
     }
 });

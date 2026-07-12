@@ -33,7 +33,7 @@
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Insertar Registro en Servicio</h3>
                     
                     <div class="nk-card p-4 p-md-5 bg-white shadow-sm rounded-16">
-                        <form id="insertForm" onsubmit="submitInsert(event)">
+                        <form id="insertForm" onsubmit="return submitInsert(event)">
                             <div class="row g-4">
                                 <div class="col-md-12">
                                     <label class="form-label text-muted fw-bold fs-13">ID del Servicio / Orden de Trabajo</label>
@@ -50,22 +50,23 @@
                                 
                                 <div class="col-md-8">
                                     <label class="form-label text-muted fw-bold fs-13">Descripción (Repuesto / Acción)</label>
-                                    <input type="text" id="insDesc" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Cambio de cableado principal" required>
+                                    <input type="text" id="insDesc" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Cambio de cableado principal" required minlength="3" maxlength="200">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 
                                 <div class="col-md-4">
                                     <label class="form-label text-muted fw-bold fs-13">Cantidad</label>
-                                    <input type="number" id="insQty" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="1" min="1" required>
+                                    <input type="number" id="insQty" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="1" min="1" max="9999" required>
                                 </div>
                                 
                                 <div class="col-md-6">
                                     <label class="form-label text-muted fw-bold fs-13">Costo Estimado ($)</label>
-                                    <input type="number" id="insCost" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="0.00">
+                                    <input type="number" id="insCost" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="0.00" min="0" step="0.01">
                                 </div>
                                 
                                 <div class="col-md-6">
                                     <label class="form-label text-muted fw-bold fs-13">Tiempo Invertido (Horas)</label>
-                                    <input type="number" id="insTime" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. 2.5">
+                                    <input type="number" id="insTime" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. 2.5" min="0" step="0.5" max="999">
                                 </div>
                                 
                                 <div class="col-12 mt-5 d-flex justify-content-center align-items-center gap-3 flex-wrap">
@@ -88,8 +89,36 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/main.js"></script>
     <script>
+        function validateInsertForm() {
+            const service = document.getElementById('insService');
+            const desc = document.getElementById('insDesc');
+            const qty = document.getElementById('insQty');
+            let valid = true;
+
+            [desc].forEach(el => el.classList.remove('is-invalid'));
+
+            if (!service.value) { valid = false; }
+            if (!desc.value.trim() || desc.value.trim().length < 3) {
+                desc.classList.add('is-invalid');
+                desc.nextElementSibling.textContent = 'Descripción debe tener al menos 3 caracteres';
+                valid = false;
+            }
+            if (/[<>"';()&%]/.test(desc.value)) {
+                desc.classList.add('is-invalid');
+                desc.nextElementSibling.textContent = 'Caracteres no permitidos';
+                valid = false;
+            }
+            if (!qty.value || parseInt(qty.value) < 1) {
+                qty.classList.add('is-invalid');
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function submitInsert(e) {
             e.preventDefault();
+            if (!validateInsertForm()) return;
             if (!window.nkStorage) return;
             const record = {
                 serviceId: document.getElementById('insService').value,

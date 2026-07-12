@@ -61,11 +61,12 @@
                             <div class="nk-card p-4 p-md-5 bg-white shadow-sm h-100 rounded-16">
                                 <h5 class="fw-bold mb-4 fs-5 border-bottom pb-3">Actualizar Datos Personales</h5>
                                 
-                                <form id="profileForm" onsubmit="saveProfile(event)">
+                                <form id="profileForm" onsubmit="return saveProfile(event)">
                                     <div class="row g-4">
                                         <div class="col-md-6">
                                             <label class="form-label text-muted fw-bold fs-13">Nombre Completo</label>
-                                            <input type="text" id="profName" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="Emilse Ostos">
+                                            <input type="text" id="profName" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="Emilse Ostos" required minlength="3" maxlength="100">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted fw-bold fs-13">Documento de Identidad</label>
@@ -73,11 +74,13 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted fw-bold fs-13">Correo Electrónico</label>
-                                            <input type="email" id="profEmail" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="emilse.ostos@gmail.com">
+                                            <input type="email" id="profEmail" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="emilse.ostos@gmail.com" required>
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label text-muted fw-bold fs-13">Teléfono Móvil</label>
-                                            <input type="tel" id="profPhone" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="+57 320 123 4567">
+                                            <input type="tel" id="profPhone" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" value="+57 320 123 4567" required pattern="^\+?[0-9\s\-()]{7,15}$">
+                                            <div class="invalid-feedback"></div>
                                         </div>
                                         <div class="col-12 mt-5 d-flex justify-content-center border-top pt-4">
                                             <button type="submit" class="btn btn-success rounded-pill fw-bold shadow-sm bg-nk-primary border-0 btn-form-action">
@@ -126,8 +129,47 @@
             }
         });
 
+        function validateProfileForm() {
+            const name = document.getElementById('profName');
+            const email = document.getElementById('profEmail');
+            const phone = document.getElementById('profPhone');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let valid = true;
+
+            name.classList.remove('is-invalid');
+            email.classList.remove('is-invalid');
+            phone.classList.remove('is-invalid');
+
+            if (!name.value.trim() || name.value.trim().length < 3) {
+                name.classList.add('is-invalid');
+                name.nextElementSibling.textContent = 'Nombre debe tener al menos 3 caracteres';
+                valid = false;
+            }
+            if (!email.value.trim()) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Email es requerido';
+                valid = false;
+            } else if (!emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Formato de email inválido';
+                valid = false;
+            }
+            if (!phone.value.trim()) {
+                phone.classList.add('is-invalid');
+                phone.nextElementSibling.textContent = 'Teléfono es requerido';
+                valid = false;
+            } else if (!/^\+?[\d\s\-()]{7,15}$/.test(phone.value)) {
+                phone.classList.add('is-invalid');
+                phone.nextElementSibling.textContent = 'Formato de teléfono inválido';
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function saveProfile(e) {
             e.preventDefault();
+            if (!validateProfileForm()) return;
             if (!window.nkStorage) return;
             window.nkStorage.updateProfile({
                 name: document.getElementById('profName').value,
@@ -135,7 +177,6 @@
                 phone: document.getElementById('profPhone').value
             });
             window.nkStorage.showToast('Perfil actualizado exitosamente');
-            // Update sidebar display
             document.getElementById('profileNameDisplay').textContent = document.getElementById('profName').value;
             document.getElementById('profileEmailDisplay').innerHTML = '<i class="bi bi-envelope-fill me-2 fs-5 w-25 text-nk-primary"></i> ' + document.getElementById('profEmail').value;
             document.getElementById('profilePhoneDisplay').innerHTML = '<i class="bi bi-telephone-fill me-2 fs-5 w-25 text-nk-primary"></i> ' + document.getElementById('profPhone').value;

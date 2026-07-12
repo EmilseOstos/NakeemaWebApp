@@ -66,15 +66,17 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label text-muted fs-13 fw-600">Nombre de la Empresa</label>
-                                        <input type="text" id="cfgCompanyName" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Nakeema Corp">
+                                        <input type="text" id="cfgCompanyName" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Nakeema Corp" required minlength="3" maxlength="100">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label text-muted fs-13 fw-600">Correo de Contacto</label>
-                                        <input type="email" id="cfgCompanyEmail" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="admin@nakeema.com">
+                                        <input type="email" id="cfgCompanyEmail" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="admin@nakeema.com" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                     <div class="col-md-12">
                                         <label class="form-label text-muted fs-13 fw-600">Dirección Principal</label>
-                                        <input type="text" id="cfgCompanyAddress" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Calle Falsa 123, Ciudad de México">
+                                        <input type="text" id="cfgCompanyAddress" class="form-control shadow-none bg-light border-0 py-2 px-3 rounded-3" value="Calle Falsa 123, Ciudad de México" maxlength="200">
                                     </div>
                                 </div>
 
@@ -147,7 +149,35 @@
             });
         }
 
+        function validateConfigForm() {
+            const name = document.getElementById('cfgCompanyName');
+            const email = document.getElementById('cfgCompanyEmail');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let valid = true;
+
+            name.classList.remove('is-invalid');
+            email.classList.remove('is-invalid');
+
+            if (!name.value.trim() || name.value.trim().length < 3) {
+                name.classList.add('is-invalid');
+                name.nextElementSibling.textContent = 'El nombre debe tener al menos 3 caracteres';
+                valid = false;
+            }
+            if (!email.value.trim()) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Email es requerido';
+                valid = false;
+            } else if (!emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Formato de email inválido';
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function saveAllConfig() {
+            if (!validateConfigForm()) return;
             if (!window.nkStorage) return;
             window.nkStorage.updatePreferences({
                 companyName: document.getElementById('cfgCompanyName').value,

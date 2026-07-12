@@ -33,11 +33,12 @@
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Registrar Nuevo Servicio</h3>
                     
                     <div class="nk-card p-4 p-md-5 bg-white shadow-sm rounded-16">
-                        <form id="registerForm" onsubmit="submitRegister(event)">
+                        <form id="registerForm" onsubmit="return submitRegister(event)">
                             <div class="row g-4">
                                 <div class="col-md-12">
                                     <label class="form-label text-muted fw-bold fs-13">Título del Problema / Servicio</label>
-                                    <input type="text" id="regTitle" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Falla en el sistema eléctrico principal" required>
+                                    <input type="text" id="regTitle" class="form-control bg-light border-0 py-2 px-3 shadow-none rounded-3" placeholder="Ej. Falla en el sistema eléctrico principal" required minlength="5" maxlength="200">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                                 
                                 <div class="col-md-6">
@@ -65,13 +66,13 @@
                                     <label class="form-label text-muted fw-bold fs-13">Dirección de Atención</label>
                                     <div class="input-group overflow-hidden rounded-3">
                                         <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-geo-alt-fill text-danger"></i></span>
-                                        <input type="text" id="regAddress" class="form-control bg-light border-0 py-2 shadow-none" placeholder="Dirección donde se requiere el servicio" value="Avenida Principal 456, Edificio Central" required>
+                                        <input type="text" id="regAddress" class="form-control bg-light border-0 py-2 shadow-none" placeholder="Dirección donde se requiere el servicio" value="Avenida Principal 456, Edificio Central" required minlength="5" maxlength="200">
                                     </div>
                                 </div>
                                 
                                 <div class="col-md-12">
                                     <label class="form-label text-muted fw-bold fs-13">Descripción Detallada</label>
-                                    <textarea id="regDescription" class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="4" placeholder="Describe los detalles del problema, síntomas que presenta o requerimientos específicos..."></textarea>
+                                    <textarea id="regDescription" class="form-control bg-light border-0 py-3 px-3 shadow-none rounded-3" rows="4" placeholder="Describe los detalles del problema, síntomas que presenta o requerimientos específicos..." maxlength="500"></textarea>
                                 </div>
                                 
                                 <div class="col-12 mt-5 d-flex justify-content-center align-items-center gap-3 flex-wrap">
@@ -94,8 +95,44 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/main.js"></script>
     <script>
+        function validateClientRegForm() {
+            const title = document.getElementById('regTitle');
+            const category = document.getElementById('regCategory');
+            const priority = document.getElementById('regPriority');
+            const address = document.getElementById('regAddress');
+            let valid = true;
+
+            [title, category, priority, address].forEach(el => el.classList.remove('is-invalid'));
+
+            if (!title.value.trim() || title.value.trim().length < 5) {
+                title.classList.add('is-invalid');
+                title.nextElementSibling.textContent = 'El título debe tener al menos 5 caracteres';
+                valid = false;
+            }
+            if (/[<>"';()&%]/.test(title.value)) {
+                title.classList.add('is-invalid');
+                title.nextElementSibling.textContent = 'Caracteres no permitidos (< > \" \' ;)';
+                valid = false;
+            }
+            if (!category.value) {
+                category.classList.add('is-invalid');
+                valid = false;
+            }
+            if (!priority.value) {
+                priority.classList.add('is-invalid');
+                valid = false;
+            }
+            if (!address.value.trim() || address.value.trim().length < 5) {
+                address.classList.add('is-invalid');
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function submitRegister(e) {
             e.preventDefault();
+            if (!validateClientRegForm()) return;
             if (!window.nkStorage) { alert('Error de almacenamiento'); return; }
             const service = {
                 type: document.getElementById('regCategory').value,

@@ -17,18 +17,22 @@
                 <img src="img/logo.png" alt="Nakeema Logo" class="nk-img-contain-lg">
             </div>
 
+            <div id="loginError" class="alert alert-danger py-2 px-3 fs-13 d-none text-center" role="alert"></div>
+
             <!-- LOGIN SECTION -->
             <div id="loginSection">
-                <form id="loginForm" action="${pageContext.request.contextPath}/LoginServlet" method="POST">
+                <form id="loginForm" action="${pageContext.request.contextPath}/LoginServlet" method="POST" onsubmit="return validateLoginForm()">
                     <div class="form-floating-custom">
                         <i class="bi bi-person-fill"></i>
-                        <input type="text" name="identificador" class="form-control" placeholder="Usuario/email" value="admin" required>
+                        <input type="text" id="loginIdentificador" name="identificador" class="form-control" placeholder="Usuario/email" value="admin" required>
+                        <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="form-floating-custom position-relative">
                         <i class="bi bi-lock-fill"></i>
                         <input type="password" name="password" class="form-control pe-5" id="loginPass" placeholder="Contraseña" value="123456" required>
                         <span class="bi bi-eye-slash-fill password-toggle-icon fs-nk-muted" onclick="togglePassword('loginPass', this)"></span>
+                        <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="form-floating-custom">
@@ -52,19 +56,23 @@
             <!-- REGISTER FORM -->
             <div id="registerSection" style="display: none;">
                 <h5 class="mb-4 fw-bold text-muted">Crear Nueva Cuenta</h5>
-                <form id="registerForm" action="${pageContext.request.contextPath}/RegistroServlet" method="POST">
+                <div id="registerError" class="alert alert-danger py-2 px-3 fs-13 d-none text-center" role="alert"></div>
+                <form id="registerForm" action="${pageContext.request.contextPath}/RegistroServlet" method="POST" onsubmit="return validateRegisterForm()">
                     <div class="form-floating-custom">
                         <i class="bi bi-person-badge"></i>
-                        <input type="text" name="username" class="form-control" placeholder="Nombre de Usuario" required>
+                        <input type="text" id="regUsername" name="username" class="form-control" placeholder="Nombre de Usuario (mín. 3 caracteres)" required>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating-custom">
                         <i class="bi bi-envelope-fill"></i>
-                        <input type="email" name="email" class="form-control" placeholder="Correo Electrónico" required>
+                        <input type="email" id="regEmail" name="email" class="form-control" placeholder="Correo Electrónico" required>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating-custom position-relative">
                         <i class="bi bi-lock-fill"></i>
-                        <input type="password" name="password" class="form-control pe-5" id="registerPass" placeholder="Crear Contraseña" required>
+                        <input type="password" name="password" class="form-control pe-5" id="registerPass" placeholder="Crear Contraseña (mín. 6 caracteres)" required>
                         <span class="bi bi-eye-slash-fill password-toggle-icon fs-nk-muted" onclick="togglePassword('registerPass', this)"></span>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating-custom">
                         <i class="bi bi-shield-lock-fill"></i>
@@ -109,6 +117,84 @@
         </div>
     </div>
     <script type="module" src="js/main.js"></script>
+    <script>
+        function validateLoginForm() {
+            const user = document.getElementById('loginIdentificador');
+            const pass = document.getElementById('loginPass');
+            let valid = true;
+
+            if (!user.value.trim()) {
+                user.classList.add('is-invalid');
+                user.nextElementSibling.textContent = 'Usuario/Email es requerido';
+                valid = false;
+            } else {
+                user.classList.remove('is-invalid');
+            }
+
+            if (!pass.value.trim()) {
+                pass.classList.add('is-invalid');
+                pass.nextElementSibling.textContent = 'Contraseña es requerida';
+                valid = false;
+            } else if (pass.value.length < 6) {
+                pass.classList.add('is-invalid');
+                pass.nextElementSibling.textContent = 'La contraseña debe tener al menos 6 caracteres';
+                valid = false;
+            } else {
+                pass.classList.remove('is-invalid');
+            }
+
+            return valid;
+        }
+
+        function validateRegisterForm() {
+            const username = document.getElementById('regUsername');
+            const email = document.getElementById('regEmail');
+            const pass = document.getElementById('registerPass');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let valid = true;
+
+            if (!username.value.trim()) {
+                username.classList.add('is-invalid');
+                username.nextElementSibling.textContent = 'Nombre de usuario es requerido';
+                valid = false;
+            } else if (username.value.trim().length < 3) {
+                username.classList.add('is-invalid');
+                username.nextElementSibling.textContent = 'Debe tener al menos 3 caracteres';
+                valid = false;
+            } else if (/[<>"';()&%]/.test(username.value)) {
+                username.classList.add('is-invalid');
+                username.nextElementSibling.textContent = 'Caracteres no permitidos';
+                valid = false;
+            } else {
+                username.classList.remove('is-invalid');
+            }
+
+            if (!email.value.trim()) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Email es requerido';
+                valid = false;
+            } else if (!emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Formato de email inválido';
+                valid = false;
+            } else {
+                email.classList.remove('is-invalid');
+            }
+
+            if (!pass.value.trim()) {
+                pass.classList.add('is-invalid');
+                pass.nextElementSibling.textContent = 'Contraseña es requerida';
+                valid = false;
+            } else if (pass.value.length < 6) {
+                pass.classList.add('is-invalid');
+                pass.nextElementSibling.textContent = 'Debe tener al menos 6 caracteres';
+                valid = false;
+            } else {
+                pass.classList.remove('is-invalid');
+            }
+
+            return valid;
+        }
+    </script>
 </body>
->>>>>>> df49eca10a177a235459f59339744f707965389c
 </html>

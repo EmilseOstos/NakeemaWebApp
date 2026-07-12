@@ -81,11 +81,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-4 p-4">
-                    <form id="addServiceForm" onsubmit="saveService(event)">
+                    <form id="addServiceForm" onsubmit="return saveService(event)">
                         <input type="hidden" id="editServiceId">
                         <div class="mb-3">
                             <label class="form-label text-muted fw-bold fs-13">Cliente</label>
-                            <input type="text" id="serviceClient" class="form-control bg-light border-0 py-2" required>
+                            <input type="text" id="serviceClient" class="form-control bg-light border-0 py-2" required minlength="3" maxlength="100">
+                            <div class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted fw-bold fs-13">Tipo de Servicio</label>
@@ -108,7 +109,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-muted fw-bold fs-13">Dirección</label>
-                            <input type="text" id="serviceAddress" class="form-control bg-light border-0 py-2" placeholder="Dirección del servicio">
+                            <input type="text" id="serviceAddress" class="form-control bg-light border-0 py-2" placeholder="Dirección del servicio" maxlength="200">
                         </div>
                         <div class="mb-4">
                             <label class="form-label text-muted fw-bold fs-13">Prioridad</label>
@@ -205,8 +206,35 @@
             new bootstrap.Modal(document.getElementById('addServiceModal')).show();
         }
 
+        function validateAddServiceForm() {
+            const client = document.getElementById('serviceClient');
+            const type = document.getElementById('serviceType');
+            let valid = true;
+
+            client.classList.remove('is-invalid');
+            type.classList.remove('is-invalid');
+
+            if (!client.value.trim() || client.value.trim().length < 3) {
+                client.classList.add('is-invalid');
+                client.nextElementSibling.textContent = 'Nombre del cliente debe tener al menos 3 caracteres';
+                valid = false;
+            }
+            if (/[<>"';()&%]/.test(client.value)) {
+                client.classList.add('is-invalid');
+                client.nextElementSibling.textContent = 'Caracteres no permitidos';
+                valid = false;
+            }
+            if (!type.value) {
+                type.classList.add('is-invalid');
+                valid = false;
+            }
+
+            return valid;
+        }
+
         function saveService(e) {
             e.preventDefault();
+            if (!validateAddServiceForm()) return;
             if (!window.nkStorage) return;
             const client = document.getElementById('serviceClient').value;
             const type = document.getElementById('serviceType').value;
