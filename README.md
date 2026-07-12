@@ -119,6 +119,33 @@ Abrir el navegador en: **http://localhost:8080/nakeema-webapp**
 
 ---
 
+## Validaciones Implementadas
+
+### Backend (Java - Validator.java)
+- **Campos requeridos**: Todos los campos obligatorios validados antes del procesamiento.
+- **Email**: Validación de formato con regex (`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`).
+- **Contraseña**: Longitud mínima de 6 caracteres, máxima de 50, sin caracteres peligrosos.
+- **Teléfono**: Formato numérico de 7 a 15 dígitos (con o sin prefijo +).
+- **Longitudes**: Mínimas y máximas en todos los campos de texto.
+- **Caracteres peligrosos**: Rechazo de `< > " ' % ; ( ) &` para prevenir XSS.
+- **Fechas**: Validación de formato ISO (YYYY-MM-DD), rango de años (2020-2030), valores de mes/día.
+- **Números positivos**: IDs, cantidades y costos validados como enteros positivos.
+- **Roles**: Validación contra lista blanca (admin, cliente, tecnico, client, tech).
+- **Sanitización HTML**: Escape de `< > " ' &` en todos los outputs.
+
+### Frontend (JavaScript - validation.js)
+- Validación en tiempo real con feedback visual (clases `is-valid`/`is-invalid` de Bootstrap).
+- Validación de formularios completos antes del envío.
+- Prevención de XSS mediante sanitización de caracteres peligrosos.
+- Validación de fortaleza de contraseña (mayúsculas, minúsculas, números).
+- Reglas de validación configurables por campo (required, minLength, maxLength, pattern, noDangerous).
+
+### Seguridad
+- **SQL Injection**: Prevenido mediante PreparedStatement en todas las consultas JDBC.
+- **XSS**: Sanitización de HTML en backend y frontend.
+- **Control de acceso**: Verificación de sesión y rol en cada JSP protegido.
+- **CSRF**: Sesión HTTP con atributos para identificación segura.
+
 ## Estándares de Codificación
 
 - Nomenclatura de clases en **PascalCase** (`ClienteServlet`, `UsuarioDAO`).
