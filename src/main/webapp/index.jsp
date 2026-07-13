@@ -77,8 +77,8 @@
                     <div class="form-floating-custom">
                         <i class="bi bi-shield-lock-fill"></i>
                         <select name="rol" class="form-select text-muted" required>
-                            <option value="cliente" selected>Cliente</option>
-                            <option value="tecnico">Técnico/Soporte</option>
+                            <option value="client" selected>Cliente</option>
+                            <option value="tech">Técnico/Soporte</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-nakeema mt-2">Completar Registro</button>
