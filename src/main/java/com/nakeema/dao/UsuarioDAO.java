@@ -149,4 +149,35 @@ public class UsuarioDAO {
             return false;
         }
     }
+
+    // Método para buscar un usuario por su email (Recuperación de contraseña)
+    public Usuario buscarPorEmail(String email) {
+        Usuario usuario = null;
+        String sql = "SELECT id, username, email, password, rol FROM usuarios WHERE email = ?";
+        
+        try (Connection cn = Conexion.getConexion();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            
+            ps.setString(1, email);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    usuario = new Usuario(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("rol")
+                    );
+                    System.out.println("[DAO] ✅ Usuario encontrado por email: " + usuario.getUsername());
+                } else {
+                    System.out.println("[DAO] ❌ No se encontró usuario con email: " + email);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("[DAO] ❌ Error al buscar por email: " + e.getMessage());
+        }
+        
+        return usuario;
+    }
 }

@@ -92,11 +92,12 @@
             <div id="forgotSection" style="display: none;">
                 <h5 class="mb-3 fw-bold text-muted">Recuperar Contraseña</h5>
                 <p class="text-muted mb-4 fs-13">Ingresa el correo asociado a tu cuenta para enviarte un enlace de recuperación.</p>
-                <!-- IMPORTANTE: Cambia la acción a tu servlet de recuperación -->
-                <form id="forgotForm" action="${pageContext.request.contextPath}/RecuperarPasswordServlet" method="POST">
+                <div id="forgotError" class="alert alert-danger py-2 px-3 fs-13 d-none text-center" role="alert"></div>
+                <form id="forgotForm" action="${pageContext.request.contextPath}/RecuperarPasswordServlet" method="POST" onsubmit="return validateForgotForm()">
                     <div class="form-floating-custom">
                         <i class="bi bi-envelope-fill"></i>
-                        <input type="email" name="email" class="form-control" placeholder="Tu Correo Electrónico" required>
+                        <input type="email" id="forgotEmail" name="email" class="form-control" placeholder="Tu Correo Electrónico" required>
+                        <div class="invalid-feedback"></div>
                     </div>
                     <button type="submit" class="btn btn-nakeema mt-2">Enviar Enlace</button>
                 </form>
@@ -141,6 +142,26 @@
                 valid = false;
             } else {
                 pass.classList.remove('is-invalid');
+            }
+
+            return valid;
+        }
+
+        function validateForgotForm() {
+            const email = document.getElementById('forgotEmail');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let valid = true;
+
+            if (!email.value.trim()) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Correo electrónico es requerido';
+                valid = false;
+            } else if (!emailRegex.test(email.value)) {
+                email.classList.add('is-invalid');
+                email.nextElementSibling.textContent = 'Formato de email inválido';
+                valid = false;
+            } else {
+                email.classList.remove('is-invalid');
             }
 
             return valid;

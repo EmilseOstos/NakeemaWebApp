@@ -43,13 +43,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (urlParams.get('registro') === 'exitoso') {
         window.toggleAuthSection('successSection');
+    } else if (urlParams.get('recuperacion') === 'exitoso') {
+        window.toggleAuthSection('forgotSection');
+        const forgotSection = document.getElementById('forgotSection');
+        const successMsg = document.createElement('div');
+        successMsg.className = 'alert alert-success py-2 px-3 fs-13 text-center';
+        successMsg.role = 'alert';
+        successMsg.textContent = 'Se ha enviado un enlace de recuperación a tu correo electrónico.';
+        forgotSection.insertBefore(successMsg, forgotSection.firstChild.nextSibling);
+        setTimeout(() => { successMsg.style.display = 'none'; }, 8000);
     } else if (urlParams.get('error')) {
         const errorMsg = urlParams.get('error');
         const form = urlParams.get('form');
+        let errorDiv;
         if (form === 'register') {
             window.toggleAuthSection('registerSection');
+            errorDiv = document.getElementById('registerError');
+        } else if (form === 'forgot') {
+            window.toggleAuthSection('forgotSection');
+            errorDiv = document.getElementById('forgotError');
+        } else {
+            errorDiv = document.getElementById('loginError');
         }
-        const errorDiv = document.getElementById('loginError');
         if (errorDiv) {
             errorDiv.textContent = decodeURIComponent(errorMsg);
             errorDiv.style.display = 'block';
