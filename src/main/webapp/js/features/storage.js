@@ -87,11 +87,23 @@ export function initStorage() {
 const API_BASE = window.location.origin + '/nakeema-webapp';
 
 function apiSync(method, endpoint, data) {
-    fetch(API_BASE + endpoint, {
-        method,
+    var url = API_BASE + endpoint;
+    console.log('[apiSync]', method, url, data);
+    fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
         body: data ? JSON.stringify(data) : undefined
-    }).catch(() => {});
+    }).then(function(r) {
+        if (!r.ok) {
+            console.error('[apiSync] Error HTTP', r.status, r.statusText);
+            showToast('Error al sincronizar: ' + r.status + ' ' + r.statusText, 'error');
+        } else {
+            console.log('[apiSync] OK', r.status);
+        }
+    }).catch(function(err) {
+        console.error('[apiSync] Falló fetch:', err);
+        showToast('Error de red al sincronizar: ' + err.message, 'error');
+    });
 }
 
 // ========== SERVICES ==========
@@ -249,6 +261,14 @@ export function addMaterial(material) {
     materials.unshift(material);
     localStorage.setItem(STORAGE_KEYS.MATERIALS, JSON.stringify(materials));
     addNotification({ title: 'Material Solicitado', message: `Se solicitó ${material.name} (x${material.quantity}).`, type: 'material' });
+    apiSync('POST', '/api/registro-tecnico/solicitud', {
+        name: material.name,
+        quantity: material.quantity,
+        serviceId: material.serviceId,
+        urgency: material.urgency,
+        justification: material.justification,
+        fecha: new Date().toISOString()
+    });
     return material;
 }
 
@@ -264,6 +284,14 @@ export function addRecord(record) {
     records.unshift(record);
     localStorage.setItem(STORAGE_KEYS.RECORDS, JSON.stringify(records));
     addNotification({ title: 'Registro Insertado', message: `Registro añadido al servicio ${record.serviceId}.`, type: 'update' });
+    apiSync('POST', '/api/registro-tecnico/bitacora', {
+        serviceId: record.serviceId,
+        description: record.description,
+        quantity: record.quantity,
+        cost: record.cost,
+        time: record.time,
+        fecha: new Date().toISOString()
+    });
     return record;
 }
 

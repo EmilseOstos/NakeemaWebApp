@@ -77,6 +77,26 @@
                     </div>
                 </div>
 
+                <div class="mt-5">
+                    <h5 class="fw-bold mb-3 text-nk-primary fs-18">Solicitudes Realizadas</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="materialesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Cant.</th>
+                                    <th>Servicio</th>
+                                    <th>Urgencia</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody id="materialesTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0" id="materialesEmpty">No hay solicitudes aún.</p>
+                </div>
+
                 <div class="nk-footer-inline">&copy; 2026 Todos los derechos Reservados. Nakeema</div>
             </div>
         </main>
@@ -86,6 +106,29 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/main.js"></script>
     <script>
+        function loadMateriales() {
+            const data = JSON.parse(localStorage.getItem('nk_materials') || '[]');
+            const tbody = document.getElementById('materialesTableBody');
+            const empty = document.getElementById('materialesEmpty');
+            tbody.innerHTML = '';
+            if (data.length === 0) { empty.style.display = ''; return; }
+            empty.style.display = 'none';
+            data.forEach(function(m) {
+                var badge = m.status === 'Pendiente' ? 'warning' : m.status === 'Aprobado' ? 'success' : 'secondary';
+                var urgBadge = m.urgency === 'Urgente' ? 'bg-danger' : 'bg-secondary';
+                tbody.innerHTML += '<tr>' +
+                    '<td class="fw-medium">' + (m.name || '') + '</td>' +
+                    '<td>' + (m.quantity || '') + '</td>' +
+                    '<td>' + (m.serviceId || 'Uso General') + '</td>' +
+                    '<td><span class="badge ' + urgBadge + '">' + (m.urgency || '') + '</span></td>' +
+                    '<td><span class="badge bg-' + badge + '">' + (m.status || '') + '</span></td>' +
+                    '<td class="text-muted small">' + (m.date || '-') + '</td>' +
+                    '</tr>';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadMateriales);
+
         function validateMaterialForm() {
             const name = document.getElementById('matName');
             const qty = document.getElementById('matQty');

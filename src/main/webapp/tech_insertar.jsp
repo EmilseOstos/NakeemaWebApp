@@ -80,6 +80,26 @@
                     </div>
                 </div>
 
+                <div class="mt-5">
+                    <h5 class="fw-bold mb-3 text-nk-primary fs-18">Registros de Bitácora</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="bitacoraTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Servicio</th>
+                                    <th>Descripción</th>
+                                    <th>Cant.</th>
+                                    <th>Costo ($)</th>
+                                    <th>Tiempo (hrs)</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bitacoraTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted small mt-2 mb-0" id="bitacoraEmpty">No hay registros aún.</p>
+                </div>
+
                 <div class="nk-footer-inline">&copy; 2026 Todos los derechos Reservados. Nakeema</div>
             </div>
         </main>
@@ -89,6 +109,28 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/main.js"></script>
     <script>
+        function loadBitacora() {
+            const data = JSON.parse(localStorage.getItem('nk_records') || '[]');
+            const tbody = document.getElementById('bitacoraTableBody');
+            const empty = document.getElementById('bitacoraEmpty');
+            tbody.innerHTML = '';
+            if (data.length === 0) { empty.style.display = ''; return; }
+            empty.style.display = 'none';
+            data.forEach(function(r) {
+                var cost = parseFloat(r.cost || 0).toFixed(2);
+                tbody.innerHTML += '<tr>' +
+                    '<td class="fw-medium">' + (r.serviceId || '') + '</td>' +
+                    '<td>' + (r.description || '') + '</td>' +
+                    '<td>' + (r.quantity || '') + '</td>' +
+                    '<td>$' + cost + '</td>' +
+                    '<td>' + (r.time || '0') + '</td>' +
+                    '<td class="text-muted small">' + (r.date || '-') + '</td>' +
+                    '</tr>';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBitacora);
+
         function validateInsertForm() {
             const service = document.getElementById('insService');
             const desc = document.getElementById('insDesc');
