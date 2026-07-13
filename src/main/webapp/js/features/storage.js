@@ -83,6 +83,17 @@ export function initStorage() {
     }
 }
 
+// ========== API SYNC ==========
+const API_BASE = window.location.origin + '/nakeema-webapp';
+
+function apiSync(method, endpoint, data) {
+    fetch(API_BASE + endpoint, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: data ? JSON.stringify(data) : undefined
+    }).catch(() => {});
+}
+
 // ========== SERVICES ==========
 export function getServices() {
     return JSON.parse(localStorage.getItem(STORAGE_KEYS.SERVICES) || '[]');
@@ -98,6 +109,14 @@ export function addService(service) {
     services.unshift(service);
     localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
     addNotification({ title: 'Nuevo Servicio Registrado', message: `Servicio ${service.id} - ${service.type} creado.`, type: 'service' });
+    apiSync('POST', '/api/servicios', {
+        idCliente: 1,
+        idTecnico: 1,
+        descripcion: `${service.type} - ${service.notes || ''} | Cliente: ${service.client || ''}`,
+        estado: service.status || 'Pendiente',
+        fechaCreacion: new Date().toISOString().split('T')[0],
+        fechaCompletado: null
+    });
     return service;
 }
 
@@ -108,6 +127,15 @@ export function updateService(id, updates) {
         Object.assign(services[idx], updates);
         localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
         addNotification({ title: 'Estado Actualizado', message: `Servicio ${id} actualizado a "${updates.status || ''}".`, type: 'update' });
+        apiSync('PUT', '/api/servicios', {
+            idServicio: parseInt(id.replace(/\D/g,'')) || 0,
+            idCliente: 1,
+            idTecnico: 1,
+            descripcion: services[idx].type + ' - ' + (services[idx].notes || ''),
+            estado: updates.status || services[idx].status,
+            fechaCreacion: '',
+            fechaCompletado: updates.status === 'Finalizado' ? new Date().toISOString().split('T')[0] : null
+        });
     }
     return services[idx];
 }
@@ -115,6 +143,8 @@ export function updateService(id, updates) {
 export function deleteService(id) {
     const services = getServices().filter(s => s.id !== id);
     localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
+    const numId = parseInt(id.replace(/\D/g,''));
+    if (numId) apiSync('DELETE', '/api/servicios/' + numId);
 }
 
 // ========== TECHNICIANS ==========
@@ -126,6 +156,13 @@ export function addTechnician(tech) {
     const techs = getTechnicians();
     techs.unshift(tech);
     localStorage.setItem(STORAGE_KEYS.TECHNICIANS, JSON.stringify(techs));
+    apiSync('POST', '/api/tecnicos', {
+        nombre: tech.name || '',
+        email: tech.email || tech.name + '@nakeema.com',
+        telefono: tech.phone || '',
+        especialidad: tech.specialty || '',
+        estado: (tech.status || 'Disponible').toLowerCase()
+    });
     return tech;
 }
 

@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         successMsg.className = 'alert alert-success py-2 px-3 fs-13 text-center';
         successMsg.role = 'alert';
         successMsg.textContent = 'Se ha enviado un enlace de recuperación a tu correo electrónico.';
-        forgotSection.insertBefore(successMsg, forgotSection.firstChild.nextSibling);
+        forgotSection.prepend(successMsg);
         setTimeout(() => { successMsg.style.display = 'none'; }, 8000);
     } else if (urlParams.get('error')) {
         const errorMsg = urlParams.get('error');
