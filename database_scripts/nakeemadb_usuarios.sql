@@ -40,7 +40,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'admin','admin@nakeema.com','123456','admin'),(2,'cliente1','cliente1@email.com','123456','cliente'),(3,'tecnico1','tecnico1@email.com','123456','tecnico');
+INSERT INTO `usuarios` VALUES (1,'admin','admin@nakeema.com','123456','admin'),(2,'cliente1','cliente1@email.com','123456','client'),(3,'tecnico1','tecnico1@email.com','123456','tech');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

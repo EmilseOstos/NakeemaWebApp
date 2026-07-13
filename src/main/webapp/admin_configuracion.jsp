@@ -25,7 +25,7 @@
         <nk-sidebar role="admin" active="configuracion" context="${pageContext.request.contextPath}"></nk-sidebar>
 
         <main class="main-content">
-            <nk-topbar role="admin" username="Administrador"></nk-topbar>
+            <nk-topbar role="admin" username="${usuarioLogueado}"></nk-topbar>
 
             <div class="px-md-4 py-4 flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center mb-4">

@@ -27,7 +27,7 @@
             <nk-sidebar role="admin" active="dashboard" context="${pageContext.request.contextPath}"></nk-sidebar>
 
             <main class="main-content">
-                <nk-topbar role="admin" username="Administrador"></nk-topbar>
+                <nk-topbar role="admin" username="${usuarioLogueado}"></nk-topbar>
 
                 <div class="row g-3 mt-2">
                     <div class="col-md-4">

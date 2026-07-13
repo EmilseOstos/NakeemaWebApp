@@ -30,7 +30,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Topbar -->
-            <nk-topbar role="admin" username="Administrador"></nk-topbar>
+            <nk-topbar role="admin" username="${usuarioLogueado}"></nk-topbar>
 
             <div class="px-md-4 py-4 flex-grow-1">
                 <div class="d-flex justify-content-between align-items-center mb-4">

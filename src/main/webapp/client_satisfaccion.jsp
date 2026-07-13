@@ -27,7 +27,7 @@
         <main class="main-content">
             <div class="nk-card flex-grow-1 d-flex flex-column position-relative">
                 
-                <nk-topbar role="client" username="Emilse Ostos"></nk-topbar>
+                <nk-topbar role="client" username="${usuarioLogueado}"></nk-topbar>
 
                 <div class="px-md-4 py-4 flex-grow-1 w-100" style="max-width: 600px; margin: 0 auto;">
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Reporte de Satisfacción</h3>

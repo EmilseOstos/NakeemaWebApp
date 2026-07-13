@@ -27,7 +27,7 @@
         <main class="main-content">
             <div class="nk-card flex-grow-1 position-relative p-4 d-flex flex-column">
                 
-                <nk-topbar role="tech" username="Kelly Ramirez"></nk-topbar>
+                <nk-topbar role="tech" username="${usuarioLogueado}"></nk-topbar>
 
                 <div class="text-center mb-5 w-100 pt-3">
                     <h2 class="fw-bold text-dark fs-28">Hola Kelly! 👋</h2>
@@ -160,11 +160,12 @@
             const s = window.nkStorage ? window.nkStorage.getServiceById(id) : null;
             if (!s) { alert('Servicio no encontrado'); return; }
             document.getElementById('detailModalTitle').textContent = s.id + ' - ' + s.type;
+            const badgeClass = s.status==='En Proceso'?'warning':s.status==='Pendiente'?'secondary':s.status==='Finalizado'?'success':'danger';
             document.getElementById('detailModalBody').innerHTML = `
                 <div class="mb-3"><strong>Cliente:</strong> ${s.client}</div>
                 <div class="mb-3"><strong>Dirección:</strong> ${s.address}</div>
                 <div class="mb-3"><strong>Prioridad:</strong> ${s.priority}</div>
-                <div class="mb-3"><strong>Estado:</strong> <span class="badge text-bg-${s.status==='En Proceso'?'warning':s.status==='Pendiente'?'secondary':s.status==='Finalizado'?'success':'danger'}">${s.status}</span></div>
+                <div class="mb-3"><strong>Estado:</strong> <span class="badge text-bg-${badgeClass}">${s.status}</span></div>
                 <div class="mb-3"><strong>Fecha:</strong> ${s.date}</div>
                 <div class="mb-0"><strong>Notas:</strong> ${s.notes}</div>
             `;

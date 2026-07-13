@@ -27,7 +27,7 @@
         <main class="main-content">
             <div class="nk-card flex-grow-1 position-relative p-4 d-flex flex-column">
                 
-                <nk-topbar role="tech" username="Kelly Ramirez"></nk-topbar>
+                <nk-topbar role="tech" username="${usuarioLogueado}"></nk-topbar>
 
                 <div class="px-md-4 py-4 flex-grow-1 w-100">
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Mis Servicios Asignados</h3>
@@ -141,9 +141,9 @@
                 <div class="mb-3">
                     <label class="form-label fw-bold text-muted fs-13">Cambiar Estado</label>
                     <select id="gestionarStatus" class="form-select bg-light border-0 py-2">
-                        <option value="En Proceso" ${s.status==='En Proceso'?'selected':''}>En Proceso</option>
+                        <option value="En Proceso">En Proceso</option>
                         <option value="Esperando Repuestos">Esperando Repuestos</option>
-                        <option value="Finalizado" ${s.status==='Finalizado'?'selected':''}>Finalizado</option>
+                        <option value="Finalizado">Finalizado</option>
                         <option value="Cancelado">Cancelado</option>
                     </select>
                 </div>
@@ -152,6 +152,7 @@
                     <textarea id="gestionarNote" class="form-control bg-light border-0 py-2" rows="2" placeholder="Nota adicional..."></textarea>
                 </div>
             `;
+            document.getElementById('gestionarStatus').value = s.status || 'En Proceso';
             new bootstrap.Modal(document.getElementById('gestionarModal')).show();
         }
 

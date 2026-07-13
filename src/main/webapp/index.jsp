@@ -24,13 +24,13 @@
                 <form id="loginForm" action="${pageContext.request.contextPath}/LoginServlet" method="POST" onsubmit="return validateLoginForm()">
                     <div class="form-floating-custom">
                         <i class="bi bi-person-fill"></i>
-                        <input type="text" id="loginIdentificador" name="identificador" class="form-control" placeholder="Usuario/email" value="admin" required>
+                        <input type="text" id="loginIdentificador" name="identificador" class="form-control" placeholder="Usuario o correo electrónico" required>
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="form-floating-custom position-relative">
                         <i class="bi bi-lock-fill"></i>
-                        <input type="password" name="password" class="form-control pe-5" id="loginPass" placeholder="Contraseña" value="123456" required>
+                        <input type="password" name="password" class="form-control pe-5" id="loginPass" placeholder="Contraseña" required>
                         <span class="bi bi-eye-slash-fill password-toggle-icon fs-nk-muted" onclick="togglePassword('loginPass', this)"></span>
                         <div class="invalid-feedback"></div>
                     </div>

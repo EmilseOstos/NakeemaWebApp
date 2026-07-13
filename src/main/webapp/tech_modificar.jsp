@@ -27,7 +27,7 @@
         <main class="main-content">
             <div class="nk-card flex-grow-1 position-relative p-4 d-flex flex-column">
                 
-                <nk-topbar role="tech" username="Kelly Ramirez"></nk-topbar>
+                <nk-topbar role="tech" username="${usuarioLogueado}"></nk-topbar>
 
                 <div class="px-md-4 py-4 flex-grow-1 w-100" style="max-width: 800px; margin: 0 auto;">
                     <h3 class="fw-bold mb-4 text-nk-primary fs-24">Actualizar Estado de Servicio</h3>
