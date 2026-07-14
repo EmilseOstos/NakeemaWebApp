@@ -88,3 +88,15 @@ CREATE TABLE chat_mensajes (
     leido BOOLEAN DEFAULT FALSE,
     fecha_envio TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- ==========================================
+-- 8. SATISFACCIÓN (Nuevo módulo)
+-- ==========================================
+CREATE TABLE satisfaccion (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    servicio_id VARCHAR(100) NOT NULL,
+    calificacion INTEGER NOT NULL CHECK (calificacion >= 1 AND calificacion <= 5),
+    comentario TEXT,
+    cliente_nombre VARCHAR(255),
+    fecha_creacion TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);

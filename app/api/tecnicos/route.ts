@@ -24,8 +24,9 @@ export async function GET() {
     }
 
     return NextResponse.json({ data }, { status: 200 });
-  } catch (err: any) {
-    console.error('Error en GET /api/tecnicos:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error en GET /api/tecnicos:', message);
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
@@ -47,8 +48,7 @@ export async function POST(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // OMITIMOS el usuario_id porque la base de datos permite que sea nulo si no creamos cuenta de login
-    const { data, error } = await supabase
+      const { data, error } = await supabase
       .from('tecnicos')
       .insert([
         {
@@ -67,10 +67,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: 'Técnico creado exitosamente', data: data?.[0] }, { status: 200 });
 
-  } catch (err: any) {
-    console.error('Error en POST /api/tecnicos:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error en POST /api/tecnicos:', message);
     return NextResponse.json(
-      { error: 'Error interno del servidor.', details: err.message },
+      { error: 'Error interno del servidor.', details: message },
       { status: 500 }
     );
   }

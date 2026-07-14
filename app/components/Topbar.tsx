@@ -7,13 +7,11 @@ export default function Topbar() {
 
   const isAdmin = pathname.startsWith("/dashboard/admin");
   const isTecnico = pathname.startsWith("/dashboard/tecnico");
-  const isCliente = pathname.startsWith("/dashboard/cliente");
 
   const name = isAdmin ? "Administrador" : isTecnico ? "Kelly Ramirez" : "Emilse Ostos";
   const role = isAdmin ? "Administrador" : isTecnico ? "Técnico" : "Cliente";
   const initials = isAdmin ? "AD" : isTecnico ? "KR" : "EO";
   
-  // Título según la ruta original
   const pageTitle = isTecnico 
     ? "Portal Técnico" 
     : isAdmin 

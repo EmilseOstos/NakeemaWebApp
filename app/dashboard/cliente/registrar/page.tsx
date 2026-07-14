@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function RegistrarServicio() {
   const [titulo, setTitulo] = useState('');
@@ -9,11 +9,8 @@ export default function RegistrarServicio() {
   const [direccion, setDireccion] = useState('Avenida Principal 456, Edificio Central');
   const [descripcion, setDescripcion] = useState('');
 
-  const [loading, setLoading] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     
     try {
       const response = await fetch('/api/servicios', {
@@ -42,8 +39,6 @@ export default function RegistrarServicio() {
     } catch (error) {
       console.error('Error enviando la solicitud:', error);
       alert('Error de conexión al servidor');
-    } finally {
-      setLoading(false);
     }
   };
 

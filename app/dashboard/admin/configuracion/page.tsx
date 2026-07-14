@@ -6,13 +6,10 @@ export default function ConfiguracionPage() {
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(
+    typeof document !== 'undefined' ? document.documentElement.classList.contains("dark") : false
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // Check initial dark mode state
-    setIsDarkMode(document.documentElement.classList.contains("dark"));
-  }, []);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();

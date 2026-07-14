@@ -46,10 +46,11 @@ export async function GET(request: Request) {
       },
       { status: 200 }
     );
-  } catch (err: any) {
-    console.error('Error GET /api/chat:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error GET /api/chat:', message);
     return NextResponse.json(
-      { error: 'Error al recuperar el historial del chat.', details: err.message },
+      { error: 'Error al recuperar el historial del chat.', details: message },
       { status: 500 }
     );
   }
@@ -95,10 +96,11 @@ export async function POST(request: Request) {
       },
       { status: 201 }
     );
-  } catch (err: any) {
-    console.error('Error POST /api/chat:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error POST /api/chat:', message);
     return NextResponse.json(
-      { error: 'Error al enviar el mensaje.', details: err.message },
+      { error: 'Error al enviar el mensaje.', details: message },
       { status: 500 }
     );
   }

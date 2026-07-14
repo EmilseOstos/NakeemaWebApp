@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 
 // Colores disponibles para los avatares
 const AVATAR_COLORS = [
@@ -14,9 +14,17 @@ const getBadgeClass = (estado: string) => {
   return "bg-red-100 text-red-700";
 };
 
+type Tecnico = {
+  id: string;
+  nombre: string;
+  especialidad: string;
+  telefono: string;
+  estado: string;
+};
+
 export default function TecnicosPage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [tecnicos, setTecnicos] = useState<any[]>([]);
+  const [tecnicos, setTecnicos] = useState<Tecnico[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form states
@@ -26,13 +34,8 @@ export default function TecnicosPage() {
   const [estado, setEstado] = useState("Disponible");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchTecnicos();
-  }, []);
-
   const fetchTecnicos = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/tecnicos');
       const data = await res.json();
       if (data.data) {
@@ -44,6 +47,12 @@ export default function TecnicosPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    startTransition(() => {
+      fetchTecnicos();
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

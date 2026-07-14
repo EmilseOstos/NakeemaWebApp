@@ -13,6 +13,7 @@ Cypress.Commands.add('checkElement', (selector: string) => {
 })
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       login(email: string, password: string): Chainable<void>

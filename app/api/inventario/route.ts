@@ -32,10 +32,11 @@ export async function GET() {
       },
       { status: 200 }
     );
-  } catch (err: any) {
-    console.error('Error GET /api/inventario:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error GET /api/inventario:', message);
     return NextResponse.json(
-      { error: 'Error al obtener el inventario.', details: err.message },
+      { error: 'Error al obtener el inventario.', details: message },
       { status: 500 }
     );
   }
@@ -100,10 +101,11 @@ export async function POST(request: Request) {
       },
       { status: 200 }
     );
-  } catch (err: any) {
-    console.error('Error POST /api/inventario:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error POST /api/inventario:', message);
     return NextResponse.json(
-      { error: 'Error al actualizar el inventario.', details: err.message },
+      { error: 'Error al actualizar el inventario.', details: message },
       { status: 500 }
     );
   }

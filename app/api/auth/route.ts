@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { comparePassword } from '@/lib/password';
 
 export async function POST(request: Request) {
   try {
@@ -16,75 +17,52 @@ export async function POST(request: Request) {
       );
     }
 
-    // ==========================================
-    // MODO DEMO / LOCAL (Bypass de Supabase si no hay DB conectada)
-    // ==========================================
-    if (
-      (rol === 'Administrador' && email.includes('admin')) ||
-      (rol === 'Técnico' && email.includes('tecnico')) ||
-      (rol === 'Cliente' && email.includes('cliente')) ||
-      password === '123456' ||
-      password === '......' // Contraseña de prueba que usa el usuario
-    ) {
+    if (!supabaseUrl || !supabaseKey) {
       return NextResponse.json(
-        {
-          message: 'Autenticación exitosa (Modo Local)',
-          user: { id: 'demo-id', email: email, rol: rol }
-        },
-        { status: 200 }
+        { error: 'No hay conexión a la base de datos. Verifica las credenciales de Supabase.' },
+        { status: 503 }
       );
     }
 
-    // Si hay credenciales de supabase, intentamos la consulta real:
-    if (supabaseUrl && supabaseKey) {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      let tabla = '';
-      
-      if (rol === 'Técnico') tabla = 'tecnico';
-      else if (rol === 'Cliente') tabla = 'cliente';
-      else if (rol === 'Administrador') tabla = 'administrador';
-      else return NextResponse.json({ error: 'Rol no válido' }, { status: 400 });
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-      const { data: usuario, error } = await supabase
-        .from(tabla)
-        .select('*')
-        .eq('email', email)
-        .eq('password', password)
-        .single();
+    const { data: usuario, error } = await supabase
+      .from('usuarios')
+      .select('*, roles!inner(nombre)')
+      .eq('email', email)
+      .single();
 
-      if (error || !usuario) {
-        if (rol === 'Administrador') {
-           const { data: fallbackAdmin, error: fallbackError } = await supabase
-            .from('usuarios')
-            .select('*, roles!inner(nombre)')
-            .eq('email', email)
-            .eq('password_hash', password)
-            .single();
-            
-           if (!fallbackError && fallbackAdmin && (fallbackAdmin.roles as any).nombre === 'Administrador') {
-              return NextResponse.json({
-                message: 'Autenticación exitosa',
-                user: { id: fallbackAdmin.id, email: fallbackAdmin.email, rol: 'Administrador' }
-              }, { status: 200 });
-           }
-        }
-        return NextResponse.json({ error: 'Credenciales incorrectas o usuario no encontrado.' }, { status: 401 });
-      }
-
-      const { password: pwd, ...safeUser } = usuario;
-      return NextResponse.json({ message: 'Autenticación exitosa', user: { ...safeUser, rol } }, { status: 200 });
+    if (error || !usuario) {
+      return NextResponse.json({ error: 'Credenciales incorrectas o usuario no encontrado.' }, { status: 401 });
     }
 
-    // Si llegamos aquí, no hay DB y no cumplió los requisitos del modo demo
-    return NextResponse.json(
-      { error: 'Credenciales incorrectas o usuario no encontrado.' },
-      { status: 401 }
-    );
+    const passwordValida = await comparePassword(password, usuario.password_hash);
+    if (!passwordValida) {
+      return NextResponse.json({ error: 'Credenciales incorrectas o usuario no encontrado.' }, { status: 401 });
+    }
 
-  } catch (err: any) {
-    console.error('Error en el endpoint de autenticación:', err);
+type RoleRow = { nombre: string };
+    const rolesData = usuario.roles as RoleRow;
+    const rolUsuario = rolesData.nombre;
+    if (rolUsuario !== rol) {
+      return NextResponse.json({ error: `El rol seleccionado no coincide con el usuario.` }, { status: 403 });
+    }
+
+    const safeUser = {
+      id: usuario.id,
+      email: usuario.email,
+      username: usuario.username,
+    };
+    return NextResponse.json({
+      message: 'Autenticación exitosa',
+      user: { ...safeUser, rol: rolUsuario }
+    }, { status: 200 });
+
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error en el endpoint de autenticación:', message);
     return NextResponse.json(
-      { error: 'Error interno del servidor.', details: err.message },
+      { error: 'Error interno del servidor.', details: message },
       { status: 500 }
     );
   }

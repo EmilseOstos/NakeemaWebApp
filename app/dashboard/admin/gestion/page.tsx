@@ -9,10 +9,11 @@ const SERVICIOS_INICIALES = [
 ];
 
 export default function GestionServiciosPage() {
-  const [servicios, setServicios] = useState(SERVICIOS_INICIALES);
+  const [servicios] = useState(SERVICIOS_INICIALES);
   const [filtroEstado, setFiltroEstado] = useState("all");
   const [busqueda, setBusqueda] = useState("");
-  const [selected, setSelected] = useState<any>(null);
+  type Servicio = typeof SERVICIOS_INICIALES[0];
+  const [selected, setSelected] = useState<Servicio | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const filteredServicios = servicios.filter(s => {

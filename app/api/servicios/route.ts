@@ -55,10 +55,11 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ message: 'Servicio creado exitosamente en Supabase', data }, { status: 200 });
 
-  } catch (err: any) {
-    console.error('Error en el endpoint de servicios:', err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Error desconocido';
+    console.error('Error en el endpoint de servicios:', message);
     return NextResponse.json(
-      { error: 'Error interno del servidor.', details: err.message },
+      { error: 'Error interno del servidor.', details: message },
       { status: 500 }
     );
   }
