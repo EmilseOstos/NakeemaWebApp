@@ -5,6 +5,14 @@ export async function GET(request: Request) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json(
+        { data: [], message: 'Modo local sin conexión a Supabase' },
+        { status: 200 }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Recuperar el query param de la URL: /api/chat?idServicio=UUID
@@ -61,6 +69,14 @@ export async function POST(request: Request) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json(
+        { message: 'Mensaje enviado (Modo Local - Sin Supabase)' },
+        { status: 200 }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const body = await request.json();

@@ -9,6 +9,14 @@ export async function GET() {
   // Inicialización del cliente de Supabase ADENTRO de la función
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json(
+      { data: [], message: 'Modo local sin conexión a Supabase' },
+      { status: 200 }
+    );
+  }
+
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
@@ -47,6 +55,14 @@ export async function POST(request: Request) {
   // Inicialización del cliente de Supabase ADENTRO de la función
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json(
+      { error: 'No hay conexión a Supabase configurada.' },
+      { status: 400 }
+    );
+  }
+
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   try {
