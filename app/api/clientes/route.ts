@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcryptjs';
 
 export async function GET() {
   try {
@@ -60,6 +61,7 @@ export async function POST(request: Request) {
 
     // Generate a random password for the new client
     const tempPassword = Math.random().toString(36).slice(-10);
+    const password_hash = await bcrypt.hash(tempPassword, 10);
 
     // Create user
     const { data: userData, error: userError } = await supabase
@@ -67,7 +69,7 @@ export async function POST(request: Request) {
       .insert([{
         username: email.split('@')[0],
         email,
-        password_hash: tempPassword,
+        password_hash,
         rol_id: rolData.id,
       }])
       .select()

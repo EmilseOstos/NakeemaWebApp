@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 
 // ==========================================
@@ -60,6 +59,14 @@ function IconLogout() {
 // ==========================================
 type MenuItem = { label: string; href: string; icon: React.ReactNode };
 
+function IconChat() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+    </svg>
+  );
+}
+
 const MENUS: Record<string, MenuItem[]> = {
   tecnico: [
     { label: "Dashboard", href: "/dashboard/tecnico", icon: <IconLightning /> },
@@ -67,6 +74,8 @@ const MENUS: Record<string, MenuItem[]> = {
     { label: "Actualizar Estado", href: "/dashboard/tecnico/estado", icon: <IconRefresh /> },
     { label: "Solicitar", href: "/dashboard/tecnico/insumos", icon: <IconBox /> },
     { label: "Consultar", href: "/dashboard/tecnico/servicios", icon: <IconSearch /> },
+    { label: "Chat", href: "/dashboard/chat", icon: <IconChat /> },
+    { label: "Mi Perfil", href: "/dashboard/tecnico/perfil", icon: <IconSearch /> },
   ],
   admin: [
     { label: "Dashboard", href: "/dashboard/admin", icon: <IconLightning /> },
@@ -75,6 +84,7 @@ const MENUS: Record<string, MenuItem[]> = {
     { label: "Clientes", href: "/dashboard/admin/clientes", icon: <IconSearch /> },
     { label: "Reportes", href: "/dashboard/admin/reportes", icon: <IconBox /> },
     { label: "Técnicos", href: "/dashboard/admin/tecnicos", icon: <IconRefresh /> },
+    { label: "Chat", href: "/dashboard/chat", icon: <IconChat /> },
     { label: "Configuración", href: "/dashboard/admin/configuracion", icon: <IconSearch /> },
   ],
   cliente: [
@@ -82,11 +92,12 @@ const MENUS: Record<string, MenuItem[]> = {
     { label: "Registrar Servicio", href: "/dashboard/cliente/registrar", icon: <IconPlusCircle /> },
     { label: "Servicios Activos", href: "/dashboard/cliente/activos", icon: <IconRefresh /> },
     { label: "Satisfacción", href: "/dashboard/cliente/satisfaccion", icon: <IconBox /> },
+    { label: "Chat", href: "/dashboard/chat", icon: <IconChat /> },
     { label: "Mi Perfil", href: "/dashboard/cliente/perfil", icon: <IconSearch /> },
   ]
 };
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   
@@ -98,8 +109,13 @@ export default function Sidebar() {
       
   const currentMenu = MENUS[role] || MENUS["cliente"];
 
+  const handleNav = (href: string) => {
+    router.push(href);
+    onClose?.();
+  };
+
   return (
-    <aside className="w-[260px] bg-white rounded-[2rem] shadow-sm flex-shrink-0 flex flex-col h-full overflow-hidden">
+    <aside className="w-full bg-white rounded-[2rem] shadow-sm flex flex-col h-full overflow-hidden">
       <div className="p-8 pb-4 flex justify-center">
         {/* Usando Image de Next.js. Asegúrate de tener /logo.png en public */}
         <Image src="/logo.png" alt="Nakeema Logo" width={160} height={40} className="h-auto w-40 object-contain" priority />
@@ -111,10 +127,10 @@ export default function Sidebar() {
           const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== `/dashboard/${role}`);
           
           return (
-            <Link
+            <button
               key={idx}
-              href={item.href}
-              className={`flex items-center gap-4 px-5 py-3.5 transition-all duration-200 ${
+              onClick={() => handleNav(item.href)}
+              className={`flex items-center gap-4 px-5 py-3.5 transition-all duration-200 w-full text-left ${
                 isActive
                   ? "bg-[#0da766] text-white rounded-xl font-bold shadow-md shadow-green-500/20"
                   : "text-gray-500 hover:text-gray-800 font-bold bg-transparent"
@@ -124,7 +140,7 @@ export default function Sidebar() {
                 {item.icon}
               </div>
               <span className="text-[13px] tracking-wide">{item.label}</span>
-            </Link>
+            </button>
           );
         })}
       </nav>
@@ -133,6 +149,7 @@ export default function Sidebar() {
         <button
           onClick={async () => {
             await fetch('/api/logout', { method: 'POST' });
+            onClose?.();
             router.push('/');
           }}
           className="flex items-center gap-3 px-5 py-3 text-[#d9304f] hover:bg-red-50 rounded-xl transition-colors font-black text-[13px] tracking-wide w-full"

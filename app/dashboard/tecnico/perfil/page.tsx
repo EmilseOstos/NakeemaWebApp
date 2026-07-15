@@ -1,120 +1,135 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type PerfilData = {
+  nombre: string;
+  email: string;
+  telefono: string;
+  especialidad: string;
+};
 
 export default function MiPerfilPage() {
+  const [perfil, setPerfil] = useState<PerfilData | null>(null);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [nombre, setNombre] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [especialidad, setEspecialidad] = useState("");
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setAvatar(event.target.result as string);
+  useEffect(() => {
+    fetch('/api/perfil')
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) {
+          setPerfil(data.data);
+          setNombre(data.data.nombre || "");
+          setTelefono(data.data.telefono || "");
+          setEspecialidad(data.data.especialidad || "");
         }
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch('/api/perfil', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, telefono, especialidad }),
+      });
+      if (res.ok) {
+        setToast("¡Perfil actualizado exitosamente!");
+      } else {
+        setToast("Error al actualizar perfil");
+      }
+    } catch {
+      setToast("Error de conexión");
+    } finally {
+      setLoading(false);
+      setTimeout(() => setToast(""), 3000);
     }
   };
 
-  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setToast("¡Perfil actualizado exitosamente!");
-      setLoading(false);
-      setTimeout(() => setToast(""), 3000);
-    }, 800);
-  };
+  if (!perfil) {
+    return (
+      <div className="flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
       <h3 className="font-black text-[#0da766] text-2xl">Mi Perfil</h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Columna Izquierda: Info Resumen */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center flex flex-col items-center">
           <div className="relative w-32 h-32 mb-4">
-            <div
-              className="w-full h-full rounded-full bg-[#0da766] flex items-center justify-center text-4xl text-white overflow-hidden shadow-sm border-4 border-gray-50"
-              style={avatar ? { backgroundImage: `url(${avatar})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-            >
-              {!avatar && "👤"}
+            <div className="w-full h-full rounded-full bg-[#0da766] flex items-center justify-center text-4xl text-white overflow-hidden shadow-sm border-4 border-gray-50">
+              {nombre ? nombre.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() : "👤"}
             </div>
-            <label
-              htmlFor="avatar-upload"
-              className="absolute bottom-0 right-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-gray-50 border border-gray-100 transition-colors"
-            >
-              📷
-            </label>
-            <input
-              id="avatar-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarUpload}
-            />
           </div>
-          
-          <h4 className="font-bold text-xl text-gray-800 mb-1">Kelly Ramirez</h4>
-          <p className="text-[#0da766] font-bold text-sm mb-4 flex items-center justify-center gap-1">
-            Soporte Técnico Nivel 2 <span className="text-[#0da766]">✓</span>
-          </p>
+
+          <h4 className="font-bold text-xl text-gray-800 mb-1">{nombre || "Sin nombre"}</h4>
+          <p className="text-[#0da766] font-bold text-sm mb-4">{especialidad || "Técnico"}</p>
 
           <div className="w-full border-t border-gray-100 pt-4 text-left space-y-3">
             <div className="flex items-center text-sm text-gray-500">
               <span className="w-8 text-[#0da766] text-lg">✉️</span>
-              kelly.ramirez@nakeema.com
+              {perfil.email || "—"}
             </div>
             <div className="flex items-center text-sm text-gray-500">
               <span className="w-8 text-[#0da766] text-lg">📞</span>
-              +57 312 987 6543
+              {telefono || "—"}
             </div>
             <div className="flex items-center text-sm text-gray-500">
-              <span className="w-8 text-[#0da766] text-lg">📍</span>
-              Bogotá, Colombia
+              <span className="w-8 text-[#0da766] text-lg">🔧</span>
+              {especialidad || "—"}
             </div>
           </div>
         </div>
 
-        {/* Columna Derecha: Formulario */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-4 mb-5">Actualizar Datos Personales</h5>
-          
+
           <form onSubmit={handleSave} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nombre Completo</label>
                 <input
                   type="text"
-                  defaultValue="Kelly Ramirez"
+                  value={nombre}
+                  onChange={e => setNombre(e.target.value)}
                   className="w-full bg-gray-50 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 focus:border-[#0da766]/30"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Documento de Identidad</label>
-                <input
-                  type="text"
-                  defaultValue="CC 1.050.222.333"
-                  disabled
-                  className="w-full bg-gray-100 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Correo Electrónico</label>
                 <input
                   type="email"
-                  defaultValue="kelly.ramirez@nakeema.com"
-                  className="w-full bg-gray-50 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 focus:border-[#0da766]/30"
+                  value={perfil.email || ""}
+                  disabled
+                  className="w-full bg-gray-100 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed"
                 />
               </div>
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Teléfono Móvil</label>
                 <input
                   type="tel"
-                  defaultValue="+57 312 987 6543"
+                  value={telefono}
+                  onChange={e => setTelefono(e.target.value)}
+                  className="w-full bg-gray-50 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 focus:border-[#0da766]/30"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Especialidad</label>
+                <input
+                  type="text"
+                  value={especialidad}
+                  onChange={e => setEspecialidad(e.target.value)}
                   className="w-full bg-gray-50 border border-transparent rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 focus:border-[#0da766]/30"
                 />
               </div>

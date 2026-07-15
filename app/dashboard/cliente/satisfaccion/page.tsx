@@ -1,14 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const LABELS = ["", "😞 Malo", "😐 Regular", "🙂 Bueno", "😊 ¡Muy Bueno!", "🤩 ¡Excelente!"];
+
+type Servicio = { id: string; descripcion: string; fecha_creacion: string };
 
 export default function SatisfaccionPage() {
   const [rating, setRating] = useState(4);
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [clienteNombre, setClienteNombre] = useState("");
+
+  useEffect(() => {
+    fetch('/api/perfil')
+      .then(res => res.json())
+      .then(async (data) => {
+        if (data.data) {
+          setClienteNombre(data.data.nombre || "");
+          if (data.data.id) {
+            const res = await fetch(`/api/servicios?cliente_id=${data.data.id}`);
+            const json = await res.json();
+            setServicios(json.data || []);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -18,7 +38,7 @@ export default function SatisfaccionPage() {
       idServicio: fd.get("servicio"),
       calificacion: rating,
       comentario: fd.get("comentario") || "Sin comentarios",
-      cliente: "Emilse Ostos",
+      cliente: clienteNombre,
     };
     try {
       await fetch("/api/satisfaccion", {
@@ -45,25 +65,26 @@ export default function SatisfaccionPage() {
 
       <div className="max-w-lg mx-auto">
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
-          {/* Ícono central */}
           <div className="text-7xl mb-3">😍</div>
           <h4 className="font-black text-gray-800 text-xl mb-1">¡Queremos escucharte!</h4>
           <p className="text-gray-400 text-sm mb-6">Evalúa el servicio prestado para ayudarnos a mejorar cada día.</p>
 
           <form onSubmit={handleSubmit} className="text-left space-y-5">
-            {/* Selector de Servicio */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Servicio a calificar</label>
               <select
                 name="servicio"
                 className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 appearance-none"
               >
-                <option value="#O.R.24501">#O.R.24501 - Mantenimiento Preventivo (15/03/2026)</option>
-                <option value="#O.R.24210">#O.R.24210 - Reparación Eléctrica (05/01/2026)</option>
+                <option value="">Seleccionar servicio...</option>
+                {servicios.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    #{s.id.slice(0, 8)} - {s.descripcion.slice(0, 40)} ({s.fecha_creacion?.slice(0, 10)})
+                  </option>
+                ))}
               </select>
             </div>
 
-            {/* Estrellas */}
             <div className="text-center">
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Calificación del Técnico</label>
               <div className="flex justify-center gap-2">
@@ -83,7 +104,6 @@ export default function SatisfaccionPage() {
               <div className="font-bold mt-2 text-[#0da766] text-sm">{LABELS[displayRating]}</div>
             </div>
 
-            {/* Comentarios */}
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Comentarios (Opcional)</label>
               <textarea
