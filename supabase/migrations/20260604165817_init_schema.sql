@@ -100,3 +100,34 @@ CREATE TABLE satisfaccion (
     cliente_nombre VARCHAR(255),
     fecha_creacion TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- ==========================================
+-- 9. PROVEEDORES
+-- ==========================================
+CREATE TABLE proveedores (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre VARCHAR(255) NOT NULL,
+    insumo VARCHAR(255) NOT NULL,
+    contacto VARCHAR(255) NOT NULL,
+    creado_en TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ==========================================
+-- 10. CONFIGURACIÓN DEL SISTEMA
+-- ==========================================
+CREATE TABLE configuracion (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nombre_empresa VARCHAR(255) NOT NULL DEFAULT 'Nakeema Corp',
+    correo_contacto VARCHAR(255) NOT NULL DEFAULT 'admin@nakeema.com',
+    direccion TEXT,
+    logo_url TEXT,
+    modo_oscuro BOOLEAN NOT NULL DEFAULT FALSE,
+    notificaciones_correo BOOLEAN NOT NULL DEFAULT TRUE,
+    alertas_sms BOOLEAN NOT NULL DEFAULT FALSE,
+    auto_asignar_servicios BOOLEAN NOT NULL DEFAULT TRUE,
+    actualizado_en TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insertar configuración por defecto
+INSERT INTO configuracion (nombre_empresa, correo_contacto, direccion)
+VALUES ('Nakeema Corp', 'admin@nakeema.com', 'Calle Falsa 123, Ciudad de México');

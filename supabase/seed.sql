@@ -25,3 +25,10 @@ INSERT INTO inventario (nombre, descripcion, cantidad, unidad_medida) VALUES
 ('Conectores RJ45', 'Conectores para redes CAT6', 100, 'unidades'),
 ('Fusibles 10A', 'Fusibles de protección', 30, 'unidades')
 ON CONFLICT DO NOTHING;
+
+INSERT INTO proveedores (nombre, insumo, contacto) VALUES
+('Distribuidora Tecnológica S.A.', 'Procesadores Intel', '3001234567'),
+('Componentes Globales', 'Tarjetas Madre ASUS', '3109876543'),
+('Soluciones IT', 'Discos Duros SSD', '3156789012'),
+('Importadora Electronica', 'Memorias RAM Corsair', '3205557777')
+ON CONFLICT DO NOTHING;

@@ -1,28 +1,57 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+type Proveedor = {
+  id: string;
+  nombre: string;
+  insumo: string;
+  contacto: string;
+};
 
 export default function ProveedoresPage() {
   const [search, setSearch] = useState('');
-  const [proveedores] = useState([
-    { id: 1, nombre: 'Distribuidora Tecnológica S.A.', insumo: 'Procesadores Intel', contacto: '3001234567' },
-    { id: 2, nombre: 'Componentes Globales', insumo: 'Tarjetas Madre ASUS', contacto: '3109876543' },
-    { id: 3, nombre: 'Soluciones IT', insumo: 'Discos Duros SSD', contacto: '3156789012' },
-    { id: 4, nombre: 'Importadora Electronica', insumo: 'Memorias RAM Corsair', contacto: '3205557777' },
-  ]);
-
+  const [proveedores, setProveedores] = useState<Proveedor[]>([]);
   const [formData, setFormData] = useState({ nombre: '', insumo: '', contacto: '' });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch('/api/proveedores')
+      .then(res => res.json())
+      .then(data => setProveedores(data.data || []))
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.nombre || !formData.insumo || !formData.contacto) {
-      setError('Error: Todos los campos son obligatorios para registrar el proveedor.');
+      setError('Todos los campos son obligatorios para registrar el proveedor.');
       return;
     }
     setError('');
-    // Mock save
-    alert('Proveedor guardado correctamente');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/proveedores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess('Proveedor guardado correctamente');
+        setProveedores(prev => [...prev, data.data]);
+        setFormData({ nombre: '', insumo: '', contacto: '' });
+      } else {
+        setError(data.error || 'Error al guardar');
+      }
+    } catch {
+      setError('Error de conexión');
+    } finally {
+      setLoading(false);
+      setTimeout(() => setSuccess(''), 3000);
+    }
   };
 
   const filteredProveedores = proveedores.filter(p => 
@@ -34,7 +63,6 @@ export default function ProveedoresPage() {
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* Encabezado */}
         <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Gestión de Proveedores</h1>
@@ -43,13 +71,18 @@ export default function ProveedoresPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Formulario de Registro */}
           <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <h2 className="text-xl font-semibold text-gray-800 mb-6">Registrar Proveedor</h2>
             
             {error && (
               <div data-testid="error-alert" className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm font-medium animate-pulse">
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-lg text-sm font-medium">
+                {success}
               </div>
             )}
 
@@ -93,14 +126,14 @@ export default function ProveedoresPage() {
               <button 
                 type="submit" 
                 data-testid="btn-guardar"
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
+                disabled={loading}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-70"
               >
-                Registrar
+                {loading ? 'Guardando...' : 'Registrar'}
               </button>
             </form>
           </div>
 
-          {/* Tabla de Consulta */}
           <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h2 className="text-xl font-semibold text-gray-800">Directorio de Insumos</h2>

@@ -2,23 +2,61 @@
 
 import { useState, useRef, useEffect } from "react";
 
+type ConfigData = {
+  nombre_empresa: string;
+  correo_contacto: string;
+  direccion: string;
+  modo_oscuro: boolean;
+  notificaciones_correo: boolean;
+  alertas_sms: boolean;
+  auto_asignar_servicios: boolean;
+};
+
 export default function ConfiguracionPage() {
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(
-    typeof document !== 'undefined' ? document.documentElement.classList.contains("dark") : false
-  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSave = (e: React.FormEvent) => {
+  const [config, setConfig] = useState<ConfigData>({
+    nombre_empresa: "Nakeema Corp",
+    correo_contacto: "admin@nakeema.com",
+    direccion: "Calle Falsa 123, Ciudad de México",
+    modo_oscuro: false,
+    notificaciones_correo: true,
+    alertas_sms: false,
+    auto_asignar_servicios: true,
+  });
+
+  useEffect(() => {
+    fetch('/api/configuracion')
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) setConfig(data.data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setToast("Configuración guardada exitosamente");
+    try {
+      const res = await fetch('/api/configuracion', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+      if (res.ok) {
+        setToast("Configuración guardada exitosamente");
+      } else {
+        setToast("Error al guardar configuración");
+      }
+    } catch {
+      setToast("Error de conexión");
+    } finally {
       setLoading(false);
       setTimeout(() => setToast(""), 3000);
-    }, 800);
+    }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,18 +76,19 @@ export default function ConfiguracionPage() {
   };
 
   const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    setConfig(prev => {
+      const newDarkMode = !prev.modo_oscuro;
+      if (newDarkMode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      return { ...prev, modo_oscuro: newDarkMode };
+    });
   };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      {/* Header section */}
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-bold text-[#0da766] text-2xl tracking-tight">Configuración del Sistema</h3>
         <button
@@ -67,10 +106,8 @@ export default function ConfiguracionPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Columna Izquierda (Logo y Estilos) */}
         <div className="lg:col-span-4 space-y-6">
           
-          {/* Logo Card */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
             <input 
               type="file" 
@@ -102,7 +139,6 @@ export default function ConfiguracionPage() {
             </button>
           </div>
 
-          {/* Estilos Card */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-3 mb-4">Estilos</h5>
             <div className="flex justify-between items-center">
@@ -111,7 +147,7 @@ export default function ConfiguracionPage() {
                 <input 
                   type="checkbox" 
                   className="sr-only peer" 
-                  checked={isDarkMode}
+                  checked={config.modo_oscuro}
                   onChange={toggleDarkMode}
                 />
                 <div className="w-11 h-6 bg-blue-100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
@@ -120,7 +156,6 @@ export default function ConfiguracionPage() {
           </div>
         </div>
 
-        {/* Columna Derecha (Formulario) */}
         <div className="lg:col-span-8">
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
             <form onSubmit={handleSave}>
@@ -128,15 +163,30 @@ export default function ConfiguracionPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-2">Nombre de la Empresa</label>
-                  <input type="text" defaultValue="Nakeema Corp" className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" />
+                  <input 
+                    type="text" 
+                    value={config.nombre_empresa}
+                    onChange={e => setConfig({...config, nombre_empresa: e.target.value})}
+                    className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" 
+                  />
                 </div>
                 <div>
                   <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-2">Correo de Contacto</label>
-                  <input type="email" defaultValue="admin@nakeema.com" className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" />
+                  <input 
+                    type="email" 
+                    value={config.correo_contacto}
+                    onChange={e => setConfig({...config, correo_contacto: e.target.value})}
+                    className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" 
+                  />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wide mb-2">Dirección Principal</label>
-                  <input type="text" defaultValue="Calle Falsa 123, Ciudad de México" className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" />
+                  <input 
+                    type="text" 
+                    value={config.direccion}
+                    onChange={e => setConfig({...config, direccion: e.target.value})}
+                    className="w-full bg-[#f8f9fa] border-0 rounded-lg px-4 py-3 text-sm text-gray-700 focus:ring-2 focus:ring-[#0da766]/30 transition-colors" 
+                  />
                 </div>
               </div>
 
@@ -144,7 +194,12 @@ export default function ConfiguracionPage() {
               <div className="space-y-5">
                 <label className="flex items-center cursor-pointer">
                   <div className="relative inline-flex items-center">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <input 
+                      type="checkbox" 
+                      checked={config.notificaciones_correo}
+                      onChange={e => setConfig({...config, notificaciones_correo: e.target.checked})}
+                      className="sr-only peer" 
+                    />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                   </div>
                   <span className="ml-4 font-bold text-gray-600 text-sm">Enviar notificaciones por correo a los técnicos</span>
@@ -152,7 +207,12 @@ export default function ConfiguracionPage() {
                 
                 <label className="flex items-center cursor-pointer">
                   <div className="relative inline-flex items-center">
-                    <input type="checkbox" className="sr-only peer" />
+                    <input 
+                      type="checkbox" 
+                      checked={config.alertas_sms}
+                      onChange={e => setConfig({...config, alertas_sms: e.target.checked})}
+                      className="sr-only peer" 
+                    />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                   </div>
                   <span className="ml-4 font-bold text-gray-600 text-sm">Habilitar alertas SMS para servicios de alta prioridad</span>
@@ -160,7 +220,12 @@ export default function ConfiguracionPage() {
                 
                 <label className="flex items-center cursor-pointer">
                   <div className="relative inline-flex items-center">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <input 
+                      type="checkbox" 
+                      checked={config.auto_asignar_servicios}
+                      onChange={e => setConfig({...config, auto_asignar_servicios: e.target.checked})}
+                      className="sr-only peer" 
+                    />
                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
                   </div>
                   <span className="ml-4 font-bold text-gray-600 text-sm">Auto-asignar servicios según disponibilidad técnica</span>

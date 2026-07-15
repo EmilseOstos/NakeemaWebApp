@@ -19,13 +19,8 @@ export default function GestionServiciosPage() {
   const [selected, setSelected] = useState<Servicio | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchServicios();
-  }, []);
-
   const fetchServicios = async () => {
     try {
-      setLoading(true);
       const res = await fetch('/api/servicios');
       const data = await res.json();
       if (data.data) setServicios(data.data);
@@ -35,6 +30,11 @@ export default function GestionServiciosPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => fetchServicios(), 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredServicios = servicios.filter(s => {
     const matchEstado = filtroEstado === "all" || s.estado.toLowerCase() === filtroEstado.toLowerCase();

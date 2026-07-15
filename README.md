@@ -1,4 +1,4 @@
-# NAKEEMA
+# NAKEEMAF
 
 Plataforma web para la gestión integral de servicios, técnicos, inventario y experiencia del cliente. El sistema está diseñado para centralizar procesos operativos y brindar una experiencia más organizada tanto para administradores, técnicos como para usuarios finales.
 
@@ -54,7 +54,7 @@ npm run test
 ## 📁 Estructura del proyecto
 
 - app/: páginas y vistas principales del sistema
-- components/: componentes reutilizables de la interfaz
+- app/components/: componentes reutilizables de la interfaz
 - app/api/: endpoints de backend y lógica de integración
 - supabase/: configuración y migraciones de base de datos
 

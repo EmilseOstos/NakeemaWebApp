@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -10,9 +10,13 @@ export async function GET() {
       return NextResponse.json({ data: [], message: 'Modo local sin conexión a Supabase' }, { status: 200 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const clienteId = searchParams.get('cliente_id');
+    const tecnicoId = searchParams.get('tecnico_id');
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('servicios')
       .select(`
         id,
@@ -20,18 +24,24 @@ export async function GET() {
         estado,
         fecha_creacion,
         fecha_completado,
+        cliente_id,
         clientes ( nombre ),
         tecnicos ( nombre )
-      `)
-      .order('fecha_creacion', { ascending: false });
+      `);
+
+    if (clienteId) query = query.eq('cliente_id', clienteId);
+    if (tecnicoId) query = query.eq('tecnico_id', tecnicoId);
+
+    const { data, error } = await query.order('fecha_creacion', { ascending: false });
 
     if (error) throw error;
 
-    const servicios = data.map((s: any) => ({
+    const servicios = data.map((s: Record<string, unknown>) => ({
       id: s.id,
       descripcion: s.descripcion,
       estado: s.estado,
       fecha_creacion: s.fecha_creacion,
+      cliente_id: s.cliente_id,
       cliente_nombre: s.clientes?.nombre || 'Sin cliente',
       tecnico_nombre: s.tecnicos?.nombre || 'Sin asignar',
     }));
@@ -116,7 +126,7 @@ export async function PATCH(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
     if (estado) updates.estado = estado;
     if (tecnico_id) updates.tecnico_id = tecnico_id;
     if (estado === 'Finalizado' || estado === 'Completado') updates.fecha_completado = new Date().toISOString();

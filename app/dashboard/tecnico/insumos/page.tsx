@@ -1,21 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type InventarioItem = {
+  id: string;
+  nombre: string;
+  cantidad: number;
+  unidad_medida: string;
+};
 
 export default function SolicitarInsumosPage() {
-  const [toast, setToast] = useState("");
+  const [inventario, setInventario] = useState<InventarioItem[]>([]);
+  const [itemId, setItemId] = useState("");
+  const [cantidad, setCantidad] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch('/api/inventario')
+      .then(res => res.json())
+      .then(data => setInventario(data.data || []))
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setToast("Solicitud enviada a bodega exitosamente");
-      setLoading(false);
-      (e.target as HTMLFormElement).reset();
+    if (!itemId) {
+      setToast("Selecciona un material");
       setTimeout(() => setToast(""), 3000);
-    }, 800);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('/api/inventario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId, cantidad_a_restar: cantidad }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToast(`Solicitud exitosa. Stock restante: ${data.data?.cantidad}`);
+        const r = await fetch('/api/inventario');
+        const j = await r.json();
+        setInventario(j.data || []);
+      } else {
+        setToast(data.error || "Error al solicitar material");
+      }
+    } catch {
+      setToast("Error de conexión");
+    } finally {
+      setLoading(false);
+      setTimeout(() => setToast(""), 3000);
+    }
   };
+
+  const selectedItem = inventario.find(i => i.id === itemId);
 
   return (
     <div className="space-y-5">
@@ -25,36 +64,34 @@ export default function SolicitarInsumosPage() {
         <div className="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-gray-100">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-              
               <div className="md:col-span-8">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nombre del Material o Herramienta</label>
-                <input type="text" required placeholder="Ej. Rollo de Cable 12AWG" className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30" />
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Material</label>
+                <select
+                  value={itemId}
+                  onChange={(e) => setItemId(e.target.value)}
+                  className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30 font-bold text-gray-700 appearance-none"
+                  required
+                >
+                  <option value="">Seleccionar material...</option>
+                  {inventario.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.nombre} ({item.cantidad} {item.unidad_medida})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="md:col-span-4">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Cantidad Necesaria</label>
-                <input type="number" required defaultValue="1" min="1" className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30" />
-              </div>
-
-              <div className="md:col-span-6">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Servicio Asociado (Opcional)</label>
-                <select className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30 appearance-none font-bold text-gray-700">
-                  <option value="">Ninguno / Uso General</option>
-                  <option value="#O.R.24567">#O.R.24567 - Reparación Eléctrica</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-6">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nivel de Urgencia</label>
-                <select className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-red-300 appearance-none font-bold text-red-500">
-                  <option value="Normal" className="text-gray-800">Normal (Bodega general)</option>
-                  <option value="Urgente">Urgente (Detiene el servicio actual)</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-12">
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Justificación de la Solicitud</label>
-                <textarea rows={3} placeholder="Explique brevemente por qué requiere estos materiales..." className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30 resize-none"></textarea>
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Cantidad</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  max={selectedItem?.cantidad || 1}
+                  value={cantidad}
+                  onChange={(e) => setCantidad(Number(e.target.value))}
+                  className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30"
+                />
               </div>
 
               <div className="md:col-span-12 pt-4 flex justify-center border-t border-gray-100 mt-2">
@@ -64,7 +101,7 @@ export default function SolicitarInsumosPage() {
                   className="px-8 py-3.5 bg-[#0da766] text-white rounded-full font-bold text-sm hover:bg-[#0a8752] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-70"
                 >
                   {loading ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : null}
-                  Enviar Solicitud a Bodega
+                  Solicitar Material
                 </button>
               </div>
             </div>
@@ -73,9 +110,7 @@ export default function SolicitarInsumosPage() {
       </div>
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">
-          {toast}
-        </div>
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">{toast}</div>
       )}
 
       <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
