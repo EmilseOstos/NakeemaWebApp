@@ -5,11 +5,11 @@ INSERT INTO roles (nombre, descripcion) VALUES
 ('Administrador', 'Administrador con control total del sistema')
 ON CONFLICT (nombre) DO NOTHING;
 
--- Password: "123456" hashed with bcryptjs (hash generado con salt rounds=10)
+-- Password: "123456" hashed with bcryptjs
 INSERT INTO usuarios (username, email, password_hash, rol_id) VALUES
-('admin', 'admin@nakeema.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', (SELECT id FROM roles WHERE nombre = 'Administrador')),
-('tecnico', 'tecnico@nakeema.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', (SELECT id FROM roles WHERE nombre = 'Tecnico')),
-('cliente', 'cliente@nakeema.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', (SELECT id FROM roles WHERE nombre = 'Cliente'))
+('admin', 'admin@nakeema.com', '$2b$10$TdA5CEk9MOgvCX1DuFFVzeHfZQxT3ZqRZwmZgCQZSorZnykUdwOfK', (SELECT id FROM roles WHERE nombre = 'Administrador')),
+('tecnico', 'tecnico@nakeema.com', '$2b$10$TdA5CEk9MOgvCX1DuFFVzeHfZQxT3ZqRZwmZgCQZSorZnykUdwOfK', (SELECT id FROM roles WHERE nombre = 'Tecnico')),
+('cliente', 'cliente@nakeema.com', '$2b$10$TdA5CEk9MOgvCX1DuFFVzeHfZQxT3ZqRZwmZgCQZSorZnykUdwOfK', (SELECT id FROM roles WHERE nombre = 'Cliente'))
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO tecnicos (usuario_id, nombre, telefono, especialidad, estado) VALUES
