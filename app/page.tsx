@@ -37,9 +37,8 @@ export default function LoginPage() {
       if (res.ok) {
         setMessage({ text: `Autenticando...`, type: "success" });
 
-        if (rol === "Administrador") router.push("/dashboard/admin");
-        else if (rol === "Técnico") router.push("/dashboard/tecnico");
-        else if (rol === "Cliente") router.push("/dashboard/cliente");
+        const destino = rol === "Administrador" ? "/dashboard/admin" : rol === "Técnico" ? "/dashboard/tecnico" : "/dashboard/cliente";
+        router.push(destino);
       } else {
         setMessage({
           text: data.error || "Error al iniciar sesión.",

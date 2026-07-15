@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -88,6 +88,7 @@ const MENUS: Record<string, MenuItem[]> = {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   
   const role = pathname.startsWith("/dashboard/admin") 
     ? "admin" 
@@ -129,13 +130,16 @@ export default function Sidebar() {
       </nav>
 
       <div className="px-6 py-8">
-        <Link
-          href="/"
-          className="flex items-center gap-3 px-5 py-3 text-[#d9304f] hover:bg-red-50 rounded-xl transition-colors font-black text-[13px] tracking-wide"
+        <button
+          onClick={async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            router.push('/');
+          }}
+          className="flex items-center gap-3 px-5 py-3 text-[#d9304f] hover:bg-red-50 rounded-xl transition-colors font-black text-[13px] tracking-wide w-full"
         >
           <IconLogout />
           Salir
-        </Link>
+        </button>
       </div>
     </aside>
   );

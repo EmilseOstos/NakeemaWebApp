@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { comparePassword } from '@/lib/password';
+import { createSessionToken } from '@/lib/session';
 
 export async function POST(request: Request) {
   try {
@@ -52,11 +53,25 @@ type RoleRow = { nombre: string };
       id: usuario.id,
       email: usuario.email,
       username: usuario.username,
+      rol: rolUsuario,
     };
-    return NextResponse.json({
+
+    const sessionToken = await createSessionToken({ id: usuario.id, email: usuario.email, rol: rolUsuario });
+
+    const response = NextResponse.json({
       message: 'Autenticación exitosa',
-      user: { ...safeUser, rol: rolUsuario }
+      user: safeUser
     }, { status: 200 });
+
+    response.cookies.set('session', sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 8,
+    });
+
+    return response;
 
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Error desconocido';

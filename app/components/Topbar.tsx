@@ -1,29 +1,37 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+type User = { id: string; email: string; rol: string };
 
 export default function Topbar() {
   const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetch('/api/me')
+      .then(res => res.json())
+      .then(data => setUser(data.user))
+      .catch(() => {});
+  }, []);
 
   const isAdmin = pathname.startsWith("/dashboard/admin");
   const isTecnico = pathname.startsWith("/dashboard/tecnico");
 
-  const name = isAdmin ? "Administrador" : isTecnico ? "Kelly Ramirez" : "Emilse Ostos";
-  const role = isAdmin ? "Administrador" : isTecnico ? "Técnico" : "Cliente";
-  const initials = isAdmin ? "AD" : isTecnico ? "KR" : "EO";
-  
-  const pageTitle = isTecnico 
-    ? "Portal Técnico" 
-    : isAdmin 
-      ? "Portal Administrador" 
+  const displayName = user?.email?.split('@')[0] || "Usuario";
+  const initials = displayName.slice(0, 2).toUpperCase();
+
+  const pageTitle = isTecnico
+    ? "Portal Técnico"
+    : isAdmin
+      ? "Portal Administrador"
       : "Portal Cliente";
 
   return (
     <header className="flex justify-between items-center bg-transparent">
-      {/* Izquierda: Título de página (en el diseño es texto limpio oscuro) */}
       <h1 className="text-xl font-black text-gray-800 tracking-tight">{pageTitle}</h1>
 
-      {/* Derecha: Notificaciones y Perfil */}
       <div className="flex items-center gap-5">
         <button className="text-gray-400 hover:text-[#0da766] transition-colors relative">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -34,8 +42,8 @@ export default function Topbar() {
 
         <div className="flex items-center gap-3 border-l border-gray-200 pl-5">
           <div className="text-right">
-            <div className="text-sm font-black text-gray-800 leading-none">{name}</div>
-            <div className="text-xs text-gray-400 font-medium mt-1">{role}</div>
+            <div className="text-sm font-black text-gray-800 leading-none">{displayName}</div>
+            <div className="text-xs text-gray-400 font-medium mt-1">{user?.rol || "—"}</div>
           </div>
           <div className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-sm font-black text-gray-600">
             {initials}

@@ -14,15 +14,29 @@ export default function RecuperarPage() {
     setLoading(true);
     setMessage(null);
 
-    // Simulación de envío
-    setTimeout(() => {
-      setMessage({ 
-        text: "Si el correo está registrado, te enviaremos instrucciones para recuperar tu contraseña.", 
-        type: "success" 
+    try {
+      const res = await fetch('/api/recuperar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
       });
+
+      const data = await res.json();
+
+      setMessage({
+        text: data.message || 'Si el correo está registrado, recibirás instrucciones.',
+        type: res.ok ? 'success' : 'error',
+      });
+
+      if (res.ok) setEmail('');
+    } catch {
+      setMessage({
+        text: 'Error de conexión con el servidor. Intenta de nuevo.',
+        type: 'error',
+      });
+    } finally {
       setLoading(false);
-      setEmail("");
-    }, 1200);
+    }
   };
 
   return (
