@@ -74,8 +74,7 @@ export default function ClientesPage() {
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="space-y-5">
         <div className="flex justify-between items-center nk-card p-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Registro de Clientes</h1>
@@ -177,7 +176,6 @@ export default function ClientesPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

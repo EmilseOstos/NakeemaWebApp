@@ -17,13 +17,23 @@ export default function ProveedoresPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingTabla, setLoadingTabla] = useState(true);
+  const [errorTabla, setErrorTabla] = useState('');
 
-  useEffect(() => {
+  const cargarProveedores = () => {
+    setLoadingTabla(true);
+    setErrorTabla('');
     fetch('/api/proveedores')
       .then(res => res.json())
-      .then(data => setProveedores(data.data || []))
-      .catch(() => {})
+      .then(data => {
+        if (data.error) setErrorTabla(data.error);
+        else setProveedores(data.data || []);
+      })
+      .catch(() => setErrorTabla('Error de conexión con el servidor.'))
       .finally(() => setLoadingTabla(false));
+  };
+
+  useEffect(() => {
+    cargarProveedores();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,8 +72,7 @@ export default function ProveedoresPage() {
   );
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="space-y-5">
         
         <div className="flex justify-between items-center nk-card p-6">
           <div>
@@ -97,7 +106,7 @@ export default function ProveedoresPage() {
                   data-testid="input-nombre"
                   value={formData.nombre}
                   onChange={e => setFormData({...formData, nombre: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0da766]/20 focus:border-[#0da766] transition-all outline-none"
                   placeholder="Ej. Distribuidora XYZ"
                 />
               </div>
@@ -109,7 +118,7 @@ export default function ProveedoresPage() {
                   data-testid="input-insumo"
                   value={formData.insumo}
                   onChange={e => setFormData({...formData, insumo: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0da766]/20 focus:border-[#0da766] transition-all outline-none"
                   placeholder="Ej. Memorias RAM"
                 />
               </div>
@@ -121,7 +130,7 @@ export default function ProveedoresPage() {
                   data-testid="input-contacto"
                   value={formData.contacto}
                   onChange={e => setFormData({...formData, contacto: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#0da766]/20 focus:border-[#0da766] transition-all outline-none"
                   placeholder="Teléfono o Email"
                 />
               </div>
@@ -129,7 +138,7 @@ export default function ProveedoresPage() {
                 type="submit" 
                 data-testid="btn-guardar"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-70"
+                className="w-full py-3 px-4 bg-[#0da766] hover:bg-[#0a8752] text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-70"
               >
                 {loading ? 'Guardando...' : 'Registrar'}
               </button>
@@ -146,7 +155,7 @@ export default function ProveedoresPage() {
                   placeholder="Buscar proveedor o insumo..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0da766]/20 focus:bg-white transition-all outline-none"
                 />
                 <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -170,12 +179,24 @@ export default function ProveedoresPage() {
                         <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin mx-auto" />
                       </td>
                     </tr>
+                  ) : errorTabla ? (
+                    <tr>
+                      <td colSpan={3} className="py-8 text-center">
+                        <p className="text-red-500 text-sm font-medium mb-3">{errorTabla}</p>
+                        <button
+                          onClick={cargarProveedores}
+                          className="px-4 py-2 bg-[#0da766] text-white rounded-full text-xs font-bold hover:bg-[#0a8752] transition-colors"
+                        >
+                          Reintentar
+                        </button>
+                      </td>
+                    </tr>
                   ) : filteredProveedores.length > 0 ? (
                     filteredProveedores.map(p => (
                       <tr key={p.id}>
                         <td className="py-4 px-4 text-gray-800 font-medium">{p.nombre}</td>
                         <td className="py-4 px-4 text-gray-600">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#d8f3e5] text-[#0a8451]">
                             {p.insumo}
                           </span>
                         </td>
@@ -192,8 +213,6 @@ export default function ProveedoresPage() {
             </div>
           </div>
         </div>
-
-      </div>
     </div>
   );
 }

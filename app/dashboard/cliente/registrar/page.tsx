@@ -64,10 +64,10 @@ export default function RegistrarServicio() {
   };
 
   return (
-    <div className="bg-[#f8f9fa] min-h-screen text-slate-800 font-sans w-full flex flex-col justify-between p-8">
-      
-      {/* CONTENIDO PRINCIPAL ALINEADO */}
-      <div className="w-full space-y-8 flex-1 max-w-7xl mx-auto">
+    <div className="w-full space-y-5">
+        
+        {/* CONTENIDO PRINCIPAL ALINEADO */}
+        <div className="w-full space-y-8 flex-1 max-w-7xl mx-auto">
         
         {/* Título de la Sección Directo (Sin la barra superior de "Portal Cliente") */}
         <div className="pt-2">
