@@ -76,7 +76,7 @@ export default function ClientesPage() {
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center nk-card p-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Registro de Clientes</h1>
             <p className="text-gray-500 mt-1">Ingresa los datos del nuevo cliente en el sistema.</p>
@@ -84,7 +84,7 @@ export default function ClientesPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="lg:col-span-2 nk-card p-6">
             {error && (
               <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm font-medium">{error}</div>
             )}
@@ -137,19 +137,19 @@ export default function ClientesPage() {
             </form>
           </div>
 
-          <div className="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="lg:col-span-3 nk-card p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Clientes Registrados</h2>
             <div className="overflow-x-auto">
-              <table className="w-full text-left">
+              <table className="table-custom w-full text-left">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                  <tr className="text-gray-600 text-sm">
                     <th className="py-3 px-4 font-medium">Nombre</th>
                     <th className="py-3 px-4 font-medium">Email</th>
                     <th className="py-3 px-4 font-medium">Teléfono</th>
                     <th className="py-3 px-4 font-medium">Estado</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody>
                   {loadingTabla ? (
                     <tr>
                       <td colSpan={4} className="py-8 text-center">
@@ -158,12 +158,12 @@ export default function ClientesPage() {
                     </tr>
                   ) : clientes.length > 0 ? (
                     clientes.map(c => (
-                      <tr key={c.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={c.id}>
                         <td className="py-4 px-4 text-gray-800 font-medium">{c.nombre}</td>
                         <td className="py-4 px-4 text-gray-500 text-sm">{c.email}</td>
                         <td className="py-4 px-4 text-gray-500 text-sm">{c.telefono}</td>
                         <td className="py-4 px-4">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${c.estado === 'Activo' ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-500'}`}>{c.estado}</span>
+                          <span className={`status-badge ${c.estado === 'Activo' ? 'bg-green-50 text-green-700' : 'bg-gray-50 text-gray-500'}`}>{c.estado}</span>
                         </td>
                       </tr>
                     ))

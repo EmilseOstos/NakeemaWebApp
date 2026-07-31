@@ -73,7 +73,7 @@ export default function ActualizarEstadoPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4 py-6">
-      <div className="w-full max-w-2xl bg-white rounded-3xl p-6 md:p-10 shadow-xs border border-slate-100">
+      <div className="nk-card w-full max-w-2xl p-6 md:p-10">
         <h2 className="text-xl md:text-2xl font-bold text-[#0da766] tracking-tight text-center mb-8">Actualizar Estado de Servicio</h2>
 
         <div className="space-y-2 mb-6">

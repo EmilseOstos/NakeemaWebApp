@@ -81,7 +81,7 @@ export default function SatisfaccionPage() {
       <h3 className="font-black text-[#0da766] text-2xl">Reporte de Satisfacción</h3>
 
       <div className="max-w-lg mx-auto">
-        <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
+        <div className="nk-card p-8 text-center">
           <div className="text-7xl mb-3">😍</div>
           <h4 className="font-black text-gray-800 text-xl mb-1">¡Queremos escucharte!</h4>
           <p className="text-gray-400 text-sm mb-6">Evalúa el servicio prestado para ayudarnos a mejorar cada día.</p>
@@ -111,7 +111,7 @@ export default function SatisfaccionPage() {
 
             <div className="text-center">
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Calificación del Técnico</label>
-              <div className="flex justify-center gap-2">
+              <div className="star-rating flex justify-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -119,9 +119,9 @@ export default function SatisfaccionPage() {
                     onMouseEnter={() => setHover(star)}
                     onMouseLeave={() => setHover(0)}
                     onClick={() => setRating(star)}
-                    className={`text-4xl transition-transform hover:scale-110 ${star <= displayRating ? "text-[#0da766]" : "text-gray-200"}`}
+                    className="text-4xl"
                   >
-                    ★
+                    <i className={star <= displayRating ? "active" : "inactive"}>★</i>
                   </button>
                 ))}
               </div>
@@ -154,7 +154,7 @@ export default function SatisfaccionPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

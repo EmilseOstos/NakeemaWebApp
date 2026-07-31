@@ -105,7 +105,7 @@ export default function ConfiguracionPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-4 space-y-6">
           
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 text-center">
+          <div className="nk-card p-8 text-center">
             <input 
               type="file" 
               accept="image/png, image/jpeg" 
@@ -114,7 +114,7 @@ export default function ConfiguracionPage() {
               onChange={handleImageUpload}
             />
             <div 
-              className="w-32 h-32 mx-auto mb-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors overflow-hidden"
+              className="logo-preview-box mx-auto mb-6 cursor-pointer hover:bg-gray-100 transition-colors overflow-hidden"
               onClick={() => fileInputRef.current?.click()}
             >
               {logoPreview ? (
@@ -136,7 +136,7 @@ export default function ConfiguracionPage() {
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="nk-card p-6">
             <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-3 mb-4">Estilos</h5>
             <p className="text-sm text-gray-400 font-medium">
               La plataforma usa un tema claro fijo para garantizar consistencia en todos los dispositivos.
@@ -145,7 +145,7 @@ export default function ConfiguracionPage() {
         </div>
 
         <div className="lg:col-span-8">
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+          <div className="nk-card p-8">
             <form onSubmit={handleSave}>
               <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-3 mb-6">Información General</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
@@ -226,7 +226,7 @@ export default function ConfiguracionPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-[11px] font-medium pt-4 pb-2">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

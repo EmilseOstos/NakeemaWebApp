@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 
@@ -10,37 +11,37 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
 
   return (
-    <div className="flex h-screen bg-[#f4f6f8] p-4 md:p-5 gap-4 md:gap-5 border-t-8 border-[#930b38] overflow-hidden">
+    <div className="dashboard-wrapper">
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 md:hidden"
+          className="fixed inset-0 bg-black/40 z-40 md:hidden sidebar-overlay"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      <div
-        className={`
-          fixed md:static inset-y-0 left-0 z-50
-          w-[260px] md:w-[260px] md:flex-shrink-0
-          transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0 md:relative
-          p-4 md:p-0
-        `}
-      >
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <Sidebar onClose={() => setSidebarOpen(false)} />
-      </div>
+      </aside>
 
-      <div className="flex-1 bg-white rounded-[2rem] shadow-sm flex flex-col overflow-hidden relative min-w-0">
-        <div className="flex-1 overflow-y-auto p-6 md:p-10">
-          <Topbar onMenuToggle={() => setSidebarOpen(true)} />
-          <main className="mt-8">
-            {children}
-          </main>
+      <main className="main-content">
+        <Topbar onMenuToggle={() => setSidebarOpen(true)} />
+        <div className="flex flex-col gap-5">
+          {children}
         </div>
-      </div>
+      </main>
+
+      <button
+        onClick={() => router.push("/dashboard/chat")}
+        aria-label="Abrir chat"
+        className="floating-chat-btn"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+        </svg>
+      </button>
     </div>
   );
 }

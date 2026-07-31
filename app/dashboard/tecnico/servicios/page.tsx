@@ -100,23 +100,17 @@ export default function MisServiciosPage() {
       <h3 className="font-black text-[#0da766] text-2xl">Mis Servicios Asignados</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-yellow-400 flex justify-between items-center">
-          <div>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Servicios Activos</div>
-            <div className="text-3xl font-black text-gray-800">{activos}</div>
-          </div>
-          <span className="text-4xl opacity-30">🔧</span>
+        <div className="nk-card stat-card">
+          <h3>Servicios Activos</h3>
+          <div className="value text-gray-800">{activos}</div>
         </div>
-        <div className="bg-white rounded-2xl p-5 shadow-sm border-l-4 border-[#0da766] flex justify-between items-center">
-          <div>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Completados Hoy</div>
-            <div className="text-3xl font-black text-gray-800">{completadosHoy}</div>
-          </div>
-          <span className="text-4xl opacity-30 text-[#0da766]">✓</span>
+        <div className="nk-card stat-card">
+          <h3>Completados Hoy</h3>
+          <div className="value text-[#0da766]">{completadosHoy}</div>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="nk-card overflow-hidden">
         <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
           <div className="font-bold text-gray-500">Lista de Tareas Pendientes</div>
         </div>
@@ -124,28 +118,28 @@ export default function MisServiciosPage() {
           <div className="p-8 text-center text-gray-400">No tienes servicios asignados.</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-center">
-              <thead className="bg-white border-b border-gray-100">
+            <table className="w-full text-sm text-center table-custom">
+              <thead>
                 <tr>
                   {["ID", "Cliente", "Prioridad", "Estado", "Acción"].map((h, i) => (
                     <th key={i} className={`py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider ${i === 0 ? "text-left" : ""}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {servicios.map((s, i) => (
-                  <tr key={s.id || i} className="hover:bg-gray-50 transition-colors">
+                  <tr key={s.id || i}>
                     <td className="py-4 px-4 text-left">
                       <div className="font-black text-gray-800">{s.id?.slice(0, 8)}</div>
                     </td>
                     <td className="py-4 px-4 font-bold text-gray-700">{s.cliente_nombre}</td>
                     <td className="py-4 px-4">
-                      <span className={`${priorityClass(s.prioridad)} text-xs font-bold px-3 py-1 rounded-full`}>
+                      <span className={`status-badge ${priorityClass(s.prioridad)}`}>
                         {s.prioridad || 'Media'}
                       </span>
                     </td>
                     <td className="py-4 px-4">
-                      <span className={`${badgeClass(s.estado)} text-xs font-bold px-3 py-1.5 rounded-full inline-block w-full max-w-[100px]`}>{s.estado}</span>
+                      <span className={`status-badge ${badgeClass(s.estado)} inline-block w-full max-w-[100px]`}>{s.estado}</span>
                     </td>
                     <td className="py-4 px-4">
                       <button
@@ -165,7 +159,7 @@ export default function MisServiciosPage() {
 
       {modalOpen && selectedServicio && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setModalOpen(false)}>
-          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-6 md:p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <h5 className="font-black text-[#0da766] text-xl">#{selectedServicio.id?.slice(0, 8)}</h5>
               <button onClick={() => setModalOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
@@ -175,7 +169,7 @@ export default function MisServiciosPage() {
               <div><strong className="text-gray-500">Descripción:</strong>
                 <p className="text-gray-800 mt-1 bg-gray-50 rounded-xl p-3 whitespace-pre-wrap max-h-40 overflow-y-auto">{selectedServicio.descripcion || "Sin descripción"}</p>
               </div>
-              <div><strong className="text-gray-500">Estado actual:</strong> <span className={`${badgeClass(selectedServicio.estado)} text-xs font-bold px-2 py-0.5 rounded-full`}>{selectedServicio.estado}</span></div>
+              <div><strong className="text-gray-500">Estado actual:</strong> <span className={`status-badge ${badgeClass(selectedServicio.estado)}`}>{selectedServicio.estado}</span></div>
             </div>
             <div className="space-y-4">
               <div>
@@ -215,7 +209,7 @@ export default function MisServiciosPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

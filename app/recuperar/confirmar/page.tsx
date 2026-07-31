@@ -54,49 +54,52 @@ function ConfirmarContent() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f3f4f6] flex flex-col items-center justify-between py-10 px-4">
-      <div />
-
-      <div className="bg-white w-full max-w-[440px] px-10 py-10 rounded-[28px] shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex flex-col items-center border border-gray-100">
-        <div className="mb-6">
-          <Image src="/logo.png" alt="Nakeema Logo" width={180} height={50} priority className="object-contain" />
+    <main className="login-container">
+      <div className="login-card">
+        <div className="login-logo">
+          <Image src="/logo.png" alt="Nakeema Logo" width={200} height={55} priority className="nk-img-contain-lg h-auto" />
         </div>
 
-        <h2 className="text-xl font-bold text-gray-800 mb-2 text-center">Nueva Contraseña</h2>
-        <p className="text-sm text-gray-500 text-center mb-6">Escribe tu nueva contraseña para recuperar el acceso a tu cuenta.</p>
+        <h2 className="text-lg font-bold text-nk-muted mb-2 text-center">Nueva Contraseña</h2>
+        <p className="text-sm text-nk-muted text-center mb-5 fs-13">
+          Escribe tu nueva contraseña para recuperar el acceso a tu cuenta.
+        </p>
 
         {!token ? (
           <div className="w-full p-4 bg-red-50 text-red-600 border border-red-100 rounded-xl text-sm text-center font-medium">
             El enlace de recuperación es inválido. Solicita uno nuevo.
           </div>
         ) : (
-          <form onSubmit={handleCambiar} className="w-full space-y-4">
-            <div>
+          <form onSubmit={handleCambiar}>
+            <div className="form-floating-custom">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
               <input
                 type="password"
                 placeholder="Nueva contraseña"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3.5 bg-[#f8fafc] text-gray-700 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 border border-gray-100 transition-all text-sm"
               />
             </div>
-            <div>
+            <div className="form-floating-custom">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
               <input
                 type="password"
                 placeholder="Confirmar nueva contraseña"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3.5 bg-[#f8fafc] text-gray-700 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500/20 border border-gray-100 transition-all text-sm"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 text-white font-semibold rounded-xl shadow-md active:scale-[0.99] transition-all text-sm mt-4 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
-              style={{ background: "linear-gradient(to right, #5cb85c, #00693e)" }}
+              className="btn-nakeema mt-2 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -119,16 +122,14 @@ function ConfirmarContent() {
           </div>
         )}
 
-        <div className="mt-6 flex flex-col items-center space-y-1.5 text-sm text-gray-500">
-          <p>
-            <Link href="/" className="text-[#0da766] font-bold hover:underline">
-              Volver al Inicio de Sesión
-            </Link>
-          </p>
+        <div className="login-links">
+          <Link href="/" className="hover:text-[#0da766]">
+            <i className="mr-1">←</i> Volver a <b>Iniciar Sesión</b>
+          </Link>
         </div>
       </div>
 
-      <p className="text-[11px] text-gray-400 tracking-wide mt-6">
+      <p className="copyright">
         © 2026 Todos los derechos Reservados. Nakeema
       </p>
     </main>

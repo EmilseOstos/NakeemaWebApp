@@ -62,14 +62,14 @@ export default function ClienteDashboard() {
 
   return (
     <div className="space-y-5">
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="nk-card welcome-card-client p-6">
         <h4 className="font-black text-gray-800 text-xl mb-1">¡Hola, {userName}! 👋</h4>
         <p className="text-gray-500 text-sm">
           Tienes <strong className="text-yellow-500">{pendientes} servicio{pendientes !== 1 ? 's' : ''} en proceso</strong> actualmente.
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl px-6 pt-6 pb-2 shadow-sm border border-gray-100">
+      <div className="nk-card px-6 pt-6 pb-2">
         <h5 className="font-black text-[#0da766] text-lg mb-1">Historial Reciente</h5>
 
         {servicios.length === 0 ? (
@@ -93,7 +93,7 @@ export default function ClienteDashboard() {
                   </div>
                 </div>
                 <div className="md:text-center">
-                  <span className={`${badgeClass(s.estado)} text-xs font-bold px-3 py-1.5 rounded-full inline-flex items-center gap-1`}>
+                  <span className={`status-badge ${badgeClass(s.estado)}`}>
                     {s.estado}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ export default function ClienteDashboard() {
         )}
       </div>
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

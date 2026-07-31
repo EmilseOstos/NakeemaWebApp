@@ -164,12 +164,12 @@ export default function TecnicosPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tecnicos.map((t, i) => (
-            <div key={t.id || i} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center relative flex flex-col h-full hover:shadow-md transition-shadow">
-              <span className={`absolute top-4 right-4 text-xs font-bold px-3 py-1 rounded-full ${getBadgeClass(t.estado)}`}>
+            <div key={t.id || i} className="nk-card p-6 text-center relative flex flex-col h-full">
+              <span className={`status-badge absolute top-4 right-4 ${getBadgeClass(t.estado)}`}>
                 {t.estado}
               </span>
 
-              <div className={`w-20 h-20 mx-auto rounded-full ${AVATAR_COLORS[i % AVATAR_COLORS.length]} text-white flex items-center justify-center text-3xl mb-4 shadow-sm border-4 border-white ring-1 ring-gray-100`}>
+              <div className={`avatar-tech mx-auto text-3xl mb-4 ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}>
                 {t.nombre?.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() || "👤"}
               </div>
 
@@ -217,7 +217,7 @@ export default function TecnicosPage() {
 
       {perfilTecnico && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setPerfilTecnico(null)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <h3 className="font-black text-[#0da766] text-lg">Perfil del Técnico</h3>
               <button onClick={() => setPerfilTecnico(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center">✕</button>
@@ -235,7 +235,7 @@ export default function TecnicosPage() {
               ))}
               <div className="flex justify-between items-center">
                 <span className="font-bold text-gray-500">Estado:</span>
-                <span className={`${getBadgeClass(perfilTecnico.estado)} text-xs font-bold px-3 py-1 rounded-full`}>{perfilTecnico.estado}</span>
+                <span className={`status-badge ${getBadgeClass(perfilTecnico.estado)}`}>{perfilTecnico.estado}</span>
               </div>
             </div>
             <button onClick={() => setPerfilTecnico(null)} className="mt-6 w-full bg-[#0da766] text-white font-bold py-3 rounded-xl hover:bg-[#0a8752] transition-colors">
@@ -247,7 +247,7 @@ export default function TecnicosPage() {
 
       {asignarTecnico && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => !asignando && setAsignarTecnico(null)}>
-          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-6 md:p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <h5 className="font-black text-[#0da766] text-xl">Asignar Servicio</h5>
               <button onClick={() => !asignando && setAsignarTecnico(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
@@ -296,7 +296,7 @@ export default function TecnicosPage() {
       {/* Modal Añadir Técnico */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => !submitting && setModalOpen(false)}>
-          <div className="bg-white rounded-2xl p-6 md:p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-6 md:p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-6">
               <h5 className="font-black text-[#0da766] text-xl">Registrar Nuevo Técnico</h5>
               <button onClick={() => !submitting && setModalOpen(false)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
@@ -365,7 +365,7 @@ export default function TecnicosPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

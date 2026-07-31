@@ -96,21 +96,21 @@ export default function ReportesPage() {
       </div>
 
       <div className="grid grid-cols-3 gap-5">
-        <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm mb-1">Completados</p>
-          <p className="text-3xl font-black text-[#0da766]">{completados}</p>
+        <div className="nk-card stat-card-report success text-center">
+          <p className="fs-13-allcaps text-gray-500">Completados</p>
+          <p className="val-report">{completados}</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm mb-1">En Proceso</p>
-          <p className="text-3xl font-black text-yellow-500">{enProceso}</p>
+        <div className="nk-card stat-card-report warning text-center">
+          <p className="fs-13-allcaps text-gray-500">En Proceso</p>
+          <p className="val-report">{enProceso}</p>
         </div>
-        <div className="bg-white rounded-2xl p-5 text-center shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm mb-1">Pendientes</p>
-          <p className="text-3xl font-black text-red-500">{pendientes}</p>
+        <div className="nk-card stat-card-report danger text-center">
+          <p className="fs-13-allcaps text-gray-500">Pendientes</p>
+          <p className="val-report">{pendientes}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div className="nk-card p-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <select
             value={filtroEstado}
@@ -159,9 +159,9 @@ export default function ReportesPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="table-custom w-full text-left">
               <thead>
-                <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                <tr className="text-gray-600 text-sm">
                   <th className="py-3 px-4 font-medium">ID</th>
                   <th className="py-3 px-4 font-medium">Cliente</th>
                   <th className="py-3 px-4 font-medium">Técnico</th>
@@ -169,14 +169,14 @@ export default function ReportesPage() {
                   <th className="py-3 px-4 font-medium">Fecha</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {filtered.map(s => (
-                  <tr key={s.id} className="hover:bg-gray-50/50">
+                  <tr key={s.id}>
                     <td className="py-3 px-4 text-xs text-gray-500 font-mono">#{s.id.slice(0, 8)}</td>
                     <td className="py-3 px-4 text-gray-800 font-medium">{s.cliente_nombre}</td>
                     <td className="py-3 px-4 text-gray-600">{s.tecnico_nombre}</td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                      <span className={`status-badge ${
                         s.estado === "Finalizado" || s.estado === "Completado" ? "bg-green-50 text-green-700" :
                         s.estado === "En Proceso" ? "bg-yellow-50 text-yellow-700" :
                         s.estado === "Cancelado" ? "bg-red-50 text-red-700" :

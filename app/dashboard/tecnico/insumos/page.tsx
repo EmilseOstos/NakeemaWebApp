@@ -82,7 +82,7 @@ export default function SolicitarInsumosPage() {
       <h3 className="font-black text-[#0da766] text-2xl">Solicitar Materiales a Bodega</h3>
 
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-gray-100">
+        <div className="nk-card p-6 md:p-10">
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <div className="md:col-span-8">
@@ -140,7 +140,7 @@ export default function SolicitarInsumosPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

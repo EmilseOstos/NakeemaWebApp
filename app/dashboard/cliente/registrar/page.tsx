@@ -77,7 +77,7 @@ export default function RegistrarServicio() {
         </div>
 
         {/* Tarjeta Contenedora Limpia con Bordes Sutiles y Alineación Perfecta */}
-        <div className="bg-white p-10 rounded-3xl shadow-sm border border-slate-100/80 w-full">
+        <div className="nk-card p-10 w-full">
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Campo: Título */}
@@ -215,7 +215,7 @@ export default function RegistrarServicio() {
       {toast && <Toast message={toast} type={toastType} />}
 
       {/* PIE DE PÁGINA */}
-      <div className="w-full text-center pt-8 pb-2 text-[11px] font-semibold text-slate-400/90 tracking-wide">
+      <div className="nk-footer-inline">
         © 2026 Todos los derechos Reservados. Nakeema
       </div>
 

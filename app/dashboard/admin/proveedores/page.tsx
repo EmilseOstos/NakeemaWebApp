@@ -65,7 +65,7 @@ export default function ProveedoresPage() {
     <div className="p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center nk-card p-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Gestión de Proveedores</h1>
             <p className="text-gray-500 mt-1">Administra los proveedores y consulta los insumos disponibles.</p>
@@ -73,7 +73,7 @@ export default function ProveedoresPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="lg:col-span-1 nk-card p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-6">Registrar Proveedor</h2>
             
             {error && (
@@ -136,7 +136,7 @@ export default function ProveedoresPage() {
             </form>
           </div>
 
-          <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="lg:col-span-2 nk-card p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h2 className="text-xl font-semibold text-gray-800">Directorio de Insumos</h2>
               <div className="relative w-full sm:w-72">
@@ -155,15 +155,15 @@ export default function ProveedoresPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left" data-testid="tabla-proveedores">
+              <table className="table-custom w-full text-left" data-testid="tabla-proveedores">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                  <tr className="text-gray-600 text-sm">
                     <th className="py-3 px-4 rounded-tl-xl font-medium">Proveedor</th>
                     <th className="py-3 px-4 font-medium">Insumo</th>
                     <th className="py-3 px-4 rounded-tr-xl font-medium">Contacto</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody>
                   {loadingTabla ? (
                     <tr>
                       <td colSpan={3} className="py-8 text-center">
@@ -172,7 +172,7 @@ export default function ProveedoresPage() {
                     </tr>
                   ) : filteredProveedores.length > 0 ? (
                     filteredProveedores.map(p => (
-                      <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={p.id}>
                         <td className="py-4 px-4 text-gray-800 font-medium">{p.nombre}</td>
                         <td className="py-4 px-4 text-gray-600">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">

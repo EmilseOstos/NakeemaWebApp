@@ -54,30 +54,30 @@ export default function ServiciosActivosPage() {
       {loading ? (
         <div className="text-center py-10 text-gray-500 font-medium">Cargando...</div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="nk-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-center">
-              <thead className="bg-gray-50 border-b border-gray-100">
+            <table className="table-custom w-full text-sm text-center">
+              <thead>
                 <tr>
                   {["ID Servicio", "Descripción", "Fecha", "Técnico", "Estado", "Detalles"].map((h, i) => (
-                    <th key={i} className={`py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider ${i === 1 ? "text-left" : ""}`}>{h}</th>
+                    <th key={i} className={`${i === 1 ? "text-left" : ""}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {servicios.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-gray-400">No tienes servicios registrados.</td>
                   </tr>
                 ) : (
                   servicios.map((s, i) => (
-                    <tr key={s.id || i} className="hover:bg-gray-50 transition-colors">
+                    <tr key={s.id || i}>
                       <td className="py-4 px-4 font-bold text-gray-500">{s.id?.slice(0, 8)}</td>
                       <td className="py-4 px-4 text-left font-medium text-gray-700">{s.descripcion?.slice(0, 50)}</td>
                       <td className="py-4 px-4 text-gray-400">{formatFecha(s.fecha_creacion)}</td>
                       <td className="py-4 px-4 text-gray-700">{s.tecnico_nombre}</td>
                       <td className="py-4 px-4">
-                        <span className={`${badgeClass(s.estado)} text-xs font-bold px-4 py-1.5 rounded-full`}>{s.estado}</span>
+                        <span className={`status-badge ${badgeClass(s.estado)}`}>{s.estado}</span>
                       </td>
                       <td className="py-4 px-4">
                         <button
@@ -98,7 +98,7 @@ export default function ServiciosActivosPage() {
 
       {selected && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h3 className="font-black text-[#0da766] text-lg">Detalle</h3>
@@ -116,7 +116,7 @@ export default function ServiciosActivosPage() {
               {selected.prioridad && (
                 <div className="flex justify-between border-b border-gray-50 pb-2">
                   <span className="font-bold text-gray-500">Prioridad:</span>
-                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${selected.prioridad === 'Alta' ? 'bg-red-500 text-white' : selected.prioridad === 'Media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>{selected.prioridad}</span>
+                  <span className={`status-badge ${selected.prioridad === 'Alta' ? 'bg-red-500 text-white' : selected.prioridad === 'Media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>{selected.prioridad}</span>
                 </div>
               )}
               {selected.direccion && (
@@ -139,7 +139,7 @@ export default function ServiciosActivosPage() {
               <div className="flex justify-between border-b border-gray-50 pb-2"><span className="font-bold text-gray-500">Fecha:</span><span className="text-gray-800">{formatFecha(selected.fecha_creacion)}</span></div>
               <div className="flex justify-between items-center">
                 <span className="font-bold text-gray-500">Estado:</span>
-                <span className={`${badgeClass(selected.estado)} text-xs font-bold px-3 py-1 rounded-full`}>{selected.estado}</span>
+                <span className={`status-badge ${badgeClass(selected.estado)}`}>{selected.estado}</span>
               </div>
             </div>
             <button
@@ -153,7 +153,7 @@ export default function ServiciosActivosPage() {
         </div>
       )}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

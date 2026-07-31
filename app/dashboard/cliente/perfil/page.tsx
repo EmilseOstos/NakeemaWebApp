@@ -107,9 +107,9 @@ export default function MiPerfilPage() {
       <h3 className="font-black text-[#0da766] text-2xl">Mi Perfil</h3>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center flex flex-col items-center">
+        <div className="nk-card p-6 text-center flex flex-col items-center">
           <div className="relative w-32 h-32 mb-4">
-            <div className="w-full h-full rounded-full bg-[#0da766] flex items-center justify-center text-4xl text-white overflow-hidden shadow-sm border-4 border-gray-50">
+            <div className="avatar-profile-xl bg-[#0da766] text-4xl overflow-hidden shadow-sm border-4 border-gray-50">
               {nombre ? nombre.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() : "👤"}
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function MiPerfilPage() {
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div className="lg:col-span-2 nk-card p-6">
           <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-4 mb-5">Actualizar Datos Personales</h5>
 
           <form onSubmit={handleSave} className="space-y-4">
@@ -192,7 +192,7 @@ export default function MiPerfilPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

@@ -87,8 +87,8 @@ export default function ChatPanel({
   if (!servicioId) return null;
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className="chat-window">
+      <div className="chat-header">
         <h4 className="font-bold text-sm text-gray-800">Chat - #{servicioId.slice(0, 8)}</h4>
         {onClose && (
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -99,7 +99,7 @@ export default function ChatPanel({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="chat-messages">
         {loading ? (
           <div className="flex justify-center py-8">
             <div className="w-6 h-6 border-2 border-[#0da766] border-t-transparent rounded-full animate-spin" />
@@ -117,18 +117,14 @@ export default function ChatPanel({
                 className={`flex ${esPropio ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
-                    esPropio
-                      ? "bg-[#0da766] text-white rounded-br-md"
-                      : "bg-gray-100 text-gray-800 rounded-bl-md"
-                  }`}
+                  className={`msg-bubble ${esPropio ? "msg-user" : "msg-bot"}`}
                 >
                   <div className="text-xs font-bold opacity-70 mb-1">
                     {esPropio ? "Tú" : m.usuarios?.username || "Usuario"}{" "}
                     {m.usuarios?.roles?.nombre ? `(${m.usuarios.roles.nombre})` : ""}
                   </div>
                   <div>{m.mensaje}</div>
-                  <div className={`text-[10px] mt-1 ${esPropio ? "text-white/60" : "text-gray-400"}`}>
+                  <div className={`text-[10px] mt-1 ${esPropio ? "text-gray-400" : "text-white/60"}`}>
                     {new Date(m.fecha_envio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
@@ -139,18 +135,18 @@ export default function ChatPanel({
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSend} className="p-4 border-t border-gray-100 flex gap-2">
+      <form onSubmit={handleSend} className="chat-input-area">
         <input
           type="text"
           value={texto}
           onChange={e => setTexto(e.target.value)}
           placeholder="Escribe un mensaje..."
-          className="flex-1 bg-gray-50 border-0 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0da766]/30"
+          className="text-sm"
         />
         <button
           type="submit"
           disabled={!texto.trim() || enviando}
-          className="px-4 py-2.5 bg-[#0da766] text-white rounded-xl font-bold text-sm hover:bg-[#0a8752] transition-colors disabled:opacity-50"
+          className="bg-[#0da766] text-white font-bold text-sm hover:bg-[#0a8752] transition-colors disabled:opacity-50"
         >
           {enviando ? (
             <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin block" />

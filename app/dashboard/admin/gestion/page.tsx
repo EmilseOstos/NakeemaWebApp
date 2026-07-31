@@ -128,11 +128,11 @@ export default function GestionServiciosPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 flex justify-center">
+        <div className="nk-card p-10 flex justify-center">
           <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : error ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 text-center">
+        <div className="nk-card p-10 text-center">
           <p className="text-gray-500 font-medium mb-3">No se pudieron cargar los servicios.</p>
           <button
             onClick={fetchServicios}
@@ -142,7 +142,7 @@ export default function GestionServiciosPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="nk-card overflow-hidden">
           <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex flex-wrap gap-4 justify-between items-center">
             <div className="relative flex-grow max-w-md">
               <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">🔍</span>
@@ -168,28 +168,28 @@ export default function GestionServiciosPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-center">
-              <thead className="bg-gray-50 border-b border-gray-100">
+            <table className="table-custom w-full text-sm text-center">
+              <thead>
                 <tr>
                   {["ID Servicio", "Cliente", "Técnico", "Fecha", "Estado", "Acciones"].map((h, i) => (
                     <th key={i} className={`py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider ${i === 1 ? "text-left" : ""}`}>{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {filteredServicios.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-gray-400">No se encontraron servicios.</td>
                   </tr>
                 ) : (
                   filteredServicios.map((s, i) => (
-                    <tr key={s.id || i} className="hover:bg-gray-50 transition-colors">
+                    <tr key={s.id || i}>
                       <td className="py-4 px-4 font-bold text-gray-500">{s.id?.slice(0, 8)}</td>
                       <td className="py-4 px-4 text-left font-medium text-gray-700">{s.cliente_nombre}</td>
                       <td className="py-4 px-4 text-gray-700">{s.tecnico_nombre}</td>
                       <td className="py-4 px-4 text-gray-400">{formatFecha(s.fecha_creacion)}</td>
                       <td className="py-4 px-4">
-                        <span className={`${badgeStyle(s.estado)} text-xs font-bold px-4 py-1.5 rounded-full inline-block min-w-[100px]`}>
+                        <span className={`status-badge ${badgeStyle(s.estado)}`}>
                           {s.estado}
                         </span>
                       </td>
@@ -220,7 +220,7 @@ export default function GestionServiciosPage() {
 
       {selected && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => setSelected(null)}>
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-8 max-w-md w-full" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-6">
               <h3 className="font-black text-[#0da766] text-lg">Detalle del Servicio</h3>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center">✕</button>
@@ -266,7 +266,7 @@ export default function GestionServiciosPage() {
               )}
               <div className="flex justify-between items-center">
                 <span className="font-bold text-gray-500">Estado:</span>
-                <span className={`${badgeStyle(selected.estado)} text-xs font-bold px-3 py-1 rounded-full`}>{selected.estado}</span>
+                <span className={`status-badge ${badgeStyle(selected.estado)}`}>{selected.estado}</span>
               </div>
 
               <div className="pt-2">
@@ -300,7 +300,7 @@ export default function GestionServiciosPage() {
 
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4" onClick={() => !acting && setConfirmDelete(null)}>
-          <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-xl" onClick={e => e.stopPropagation()}>
+          <div className="nk-card p-8 max-w-sm w-full" onClick={e => e.stopPropagation()}>
             <h3 className="font-black text-gray-800 text-lg mb-3">¿Eliminar este servicio?</h3>
             <p className="text-gray-500 text-sm mb-6">
               El servicio #{confirmDelete.id.slice(0, 8)} se eliminará permanentemente. Esta acción no se puede deshacer.
@@ -327,7 +327,7 @@ export default function GestionServiciosPage() {
 
       {toast && <Toast message={toast} type={toastType} />}
 
-      <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
+      <p className="nk-footer-inline">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>
   );
 }

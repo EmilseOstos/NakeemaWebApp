@@ -148,49 +148,41 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <aside className="w-full bg-white rounded-[2rem] shadow-sm flex flex-col h-full overflow-hidden">
-      <div className="p-8 pb-4 flex justify-center">
-        {/* Usando Image de Next.js. Asegúrate de tener /logo.png en public */}
-        <Image src="/logo.png" alt="Nakeema Logo" width={160} height={40} className="h-auto w-40 object-contain" priority />
+    <div className="flex flex-col h-full">
+      <div className="sidebar-logo">
+        <Image src="/logo.png" alt="Nakeema Logo" width={160} height={40} className="nk-img-contain h-auto" priority />
       </div>
 
-      <nav className="flex-1 px-6 py-6 space-y-3 overflow-y-auto">
+      <nav className="flex flex-col gap-1 flex-1 overflow-y-auto pb-3">
         {currentMenu.map((item, idx) => {
-          // Coincidencia exacta o si la ruta actual empieza con href (excepto dashboard principal)
           const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== `/dashboard/${role}`);
           
           return (
             <button
               key={idx}
               onClick={() => handleNav(item.href)}
-              className={`flex items-center gap-4 px-5 py-3.5 transition-all duration-200 w-full text-left ${
-                isActive
-                  ? "bg-[#0da766] text-white rounded-xl font-bold shadow-md shadow-green-500/20"
-                  : "text-gray-500 hover:text-gray-800 font-bold bg-transparent"
-              }`}
+              className={`nav-link-custom flex-center-gap ${isActive ? "active" : ""}`}
             >
-              <div className={`${isActive ? "text-white" : "opacity-60"}`}>
-                {item.icon}
-              </div>
+              <span className={`${isActive ? "text-white" : "opacity-60"}`}>{item.icon}</span>
               <span className="text-[13px] tracking-wide">{item.label}</span>
             </button>
           );
         })}
-      </nav>
 
-      <div className="px-6 py-8">
-        <button
-          onClick={async () => {
-            await fetch('/api/logout', { method: 'POST' });
-            onClose?.();
-            router.push('/');
-          }}
-          className="flex items-center gap-3 px-5 py-3 text-[#d9304f] hover:bg-red-50 rounded-xl transition-colors font-black text-[13px] tracking-wide w-full"
-        >
-          <IconLogout />
-          Salir
-        </button>
-      </div>
-    </aside>
+        <div className="mt-auto pt-3">
+          <button
+            onClick={async () => {
+              await fetch('/api/logout', { method: 'POST' });
+              onClose?.();
+              router.push('/');
+            }}
+            className="nav-link-custom text-[#d9304f] flex-center-gap hover:bg-red-50"
+          >
+            <IconLogout />
+            <span className="text-[13px] tracking-wide font-bold">Salir</span>
+          </button>
+        </div>
+      </nav>
+    </div>
   );
 }
