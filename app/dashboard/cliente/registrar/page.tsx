@@ -1,17 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import Toast from '@/app/components/Toast';
 
 export default function RegistrarServicio() {
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [prioridad, setPrioridad] = useState('');
-  const [direccion, setDireccion] = useState('Avenida Principal 456, Edificio Central');
+  const [direccion, setDireccion] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const showToast = (msg: string, type: "success" | "error" = "success") => {
+    setToast(msg);
+    setToastType(type);
+    setTimeout(() => setToast(""), 3000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setLoading(true);
+
     try {
       const response = await fetch('/api/servicios', {
         method: 'POST',
@@ -28,18 +39,28 @@ export default function RegistrarServicio() {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Solicitud registrada con éxito en Supabase');
+        showToast('Solicitud registrada exitosamente');
         setTitulo('');
         setCategoria('');
         setPrioridad('');
+        setDireccion('');
         setDescripcion('');
       } else {
-        alert(`Error al registrar: ${data.error || 'Ocurrió un problema'}`);
+        showToast(`Error al registrar: ${data.error || 'Ocurrió un problema'}`, 'error');
       }
-    } catch (error) {
-      console.error('Error enviando la solicitud:', error);
-      alert('Error de conexión al servidor');
+    } catch {
+      showToast('Error de conexión al servidor', 'error');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleCancelar = () => {
+    setTitulo('');
+    setCategoria('');
+    setPrioridad('');
+    setDireccion('');
+    setDescripcion('');
   };
 
   return (
@@ -67,6 +88,7 @@ export default function RegistrarServicio() {
               <input
                 type="text"
                 placeholder="Ej. Falla en el sistema eléctrico principal"
+                required
                 value={titulo}
                 onChange={(e) => setTitulo(e.target.value)}
                 className="w-full px-4 py-3.5 bg-[#f4f6f8] text-slate-700 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent transition-all text-sm"
@@ -84,6 +106,7 @@ export default function RegistrarServicio() {
                 <div className="relative">
                   <select
                     value={categoria}
+                    required
                     onChange={(e) => setCategoria(e.target.value)}
                     className="w-full px-4 py-3.5 bg-[#f4f6f8] text-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent appearance-none transition-all text-sm cursor-pointer"
                   >
@@ -108,6 +131,7 @@ export default function RegistrarServicio() {
                 <div className="relative">
                   <select
                     value={prioridad}
+                    required
                     onChange={(e) => setPrioridad(e.target.value)}
                     className="w-full px-4 py-3.5 bg-[#f4f6f8] text-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent appearance-none transition-all text-sm cursor-pointer"
                   >
@@ -139,9 +163,11 @@ export default function RegistrarServicio() {
                 </span>
                 <input
                   type="text"
+                  placeholder="Ej. Calle 45 #12-34, Barrio Centro"
+                  required
                   value={direccion}
                   onChange={(e) => setDireccion(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-[#f4f6f8] text-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent transition-all text-sm"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[#f4f6f8] text-slate-700 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent transition-all text-sm"
                 />
               </div>
             </div>
@@ -154,6 +180,7 @@ export default function RegistrarServicio() {
               <textarea
                 rows={5}
                 placeholder="Describe los detalles del problema, síntomas que presenta o requerimientos específicos..."
+                required
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 className="w-full px-4 py-3.5 bg-[#f4f6f8] text-slate-700 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent transition-all text-sm resize-none"
@@ -164,28 +191,28 @@ export default function RegistrarServicio() {
             <div className="flex items-center justify-center gap-6 pt-6">
               <button
                 type="button"
-                className="w-48 py-3 bg-[#6c757d] hover:bg-[#5a6268] text-white font-medium rounded-full shadow-sm transition-all text-sm text-center"
-                onClick={() => {
-                  setTitulo('');
-                  setCategoria('');
-                  setPrioridad('');
-                  setDescripcion('');
-                }}
+                disabled={loading}
+                className="w-48 py-3 bg-[#6c757d] hover:bg-[#5a6268] text-white font-medium rounded-full shadow-sm transition-all text-sm text-center disabled:opacity-50"
+                onClick={handleCancelar}
               >
                 Cancelar
               </button>
 
               <button
                 type="submit"
-                className="w-48 py-3 bg-gradient-to-r from-[#5cb85c] to-[#00693e] text-white font-medium rounded-full shadow-sm hover:opacity-95 active:scale-[0.99] transition-all text-sm text-center"
+                disabled={loading}
+                className="w-48 py-3 bg-gradient-to-r from-[#5cb85c] to-[#00693e] text-white font-medium rounded-full shadow-sm hover:opacity-95 active:scale-[0.99] transition-all text-sm text-center flex items-center justify-center gap-2 disabled:opacity-70"
               >
-                Registrar Solicitud
+                {loading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                {loading ? "Registrando..." : "Registrar Solicitud"}
               </button>
             </div>
 
           </form>
         </div>
       </div>
+
+      {toast && <Toast message={toast} type={toastType} />}
 
       {/* PIE DE PÁGINA */}
       <div className="w-full text-center pt-8 pb-2 text-[11px] font-semibold text-slate-400/90 tracking-wide">

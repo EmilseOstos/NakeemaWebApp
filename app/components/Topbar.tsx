@@ -1,16 +1,54 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 type User = { id: string; email: string; rol: string };
 
+type Notificacion = {
+  id: string;
+  texto: string;
+  ruta: string;
+};
+
+const normalizarRol = (rol: string) =>
+  rol.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 export default function Topbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [notifications] = useState<string[]>([]);
+  const [notifications, setNotifications] = useState<Notificacion[]>([]);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  const cargarNotificaciones = useCallback(() => {
+    const rolLower = user ? normalizarRol(user.rol) : null;
+    fetch('/api/perfil')
+      .then(res => res.json())
+      .then(data => {
+        const perfilId = data.data?.id;
+        let endpoint = '/api/servicios';
+        if (rolLower === 'tecnico' && perfilId) endpoint = `/api/servicios?tecnico_id=${perfilId}`;
+        else if (rolLower === 'cliente' && perfilId) endpoint = `/api/servicios?cliente_id=${perfilId}`;
+
+        fetch(endpoint)
+          .then(res => res.json())
+          .then(json => {
+            const activos = (json.data || []).filter(
+              (s: Record<string, unknown>) => s.estado === 'Pendiente' || s.estado === 'En Proceso'
+            );
+            const base = rolLower === 'admin' ? '/dashboard/admin/gestion' : rolLower === 'tecnico' ? '/dashboard/tecnico/servicios' : '/dashboard/cliente/activos';
+            setNotifications(activos.slice(0, 10).map((s: Record<string, unknown>) => ({
+              id: s.id as string,
+              texto: `${(s.titulo as string) || 'Servicio'} #${(s.id as string).slice(0, 8)} - ${s.estado}`,
+              ruta: base,
+            })));
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
+  }, [user]);
 
   useEffect(() => {
     fetch('/api/me')
@@ -18,6 +56,13 @@ export default function Topbar({ onMenuToggle }: { onMenuToggle?: () => void }) 
       .then(data => setUser(data.user))
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    cargarNotificaciones();
+    const interval = setInterval(cargarNotificaciones, 30000);
+    return () => clearInterval(interval);
+  }, [user, cargarNotificaciones]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -63,17 +108,15 @@ export default function Topbar({ onMenuToggle }: { onMenuToggle?: () => void }) 
           <button
             onClick={() => setNotifOpen(!notifOpen)}
             className="text-gray-400 hover:text-[#0da766] transition-colors relative"
+            aria-label={`Notificaciones${notifCount ? ` (${notifCount} pendientes)` : ''}`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
             </svg>
             {notifCount > 0 && (
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-white">
-                {notifCount}
+                {notifCount > 9 ? "9+" : notifCount}
               </span>
-            )}
-            {notifCount === 0 && (
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             )}
           </button>
 
@@ -84,14 +127,22 @@ export default function Topbar({ onMenuToggle }: { onMenuToggle?: () => void }) 
               </div>
               {notifications.length === 0 ? (
                 <div className="px-5 py-8 text-center text-gray-400 text-sm">
-                  No hay notificaciones nuevas
+                  No hay servicios pendientes por atender.
                 </div>
               ) : (
                 <div className="max-h-64 overflow-y-auto">
-                  {notifications.map((n, i) => (
-                    <div key={i} className="px-5 py-3 hover:bg-gray-50 border-b border-gray-50 text-sm text-gray-600">
-                      {n}
-                    </div>
+                  {notifications.map((n) => (
+                    <button
+                      key={n.id}
+                      onClick={() => {
+                        setNotifOpen(false);
+                        router.push(n.ruta);
+                      }}
+                      className="w-full text-left px-5 py-3 hover:bg-gray-50 border-b border-gray-50 text-sm text-gray-600 flex items-start gap-2"
+                    >
+                      <span className="w-2 h-2 bg-red-400 rounded-full mt-1.5 flex-shrink-0"></span>
+                      <span>{n.texto}</span>
+                    </button>
                   ))}
                 </div>
               )}

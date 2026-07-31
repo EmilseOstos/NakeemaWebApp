@@ -1,21 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Toast from "@/app/components/Toast";
 
 type Servicio = {
   id: string;
   descripcion: string;
+  prioridad: string;
   estado: string;
   fecha_creacion: string;
+  fecha_completado?: string;
   cliente_nombre: string;
 };
 
 export default function MisServiciosPage() {
+  const router = useRouter();
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedServicio, setSelectedServicio] = useState<Servicio | null>(null);
   const [nuevoEstado, setNuevoEstado] = useState("");
+  const [guardando, setGuardando] = useState(false);
+  const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   useEffect(() => {
     fetch('/api/perfil')
@@ -32,9 +40,10 @@ export default function MisServiciosPage() {
   }, []);
 
   const activos = servicios.filter(s => s.estado !== 'Finalizado' && s.estado !== 'Completado' && s.estado !== 'Cancelado').length;
+  const hoy = new Date().toDateString();
   const completadosHoy = servicios.filter(s =>
     (s.estado === 'Finalizado' || s.estado === 'Completado') &&
-    new Date(s.fecha_creacion).toDateString() === new Date().toDateString()
+    (s.fecha_completado ? new Date(s.fecha_completado).toDateString() === hoy : new Date(s.fecha_creacion).toDateString() === hoy)
   ).length;
 
   const badgeClass = (estado: string) => {
@@ -50,15 +59,9 @@ export default function MisServiciosPage() {
     return 'bg-gray-100 text-gray-600';
   };
 
-  const extractPriority = (descripcion: string) => {
-    if (!descripcion) return 'Media';
-    if (descripcion.includes('Alta') || descripcion.includes('alta')) return 'Alta';
-    if (descripcion.includes('Baja') || descripcion.includes('baja')) return 'Baja';
-    return 'Media';
-  };
-
   const handleGuardarEstado = async () => {
     if (!selectedServicio || !nuevoEstado) return;
+    setGuardando(true);
     try {
       const res = await fetch('/api/servicios', {
         method: 'PATCH',
@@ -66,6 +69,8 @@ export default function MisServiciosPage() {
         body: JSON.stringify({ id: selectedServicio.id, estado: nuevoEstado }),
       });
       if (res.ok) {
+        setToast(`Servicio actualizado a "${nuevoEstado}"`);
+        setToastType("success");
         setModalOpen(false);
         const data = await fetch(`/api/perfil`).then(r => r.json());
         if (data.data?.id) {
@@ -74,10 +79,15 @@ export default function MisServiciosPage() {
           setServicios(j.data || []);
         }
       } else {
-        alert('Error al actualizar estado');
+        setToast("Error al actualizar estado");
+        setToastType("error");
       }
     } catch {
-      alert('Error de conexión');
+      setToast("Error de conexión");
+      setToastType("error");
+    } finally {
+      setGuardando(false);
+      setTimeout(() => setToast(""), 3000);
     }
   };
 
@@ -130,8 +140,8 @@ export default function MisServiciosPage() {
                     </td>
                     <td className="py-4 px-4 font-bold text-gray-700">{s.cliente_nombre}</td>
                     <td className="py-4 px-4">
-                      <span className={`${priorityClass(extractPriority(s.descripcion))} text-xs font-bold px-3 py-1 rounded-full`}>
-                        {extractPriority(s.descripcion)}
+                      <span className={`${priorityClass(s.prioridad)} text-xs font-bold px-3 py-1 rounded-full`}>
+                        {s.prioridad || 'Media'}
                       </span>
                     </td>
                     <td className="py-4 px-4">
@@ -162,6 +172,9 @@ export default function MisServiciosPage() {
             </div>
             <div className="space-y-3 text-sm mb-6 pb-6 border-b border-gray-100">
               <div><strong className="text-gray-500">Cliente:</strong> <span className="text-gray-800 font-medium">{selectedServicio.cliente_nombre}</span></div>
+              <div><strong className="text-gray-500">Descripción:</strong>
+                <p className="text-gray-800 mt-1 bg-gray-50 rounded-xl p-3 whitespace-pre-wrap max-h-40 overflow-y-auto">{selectedServicio.descripcion || "Sin descripción"}</p>
+              </div>
               <div><strong className="text-gray-500">Estado actual:</strong> <span className={`${badgeClass(selectedServicio.estado)} text-xs font-bold px-2 py-0.5 rounded-full`}>{selectedServicio.estado}</span></div>
             </div>
             <div className="space-y-4">
@@ -180,12 +193,27 @@ export default function MisServiciosPage() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setModalOpen(false)} className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-full font-bold text-sm hover:bg-gray-200 transition-colors">Cerrar</button>
-              <button onClick={handleGuardarEstado} className="flex-1 py-3 bg-[#0da766] text-white rounded-full font-bold text-sm hover:bg-[#0a8752] transition-colors shadow-sm">Guardar</button>
+              <button
+                onClick={() => { setModalOpen(false); router.push(`/dashboard/chat?servicio=${selectedServicio.id}`); }}
+                className="flex-1 py-3 bg-blue-50 text-blue-600 rounded-full font-bold text-sm hover:bg-blue-100 transition-colors"
+              >
+                💬 Chat
+              </button>
+              <button onClick={() => setModalOpen(false)} disabled={guardando} className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-full font-bold text-sm hover:bg-gray-200 transition-colors disabled:opacity-50">Cerrar</button>
+              <button
+                onClick={handleGuardarEstado}
+                disabled={guardando || nuevoEstado === selectedServicio.estado}
+                className="flex-1 py-3 bg-[#0da766] text-white rounded-full font-bold text-sm hover:bg-[#0a8752] transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {guardando && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                {guardando ? "Guardando..." : "Guardar"}
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      {toast && <Toast message={toast} type={toastType} />}
 
       <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>

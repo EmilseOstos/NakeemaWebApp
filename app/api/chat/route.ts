@@ -35,6 +35,7 @@ export async function GET(request: Request) {
         mensaje,
         fecha_envio,
         leido,
+        remitente_id,
         usuarios (
           username,
           roles (

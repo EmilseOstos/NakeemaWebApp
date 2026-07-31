@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 type Servicio = {
   id: string;
+  titulo?: string | null;
   descripcion: string;
   estado: string;
   fecha_creacion: string;
@@ -13,32 +14,44 @@ type Servicio = {
 
 export default function ClienteDashboard() {
   const [servicios, setServicios] = useState<Servicio[]>([]);
-  const [clienteId, setClienteId] = useState<string | null>(null);
   const [userName, setUserName] = useState("Usuario");
 
   useEffect(() => {
-    fetch('/api/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) setUserName(data.user.email?.split('@')[0] || 'Usuario');
-      })
-      .catch(() => {});
+    const timer = setTimeout(() => {
+      fetch('/api/perfil')
+        .then(res => res.json())
+        .then(data => {
+          if (data.data) {
+            if (data.data.nombre) setUserName(data.data.nombre);
+            if (data.data.id) {
+              return fetch(`/api/servicios?cliente_id=${data.data.id}`);
+            }
+          }
+          return null;
+        })
+        .then(res => {
+          if (res) return res.json();
+          return null;
+        })
+        .then(d => {
+          if (d?.data) setServicios(d.data || []);
+        })
+        .catch(() => {});
 
-    fetch('/api/perfil')
-      .then(res => res.json())
-      .then(data => {
-        if (data.data?.id) {
-          setClienteId(data.data.id);
-          return fetch(`/api/servicios?cliente_id=${data.data.id}`);
-        }
-        return null;
-      })
-      .then(res => res?.json().then(d => setServicios(d.data || [])))
-      .catch(() => {});
+      fetch('/api/me')
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) setUserName(prev => prev === "Usuario" ? (data.user.email?.split('@')[0] || 'Usuario') : prev);
+        })
+        .catch(() => {});
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const pendientes = servicios.filter(s => s.estado === 'Pendiente' || s.estado === 'En Proceso').length;
-  const completados = servicios.filter(s => s.estado === 'Finalizado' || s.estado === 'Completado');
+
+  const formatFecha = (fecha?: string) =>
+    fecha ? new Date(fecha).toLocaleDateString("es-CO") : "—";
 
   const badgeClass = (estado: string) => {
     if (estado === 'Finalizado' || estado === 'Completado') return 'bg-[#0da766] text-white';
@@ -75,7 +88,7 @@ export default function ClienteDashboard() {
                     🔧
                   </div>
                   <div>
-                    <div className="font-bold text-gray-800 text-sm leading-tight">{s.descripcion?.slice(0, 40)}</div>
+                    <div className="font-bold text-gray-800 text-sm leading-tight">{s.titulo || s.descripcion?.slice(0, 40)}</div>
                     <div className="text-gray-400 text-xs">{s.tecnico_nombre}</div>
                   </div>
                 </div>
@@ -85,7 +98,7 @@ export default function ClienteDashboard() {
                   </span>
                 </div>
                 <div className="md:text-right text-gray-400 text-sm font-medium">
-                  {new Date(s.fecha_creacion).toLocaleDateString()}
+                  {formatFecha(s.fecha_creacion)}
                 </div>
               </div>
             ))}

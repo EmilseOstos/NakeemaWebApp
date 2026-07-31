@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Toast from "@/app/components/Toast";
 
 type InventarioItem = {
   id: string;
@@ -14,22 +15,37 @@ export default function SolicitarInsumosPage() {
   const [itemId, setItemId] = useState("");
   const [cantidad, setCantidad] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [cargandoInventario, setCargandoInventario] = useState(true);
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   useEffect(() => {
     fetch('/api/inventario')
       .then(res => res.json())
       .then(data => setInventario(data.data || []))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setCargandoInventario(false));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itemId) {
       setToast("Selecciona un material");
+      setToastType("error");
       setTimeout(() => setToast(""), 3000);
       return;
     }
+    const item = inventario.find(i => i.id === itemId);
+    if (item && cantidad > item.cantidad) {
+      setToast(`Solo hay ${item.cantidad} ${item.unidad_medida} disponibles`);
+      setToastType("error");
+      setTimeout(() => setToast(""), 3000);
+      return;
+    }
+    const confirmado = window.confirm(
+      `¿Solicitar ${cantidad} ${item?.unidad_medida || ""} de "${item?.nombre || "este material"}"?\nEsto descontará el stock disponible.`
+    );
+    if (!confirmado) return;
     setLoading(true);
     try {
       const res = await fetch('/api/inventario', {
@@ -40,14 +56,19 @@ export default function SolicitarInsumosPage() {
       const data = await res.json();
       if (res.ok) {
         setToast(`Solicitud exitosa. Stock restante: ${data.data?.cantidad}`);
+        setToastType("success");
         const r = await fetch('/api/inventario');
         const j = await r.json();
         setInventario(j.data || []);
+        setItemId("");
+        setCantidad(1);
       } else {
         setToast(data.error || "Error al solicitar material");
+        setToastType("error");
       }
     } catch {
       setToast("Error de conexión");
+      setToastType("error");
     } finally {
       setLoading(false);
       setTimeout(() => setToast(""), 3000);
@@ -66,19 +87,27 @@ export default function SolicitarInsumosPage() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
               <div className="md:col-span-8">
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Material</label>
-                <select
-                  value={itemId}
-                  onChange={(e) => setItemId(e.target.value)}
-                  className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30 font-bold text-gray-700 appearance-none"
-                  required
-                >
-                  <option value="">Seleccionar material...</option>
-                  {inventario.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.nombre} ({item.cantidad} {item.unidad_medida})
-                    </option>
-                  ))}
-                </select>
+                {cargandoInventario ? (
+                  <div className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-400">Cargando inventario...</div>
+                ) : inventario.length === 0 ? (
+                  <div className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-400">
+                    No hay materiales disponibles en bodega.
+                  </div>
+                ) : (
+                  <select
+                    value={itemId}
+                    onChange={(e) => setItemId(e.target.value)}
+                    className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0da766]/30 font-bold text-gray-700 appearance-none"
+                    required
+                  >
+                    <option value="">Seleccionar material...</option>
+                    {inventario.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.nombre} ({item.cantidad} {item.unidad_medida})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div className="md:col-span-4">
@@ -97,8 +126,8 @@ export default function SolicitarInsumosPage() {
               <div className="md:col-span-12 pt-4 flex justify-center border-t border-gray-100 mt-2">
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="px-8 py-3.5 bg-[#0da766] text-white rounded-full font-bold text-sm hover:bg-[#0a8752] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-70"
+                  disabled={loading || inventario.length === 0}
+                  className="px-8 py-3.5 bg-[#0da766] text-white rounded-full font-bold text-sm hover:bg-[#0a8752] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
                 >
                   {loading ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : null}
                   Solicitar Material
@@ -109,9 +138,7 @@ export default function SolicitarInsumosPage() {
         </div>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">{toast}</div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
 
       <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>

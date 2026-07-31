@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type Servicio = {
   id: string;
+  titulo?: string | null;
+  prioridad?: string | null;
   descripcion: string;
   estado: string;
   fecha_creacion: string;
+  fecha_completado?: string;
   cliente_nombre: string;
 };
 
@@ -16,6 +20,7 @@ type Tecnico = {
 };
 
 export default function TecnicoDashboard() {
+  const router = useRouter();
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [tecnico, setTecnico] = useState<Tecnico | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,10 +43,14 @@ export default function TecnicoDashboard() {
 
   const asignados = servicios.length;
   const enProceso = servicios.filter(s => s.estado === 'En Proceso').length;
+  const hoy = new Date().toDateString();
   const cerradosHoy = servicios.filter(s =>
     (s.estado === 'Finalizado' || s.estado === 'Completado') &&
-    new Date(s.fecha_creacion).toDateString() === new Date().toDateString()
+    (s.fecha_completado ? new Date(s.fecha_completado).toDateString() === hoy : new Date(s.fecha_creacion).toDateString() === hoy)
   ).length;
+
+  const formatFecha = (fecha?: string) =>
+    fecha ? new Date(fecha).toLocaleDateString("es-CO") : "—";
 
   const badgeClass = (estado: string) => {
     if (estado === 'Finalizado' || estado === 'Completado') return 'bg-[#0da766] text-white';
@@ -118,10 +127,30 @@ export default function TecnicoDashboard() {
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
             </div>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-gray-500 font-medium">Cliente:</span><span className="font-bold text-gray-800">{selected.cliente_nombre}</span></div>
+              {selected.titulo && <div className="flex justify-between"><span className="text-gray-500 font-medium">Título:</span><span className="font-bold text-gray-800 text-right">{selected.titulo}</span></div>}
+              <div className="flex justify-between"><span className="text-gray-500 font-medium">Cliente:</span><span className="font-bold text-gray-800 text-right">{selected.cliente_nombre}</span></div>
+              {selected.prioridad && (
+                <div className="flex justify-between"><span className="text-gray-500 font-medium">Prioridad:</span>
+                  <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${selected.prioridad === 'Alta' ? 'bg-red-500 text-white' : selected.prioridad === 'Media' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600'}`}>{selected.prioridad}</span>
+                </div>
+              )}
               <div className="flex justify-between"><span className="text-gray-500 font-medium">Estado:</span><span className={`${badgeClass(selected.estado)} font-bold px-2 py-0.5 rounded-full text-xs`}>{selected.estado}</span></div>
+              <div className="border-t border-gray-100 pt-3">
+                <span className="text-gray-500 font-medium">Descripción:</span>
+                <p className="text-gray-800 mt-1.5 bg-gray-50 rounded-xl p-3 whitespace-pre-wrap max-h-48 overflow-y-auto">{selected.descripcion || "Sin descripción"}</p>
+              </div>
+              <div className="flex justify-between text-xs text-gray-400">
+                <span>Creado: {formatFecha(selected.fecha_creacion)}</span>
+                {selected.fecha_completado && <span>Completado: {formatFecha(selected.fecha_completado)}</span>}
+              </div>
             </div>
-            <button onClick={() => setSelected(null)} className="mt-6 w-full bg-[#0da766] text-white font-bold py-3 rounded-xl hover:bg-[#0a8752] transition-colors">Cerrar</button>
+            <button
+              onClick={() => { setSelected(null); router.push(`/dashboard/chat?servicio=${selected.id}`); }}
+              className="mt-6 w-full bg-[#0da766] text-white font-bold py-3 rounded-xl hover:bg-[#0a8752] transition-colors"
+            >
+              💬 Abrir Chat del Servicio
+            </button>
+            <button onClick={() => setSelected(null)} className="mt-2 w-full bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
           </div>
         </div>
       )}

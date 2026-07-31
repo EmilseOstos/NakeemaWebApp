@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Toast from "@/app/components/Toast";
 
 type Mensaje = {
   id: string;
   mensaje: string;
   fecha_envio: string;
   leido: boolean;
+  remitente_id: string;
   usuarios: {
     username: string;
     roles: { nombre: string };
@@ -26,20 +28,24 @@ export default function ChatPanel({
   const [texto, setTexto] = useState("");
   const [loading, setLoading] = useState(true);
   const [enviando, setEnviando] = useState(false);
+  const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!servicioId) return;
-    const timer = setTimeout(() => {
+    const cargar = () => {
       fetch(`/api/chat?idServicio=${servicioId}`)
-      .then(res => res.json())
-      .then(data => {
-        setMensajes(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    }, 0);
-    return () => clearTimeout(timer);
+        .then(res => res.json())
+        .then(data => {
+          setMensajes(data.data || []);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    };
+    cargar();
+    const interval = setInterval(cargar, 5000);
+    return () => clearInterval(interval);
   }, [servicioId]);
 
   useEffect(() => {
@@ -62,11 +68,17 @@ export default function ChatPanel({
       });
       if (res.ok) {
         const data = await res.json();
-        setMensajes(prev => [...prev, { ...data.data, usuarios: { username: "Tú", roles: { nombre: "" } } }]);
+        setMensajes(prev => [...prev, { ...data.data, remitente_id: userId, usuarios: { username: "Tú", roles: { nombre: "" } } }]);
         setTexto("");
+      } else {
+        setToast("No se pudo enviar el mensaje");
+        setToastType("error");
+        setTimeout(() => setToast(""), 3000);
       }
     } catch {
-      // silent
+      setToast("Error de conexión. Intenta de nuevo.");
+      setToastType("error");
+      setTimeout(() => setToast(""), 3000);
     } finally {
       setEnviando(false);
     }
@@ -97,28 +109,32 @@ export default function ChatPanel({
             No hay mensajes. Inicia la conversación.
           </div>
         ) : (
-          mensajes.map((m) => (
-            <div
-              key={m.id}
-              className={`flex ${m.usuarios?.username === "Tú" ? "justify-end" : "justify-start"}`}
-            >
+          mensajes.map((m) => {
+            const esPropio = m.remitente_id === userId;
+            return (
               <div
-                className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
-                  m.usuarios?.username === "Tú"
-                    ? "bg-[#0da766] text-white rounded-br-md"
-                    : "bg-gray-100 text-gray-800 rounded-bl-md"
-                }`}
+                key={m.id}
+                className={`flex ${esPropio ? "justify-end" : "justify-start"}`}
               >
-                <div className="text-xs font-bold opacity-70 mb-1">
-                  {m.usuarios?.username || "Usuario"} {m.usuarios?.roles?.nombre ? `(${m.usuarios.roles.nombre})` : ""}
-                </div>
-                <div>{m.mensaje}</div>
-                <div className={`text-[10px] mt-1 ${m.usuarios?.username === "Tú" ? "text-white/60" : "text-gray-400"}`}>
-                  {new Date(m.fecha_envio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <div
+                  className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
+                    esPropio
+                      ? "bg-[#0da766] text-white rounded-br-md"
+                      : "bg-gray-100 text-gray-800 rounded-bl-md"
+                  }`}
+                >
+                  <div className="text-xs font-bold opacity-70 mb-1">
+                    {esPropio ? "Tú" : m.usuarios?.username || "Usuario"}{" "}
+                    {m.usuarios?.roles?.nombre ? `(${m.usuarios.roles.nombre})` : ""}
+                  </div>
+                  <div>{m.mensaje}</div>
+                  <div className={`text-[10px] mt-1 ${esPropio ? "text-white/60" : "text-gray-400"}`}>
+                    {new Date(m.fecha_envio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={bottomRef} />
       </div>
@@ -145,6 +161,8 @@ export default function ChatPanel({
           )}
         </button>
       </form>
+
+      {toast && <Toast message={toast} type={toastType} />}
     </div>
   );
 }

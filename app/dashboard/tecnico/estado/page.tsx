@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Toast from "@/app/components/Toast";
 
 export default function ActualizarEstadoPage() {
   const [servicios, setServicios] = useState<{ id: string; descripcion: string; estado: string }[]>([]);
@@ -8,7 +9,9 @@ export default function ActualizarEstadoPage() {
   const [nuevoEstado, setNuevoEstado] = useState("En Proceso");
   const [notas, setNotas] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cargandoServicios, setCargandoServicios] = useState(true);
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   useEffect(() => {
     fetch('/api/perfil')
@@ -20,7 +23,8 @@ export default function ActualizarEstadoPage() {
           setServicios((json.data || []).map((s: Record<string, unknown>) => ({ id: s.id as string, descripcion: s.descripcion as string, estado: s.estado as string })));
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setCargandoServicios(false));
   }, []);
 
   const selectedServicio = servicios.find(s => s.id === servicioId);
@@ -29,6 +33,7 @@ export default function ActualizarEstadoPage() {
     e.preventDefault();
     if (!servicioId) {
       setToast("Selecciona un servicio primero");
+      setToastType("error");
       setTimeout(() => setToast(""), 3000);
       return;
     }
@@ -37,10 +42,15 @@ export default function ActualizarEstadoPage() {
       const res = await fetch('/api/servicios', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: servicioId, estado: nuevoEstado }),
+        body: JSON.stringify({
+          id: servicioId,
+          estado: nuevoEstado,
+          notas_tecnicas: notas.trim() || null,
+        }),
       });
       if (res.ok) {
         setToast(`Servicio actualizado a "${nuevoEstado}"`);
+        setToastType("success");
         setNotas("");
         const data = await fetch(`/api/perfil`).then(r => r.json());
         if (data.data?.id) {
@@ -50,9 +60,11 @@ export default function ActualizarEstadoPage() {
         }
       } else {
         setToast("Error al actualizar estado");
+        setToastType("error");
       }
     } catch {
       setToast("Error de conexión");
+      setToastType("error");
     } finally {
       setLoading(false);
       setTimeout(() => setToast(""), 3000);
@@ -66,16 +78,24 @@ export default function ActualizarEstadoPage() {
 
         <div className="space-y-2 mb-6">
           <label className="block text-xs font-bold text-slate-700 tracking-wide">Seleccionar Servicio</label>
-          <select
-            value={servicioId}
-            onChange={(e) => { setServicioId(e.target.value); setNuevoEstado("En Proceso"); }}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm appearance-none focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800 font-medium"
-          >
-            <option value="" disabled hidden>Seleccionar servicio...</option>
-            {servicios.map((s) => (
-              <option key={s.id} value={s.id}>#{s.id?.slice(0, 8)}</option>
-            ))}
-          </select>
+          {cargandoServicios ? (
+            <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-400">Cargando servicios...</div>
+          ) : servicios.length === 0 ? (
+            <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-400">
+              No tienes servicios asignados.
+            </div>
+          ) : (
+            <select
+              value={servicioId}
+              onChange={(e) => { setServicioId(e.target.value); setNuevoEstado("En Proceso"); }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm appearance-none focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800 font-medium"
+            >
+              <option value="" disabled hidden>Seleccionar servicio...</option>
+              {servicios.map((s) => (
+                <option key={s.id} value={s.id}>#{s.id?.slice(0, 8)}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {selectedServicio && (
@@ -108,16 +128,15 @@ export default function ActualizarEstadoPage() {
           </div>
 
           <div className="flex justify-center pt-2">
-            <button type="submit" disabled={loading} className="bg-gradient-to-r from-[#5cb85c] to-[#00796b] hover:from-[#4cae4c] hover:to-[#004d40] text-white font-bold text-sm px-10 py-3 rounded-xl shadow-md transition-all disabled:opacity-70">
+            <button type="submit" disabled={loading || servicios.length === 0} className="bg-gradient-to-r from-[#5cb85c] to-[#00796b] hover:from-[#4cae4c] hover:to-[#004d40] text-white font-bold text-sm px-10 py-3 rounded-xl shadow-md transition-all disabled:opacity-70 flex items-center gap-2">
+              {loading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
               {loading ? "Actualizando..." : "Actualizar Servicio"}
             </button>
           </div>
         </form>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">{toast}</div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
     </div>
   );
 }

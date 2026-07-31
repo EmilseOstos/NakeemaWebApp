@@ -16,19 +16,35 @@ export default function ClientesPage() {
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingTabla, setLoadingTabla] = useState(true);
+  const [tempPassword, setTempPassword] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetch('/api/clientes')
       .then(res => res.json())
       .then(data => setClientes(data.data || []))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoadingTabla(false));
   }, []);
+
+  const handleCopyPassword = async () => {
+    if (!tempPassword) return;
+    try {
+      await navigator.clipboard.writeText(tempPassword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError('No se pudo copiar. Copia manualmente la contraseña.');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess('');
+    setTempPassword('');
     try {
       const res = await fetch('/api/clientes', {
         method: 'POST',
@@ -37,7 +53,9 @@ export default function ClientesPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setSuccess(`Cliente creado. Contraseña temporal: ${data.data?.tempPassword}`);
+        const password = data.data?.tempPassword || '';
+        setTempPassword(password);
+        setSuccess(`Cliente creado. Comparte la contraseña temporal con el cliente.`);
         setClientes(prev => [...prev, { id: data.data.id, nombre: data.data.nombre, email: formData.email, telefono: data.data.telefono || '', estado: data.data.estado || 'Activo' }]);
         setFormData({ nombre: '', email: '', telefono: '', direccion: '' });
       } else {
@@ -47,7 +65,11 @@ export default function ClientesPage() {
       setError('Error de conexión');
     } finally {
       setLoading(false);
-      setTimeout(() => setSuccess(''), 5000);
+      setTimeout(() => {
+        setSuccess('');
+        setTempPassword('');
+        setCopied(false);
+      }, 15000);
     }
   };
 
@@ -67,7 +89,27 @@ export default function ClientesPage() {
               <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm font-medium">{error}</div>
             )}
             {success && (
-              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-lg text-sm font-medium">{success}</div>
+              <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-lg text-sm font-medium">
+                {success}
+                {tempPassword && (
+                  <div className="mt-3 bg-white rounded-xl p-4 border border-green-200">
+                    <div className="flex items-center justify-between gap-3 flex-wrap">
+                      <div>
+                        <p className="text-xs font-bold text-green-800 uppercase tracking-wide mb-1">Contraseña temporal del cliente</p>
+                        <p className="font-mono text-lg font-bold text-gray-800 select-all break-all">{tempPassword}</p>
+                        <p className="text-xs text-gray-500 mt-1">Compártela con el cliente y pídele que la cambie al iniciar sesión.</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyPassword}
+                        className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+                      >
+                        {copied ? "✓ Copiada" : "📋 Copiar"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -108,7 +150,13 @@ export default function ClientesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {clientes.length > 0 ? (
+                  {loadingTabla ? (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center">
+                        <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin mx-auto" />
+                      </td>
+                    </tr>
+                  ) : clientes.length > 0 ? (
                     clientes.map(c => (
                       <tr key={c.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="py-4 px-4 text-gray-800 font-medium">{c.nombre}</td>

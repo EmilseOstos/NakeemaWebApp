@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Toast from "@/app/components/Toast";
 
 export default function InsertarRegistroPage() {
   const [servicios, setServicios] = useState<{ id: string; descripcion: string }[]>([]);
@@ -10,7 +11,9 @@ export default function InsertarRegistroPage() {
   const [costo, setCosto] = useState("");
   const [tiempo, setTiempo] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cargandoServicios, setCargandoServicios] = useState(true);
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   useEffect(() => {
     fetch('/api/perfil')
@@ -22,13 +25,21 @@ export default function InsertarRegistroPage() {
           setServicios((json.data || []).map((s: Record<string, unknown>) => ({ id: s.id as string, descripcion: s.descripcion as string })));
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setCargandoServicios(false));
   }, []);
 
   const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!servicioId) {
       setToast("Selecciona un servicio");
+      setToastType("error");
+      setTimeout(() => setToast(""), 3000);
+      return;
+    }
+    if (!descripcion.trim()) {
+      setToast("Describe el trabajo realizado");
+      setToastType("error");
       setTimeout(() => setToast(""), 3000);
       return;
     }
@@ -40,16 +51,23 @@ export default function InsertarRegistroPage() {
         body: JSON.stringify({
           id: servicioId,
           estado: 'Finalizado',
+          reporte_descripcion: descripcion.trim(),
+          cantidad: Number(cantidad) || 0,
+          costo: Number(costo) || 0,
+          tiempo: Number(tiempo) || 0,
         }),
       });
       if (res.ok) {
         setToast("Reporte guardado y servicio finalizado");
+        setToastType("success");
         handleLimpiar();
       } else {
         setToast("Error al guardar el reporte");
+        setToastType("error");
       }
     } catch {
       setToast("Error de conexión");
+      setToastType("error");
     } finally {
       setLoading(false);
       setTimeout(() => setToast(""), 3000);
@@ -72,17 +90,25 @@ export default function InsertarRegistroPage() {
         <form onSubmit={handleGuardar} className="space-y-6">
           <div className="space-y-2">
             <label className="block text-xs font-bold text-slate-700 tracking-wide">ID del Servicio</label>
-            <select
-              value={servicioId}
-              onChange={(e) => setServicioId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm appearance-none focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800 font-medium"
-              required
-            >
-              <option value="" disabled hidden>Seleccionar servicio activo...</option>
-              {servicios.map((s) => (
-                <option key={s.id} value={s.id}>#{s.id?.slice(0, 8)}</option>
-              ))}
-            </select>
+            {cargandoServicios ? (
+              <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-400">Cargando servicios...</div>
+            ) : servicios.length === 0 ? (
+              <div className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm text-slate-400">
+                No tienes servicios asignados para reportar.
+              </div>
+            ) : (
+              <select
+                value={servicioId}
+                onChange={(e) => setServicioId(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm appearance-none focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800 font-medium"
+                required
+              >
+                <option value="" disabled hidden>Seleccionar servicio activo...</option>
+                {servicios.map((s) => (
+                  <option key={s.id} value={s.id}>#{s.id?.slice(0, 8)}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="pt-2">
@@ -103,11 +129,11 @@ export default function InsertarRegistroPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-700 tracking-wide">Costo Estimado ($)</label>
-              <input type="text" placeholder="0.00" value={costo} onChange={(e) => setCosto(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800" />
+              <input type="number" min="0" step="0.01" placeholder="0.00" value={costo} onChange={(e) => setCosto(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800" />
             </div>
             <div className="space-y-2">
               <label className="block text-xs font-bold text-slate-700 tracking-wide">Tiempo (Horas)</label>
-              <input type="text" placeholder="Ej. 2.5" value={tiempo} onChange={(e) => setTiempo(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800" required />
+              <input type="number" min="0" step="0.5" placeholder="Ej. 2.5" value={tiempo} onChange={(e) => setTiempo(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:border-[#0da766] focus:bg-white transition-colors text-slate-800" required />
             </div>
           </div>
 
@@ -120,9 +146,7 @@ export default function InsertarRegistroPage() {
         </form>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">{toast}</div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
     </div>
   );
 }

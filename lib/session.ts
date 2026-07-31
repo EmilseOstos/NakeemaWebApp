@@ -43,3 +43,28 @@ export async function verifySessionToken(token: string): Promise<SessionUser | n
     return null;
   }
 }
+
+const RECOVERY_TTL_MS = 60 * 60 * 1000; // 1 hora
+
+export async function createRecoveryToken(email: string): Promise<string> {
+  const payload = JSON.stringify({ email, exp: Date.now() + RECOVERY_TTL_MS });
+  const signature = await createSignature(payload);
+  return btoa(payload + '.' + signature);
+}
+
+export async function verifyRecoveryToken(token: string): Promise<string | null> {
+  try {
+    const decoded = atob(token);
+    const lastDot = decoded.lastIndexOf('.');
+    if (lastDot === -1) return null;
+    const payload = decoded.slice(0, lastDot);
+    const signature = decoded.slice(lastDot + 1);
+    const expectedSignature = await createSignature(payload);
+    if (signature !== expectedSignature) return null;
+    const data = JSON.parse(payload) as { email?: string; exp?: number };
+    if (!data.email || !data.exp || data.exp < Date.now()) return null;
+    return data.email;
+  } catch {
+    return null;
+  }
+}

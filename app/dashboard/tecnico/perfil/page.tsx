@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Toast from "@/app/components/Toast";
 
 type PerfilData = {
   nombre: string;
@@ -9,15 +10,21 @@ type PerfilData = {
   especialidad: string;
 };
 
+const TELEFONO_REGEX = /^[0-9+\-\s()]{7,20}$/;
+
 export default function MiPerfilPage() {
   const [perfil, setPerfil] = useState<PerfilData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [especialidad, setEspecialidad] = useState("");
 
-  useEffect(() => {
+  const loadPerfil = useCallback(() => {
+    setLoadError(false);
+    setPerfil(null);
     fetch('/api/perfil')
       .then(res => res.json())
       .then(data => {
@@ -28,11 +35,22 @@ export default function MiPerfilPage() {
           setEspecialidad(data.data.especialidad || "");
         }
       })
-      .catch(() => {});
+      .catch(() => setLoadError(true));
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => { loadPerfil(); }, 0);
+    return () => clearTimeout(timer);
+  }, [loadPerfil]);
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (telefono && !TELEFONO_REGEX.test(telefono)) {
+      setToast("El teléfono debe contener solo números (7 a 20 dígitos)");
+      setToastType("error");
+      setTimeout(() => setToast(""), 3000);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch('/api/perfil', {
@@ -42,11 +60,14 @@ export default function MiPerfilPage() {
       });
       if (res.ok) {
         setToast("¡Perfil actualizado exitosamente!");
+        setToastType("success");
       } else {
         setToast("Error al actualizar perfil");
+        setToastType("error");
       }
     } catch {
       setToast("Error de conexión");
+      setToastType("error");
     } finally {
       setLoading(false);
       setTimeout(() => setToast(""), 3000);
@@ -56,7 +77,19 @@ export default function MiPerfilPage() {
   if (!perfil) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
-        <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" />
+        {loadError ? (
+          <div className="text-center">
+            <p className="text-gray-400 text-sm mb-3">No se pudo cargar tu perfil.</p>
+            <button
+              onClick={loadPerfil}
+              className="px-5 py-2 bg-[#0da766] text-white rounded-full text-xs font-bold hover:bg-[#0a8752] transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" />
+        )}
       </div>
     );
   }
@@ -149,11 +182,7 @@ export default function MiPerfilPage() {
         </div>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
 
       <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>

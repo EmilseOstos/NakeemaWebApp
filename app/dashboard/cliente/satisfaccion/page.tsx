@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Toast from "@/app/components/Toast";
 
 const LABELS = ["", "😞 Malo", "😐 Regular", "🙂 Bueno", "😊 ¡Muy Bueno!", "🤩 ¡Excelente!"];
 
@@ -11,6 +12,7 @@ export default function SatisfaccionPage() {
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [clienteNombre, setClienteNombre] = useState("");
 
@@ -27,33 +29,48 @@ export default function SatisfaccionPage() {
           }
         }
       })
-      .catch(() => {});
+      .catch(() => setToastType("error"));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
+    const idServicio = fd.get("servicio") as string;
+    if (!idServicio) {
+      setToast("Selecciona un servicio para calificar");
+      setToastType("error");
+      setTimeout(() => setToast(""), 3000);
+      setLoading(false);
+      return;
+    }
     const payload = {
-      idServicio: fd.get("servicio"),
+      idServicio,
       calificacion: rating,
       comentario: fd.get("comentario") || "Sin comentarios",
       cliente: clienteNombre,
     };
     try {
-      await fetch("/api/satisfaccion", {
+      const res = await fetch("/api/satisfaccion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      setToast("¡Gracias! Tu evaluación ha sido enviada exitosamente");
-      (e.target as HTMLFormElement).reset();
-      setRating(4);
-      setTimeout(() => setToast(""), 3000);
+      if (res.ok) {
+        setToast("¡Gracias! Tu evaluación ha sido enviada exitosamente");
+        setToastType("success");
+        (e.target as HTMLFormElement).reset();
+        setRating(4);
+      } else {
+        setToast("No se pudo enviar la evaluación. Intenta de nuevo.");
+        setToastType("error");
+      }
     } catch {
-      setToast("Error al enviar. Intenta de nuevo.");
+      setToast("Error de conexión. Intenta de nuevo.");
+      setToastType("error");
     } finally {
       setLoading(false);
+      setTimeout(() => setToast(""), 3000);
     }
   };
 
@@ -72,17 +89,24 @@ export default function SatisfaccionPage() {
           <form onSubmit={handleSubmit} className="text-left space-y-5">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Servicio a calificar</label>
-              <select
-                name="servicio"
-                className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 appearance-none"
-              >
-                <option value="">Seleccionar servicio...</option>
-                {servicios.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    #{s.id.slice(0, 8)} - {s.descripcion.slice(0, 40)} ({s.fecha_creacion?.slice(0, 10)})
-                  </option>
-                ))}
-              </select>
+              {servicios.length === 0 ? (
+                <div className="bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm text-gray-400 text-center">
+                  No tienes servicios para calificar todavía.
+                </div>
+              ) : (
+                <select
+                  name="servicio"
+                  required
+                  className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0da766]/30 appearance-none"
+                >
+                  <option value="">Seleccionar servicio...</option>
+                  {servicios.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      #{s.id.slice(0, 8)} - {s.descripcion.slice(0, 40)} ({s.fecha_creacion?.slice(0, 10)})
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
             <div className="text-center">
@@ -117,8 +141,8 @@ export default function SatisfaccionPage() {
             <div className="flex justify-center pt-1">
               <button
                 type="submit"
-                disabled={loading}
-                className="px-10 py-3 rounded-full font-bold text-sm bg-[#0da766] text-white hover:bg-[#0a8752] transition-colors shadow-sm disabled:opacity-70 flex items-center gap-2"
+                disabled={loading || servicios.length === 0}
+                className="px-10 py-3 rounded-full font-bold text-sm bg-[#0da766] text-white hover:bg-[#0a8752] transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
               >
                 {loading ? <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : null}
                 Enviar Evaluación
@@ -128,11 +152,7 @@ export default function SatisfaccionPage() {
         </div>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium shadow-xl z-50">
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
 
       <p className="text-center text-gray-400 text-xs py-3">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Toast from "@/app/components/Toast";
 
 type ConfigData = {
   nombre_empresa: string;
   correo_contacto: string;
   direccion: string;
-  modo_oscuro: boolean;
+  logo_url?: string | null;
   notificaciones_correo: boolean;
   alertas_sms: boolean;
   auto_asignar_servicios: boolean;
@@ -14,6 +15,7 @@ type ConfigData = {
 
 export default function ConfiguracionPage() {
   const [toast, setToast] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [loading, setLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -22,19 +24,27 @@ export default function ConfiguracionPage() {
     nombre_empresa: "Nakeema Corp",
     correo_contacto: "admin@nakeema.com",
     direccion: "Calle Falsa 123, Ciudad de México",
-    modo_oscuro: false,
     notificaciones_correo: true,
     alertas_sms: false,
     auto_asignar_servicios: true,
   });
 
+  const showToast = (msg: string, type: "success" | "error" = "success") => {
+    setToast(msg);
+    setToastType(type);
+    setTimeout(() => setToast(""), 3000);
+  };
+
   useEffect(() => {
     fetch('/api/configuracion')
       .then(res => res.json())
       .then(data => {
-        if (data.data) setConfig(data.data);
+        if (data.data) {
+          setConfig(data.data);
+          if (data.data.logo_url) setLogoPreview(data.data.logo_url);
+        }
       })
-      .catch(() => {});
+      .catch(() => showToast("No se pudo cargar la configuración", "error"));
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -44,18 +54,17 @@ export default function ConfiguracionPage() {
       const res = await fetch('/api/configuracion', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config),
+        body: JSON.stringify({ ...config, logo_url: logoPreview || null }),
       });
       if (res.ok) {
-        setToast("Configuración guardada exitosamente");
+        showToast("Configuración guardada exitosamente");
       } else {
-        setToast("Error al guardar configuración");
+        showToast("Error al guardar configuración", "error");
       }
     } catch {
-      setToast("Error de conexión");
+      showToast("Error de conexión", "error");
     } finally {
       setLoading(false);
-      setTimeout(() => setToast(""), 3000);
     }
   };
 
@@ -63,28 +72,16 @@ export default function ConfiguracionPage() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        setToast("La imagen es muy grande. Máximo 2MB.");
-        setTimeout(() => setToast(""), 3000);
+        showToast("La imagen es muy grande. Máximo 2MB.", "error");
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogoPreview(reader.result as string);
+        showToast("Logo cargado. Guarda los cambios para aplicarlo.");
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const toggleDarkMode = () => {
-    setConfig(prev => {
-      const newDarkMode = !prev.modo_oscuro;
-      if (newDarkMode) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-      return { ...prev, modo_oscuro: newDarkMode };
-    });
   };
 
   return (
@@ -141,18 +138,9 @@ export default function ConfiguracionPage() {
 
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <h5 className="font-bold text-lg text-gray-800 border-b border-gray-100 pb-3 mb-4">Estilos</h5>
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-gray-600 text-sm flex items-center gap-2"><span>🌙</span> Modo Oscuro</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  className="sr-only peer" 
-                  checked={config.modo_oscuro}
-                  onChange={toggleDarkMode}
-                />
-                <div className="w-11 h-6 bg-blue-100 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-              </label>
-            </div>
+            <p className="text-sm text-gray-400 font-medium">
+              La plataforma usa un tema claro fijo para garantizar consistencia en todos los dispositivos.
+            </p>
           </div>
         </div>
 
@@ -236,14 +224,7 @@ export default function ConfiguracionPage() {
         </div>
       </div>
 
-      {toast && (
-        <div className="fixed bottom-20 right-6 bg-[#0da766] text-white px-6 py-3 rounded-full text-sm font-bold shadow-xl z-50 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-          {toast}
-        </div>
-      )}
+      {toast && <Toast message={toast} type={toastType} />}
 
       <p className="text-center text-gray-400 text-[11px] font-medium pt-4 pb-2">© 2026 Todos los derechos Reservados. Nakeema</p>
     </div>

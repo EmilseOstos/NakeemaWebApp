@@ -16,12 +16,14 @@ export default function ProveedoresPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingTabla, setLoadingTabla] = useState(true);
 
   useEffect(() => {
     fetch('/api/proveedores')
       .then(res => res.json())
       .then(data => setProveedores(data.data || []))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoadingTabla(false));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,7 +77,7 @@ export default function ProveedoresPage() {
             <h2 className="text-xl font-semibold text-gray-800 mb-6">Registrar Proveedor</h2>
             
             {error && (
-              <div data-testid="error-alert" className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm font-medium animate-pulse">
+              <div data-testid="error-alert" className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg text-sm font-medium">
                 {error}
               </div>
             )}
@@ -162,7 +164,13 @@ export default function ProveedoresPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filteredProveedores.length > 0 ? (
+                  {loadingTabla ? (
+                    <tr>
+                      <td colSpan={3} className="py-8 text-center">
+                        <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin mx-auto" />
+                      </td>
+                    </tr>
+                  ) : filteredProveedores.length > 0 ? (
                     filteredProveedores.map(p => (
                       <tr key={p.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="py-4 px-4 text-gray-800 font-medium">{p.nombre}</td>

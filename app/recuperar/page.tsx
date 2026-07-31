@@ -23,12 +23,15 @@ export default function RecuperarPage() {
 
       const data = await res.json();
 
-      setMessage({
-        text: data.message || 'Si el correo está registrado, recibirás instrucciones.',
-        type: res.ok ? 'success' : 'error',
-      });
-
-      if (res.ok) setEmail('');
+      if (res.ok) {
+        setMessage({ text: data.message || 'Si el correo está registrado, recibirás instrucciones.', type: 'success' });
+        if (data.hint) {
+          setMessage({ text: `${data.message} Enlace de desarrollo: ${data.hint}`, type: 'success' });
+        }
+        setEmail('');
+      } else {
+        setMessage({ text: data.error || 'No se pudo procesar la solicitud.', type: 'error' });
+      }
     } catch {
       setMessage({
         text: 'Error de conexión con el servidor. Intenta de nuevo.',

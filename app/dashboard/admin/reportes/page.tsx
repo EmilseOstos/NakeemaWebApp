@@ -14,18 +14,29 @@ type Servicio = {
 export default function ReportesPage() {
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [filtroEstado, setFiltroEstado] = useState("all");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
 
-  useEffect(() => {
+  const fetchServicios = () => {
+    setLoading(true);
+    setError(false);
     fetch('/api/servicios')
       .then(res => res.json())
       .then(data => {
         setServicios(data.data || []);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(fetchServicios, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const filtered = servicios.filter(s => {
@@ -39,6 +50,32 @@ export default function ReportesPage() {
   const pendientes = servicios.filter(s => s.estado === "Pendiente").length;
   const enProceso = servicios.filter(s => s.estado === "En Proceso").length;
 
+  const formatFecha = (fecha?: string) =>
+    fecha ? new Date(fecha).toLocaleDateString("es-CO") : "—";
+
+  const exportCSV = () => {
+    const headers = ["ID", "Cliente", "Técnico", "Estado", "Fecha"];
+    const rows = filtered.map(s => [
+      s.id,
+      s.cliente_nombre,
+      s.tecnico_nombre,
+      s.estado,
+      s.fecha_creacion ? new Date(s.fecha_creacion).toLocaleDateString("es-CO") : "",
+    ]);
+    const csv = [headers, ...rows]
+      .map(row => row.map(cell => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `reporte_servicios_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -46,6 +83,16 @@ export default function ReportesPage() {
           <h1 className="text-3xl font-bold text-gray-800 tracking-tight">Centro de Reportes</h1>
           <p className="text-gray-500 mt-1">Descarga y analiza los datos de la plataforma.</p>
         </div>
+        <button
+          onClick={exportCSV}
+          disabled={filtered.length === 0}
+          className="px-5 py-2.5 bg-[#0da766] text-white rounded-xl font-bold text-sm hover:bg-[#0a8752] transition-colors flex items-center gap-2 shadow-sm disabled:opacity-50"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Exportar CSV
+        </button>
       </div>
 
       <div className="grid grid-cols-3 gap-5">
@@ -96,6 +143,16 @@ export default function ReportesPage() {
           <div className="flex justify-center py-12">
             <div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400 mb-3">No se pudieron cargar los datos.</p>
+            <button
+              onClick={fetchServicios}
+              className="px-5 py-2 bg-[#0da766] text-white rounded-full text-xs font-bold hover:bg-[#0a8752] transition-colors"
+            >
+              Reintentar
+            </button>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             No hay servicios que coincidan con los filtros
@@ -126,7 +183,7 @@ export default function ReportesPage() {
                         "bg-gray-50 text-gray-600"
                       }`}>{s.estado}</span>
                     </td>
-                    <td className="py-3 px-4 text-gray-500 text-sm">{s.fecha_creacion?.slice(0, 10)}</td>
+                    <td className="py-3 px-4 text-gray-500 text-sm">{formatFecha(s.fecha_creacion)}</td>
                   </tr>
                 ))}
               </tbody>

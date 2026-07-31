@@ -20,6 +20,12 @@ export default function RegistroPage() {
     setLoading(true);
     setMessage(null);
 
+    if (password.length < 6) {
+      setMessage({ text: "La contraseña debe tener al menos 6 caracteres.", type: "error" });
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setMessage({ text: "Las contraseñas no coinciden.", type: "error" });
       setLoading(false);

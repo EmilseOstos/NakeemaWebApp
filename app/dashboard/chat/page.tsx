@@ -1,41 +1,68 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import ChatPanel from "@/app/components/ChatPanel";
 
-type Servicio = { id: string; descripcion: string; estado: string };
+type Servicio = { id: string; titulo?: string | null; descripcion: string; estado: string };
 
-export default function ChatPage() {
+const normalizarRol = (rol: string) =>
+  rol.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+function ChatPageContent() {
+  const searchParams = useSearchParams();
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [userId, setUserId] = useState("");
-  useEffect(() => {
-    fetch('/api/me')
-      .then(res => res.json())
-      .then(data => {
-        if (data.user) setUserId(data.user.id);
+  const [loadingServicios, setLoadingServicios] = useState(true);
 
-        fetch('/api/perfil')
-          .then(r => r.json())
-          .then(p => {
-            if (p.data) {
-              const pid = p.data.id;
-              if (pid) {
-                const role = p.rol;
-                const endpoint = role === "Administrador"
-                  ? '/api/servicios'
-                  : `/api/servicios?${role === "Técnico" ? "tecnico_id" : "cliente_id"}=${pid}`;
-                fetch(endpoint)
-                  .then(r => r.json())
-                  .then(j => setServicios(j.data || []))
-                  .catch(() => {});
-              }
-            }
-          })
-          .catch(() => {});
-      })
-      .catch(() => {});
+  useEffect(() => {
+    const servicioQuery = searchParams.get("servicio");
+    if (servicioQuery) {
+      const timer = setTimeout(() => setSelectedId(servicioQuery), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  const cargarServicios = useCallback(async () => {
+    setLoadingServicios(true);
+    try {
+      const meRes = await fetch('/api/me');
+      const me = await meRes.json();
+      const user = me.user;
+      if (user) {
+        setUserId(user.id);
+      }
+      const rolLower = user?.rol ? normalizarRol(user.rol) : '';
+
+      let endpoint = '/api/servicios';
+      if (rolLower === 'tecnico' || rolLower === 'cliente') {
+        const perfilRes = await fetch('/api/perfil');
+        const perfil = await perfilRes.json();
+        const pid = perfil.data?.id;
+        if (pid) {
+          endpoint = `/api/servicios?${rolLower === 'tecnico' ? 'tecnico_id' : 'cliente_id'}=${pid}`;
+        } else {
+          setServicios([]);
+          return;
+        }
+      }
+
+      const res = await fetch(endpoint);
+      const json = await res.json();
+      setServicios(json.data || []);
+    } catch {
+      setServicios([]);
+    } finally {
+      setLoadingServicios(false);
+    }
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(cargarServicios, 0);
+    return () => clearTimeout(timer);
+  }, [cargarServicios]);
 
   return (
     <div className="space-y-5">
@@ -45,7 +72,11 @@ export default function ChatPage() {
         <div className="lg:col-span-4 bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <h4 className="font-bold text-sm text-gray-700 mb-4">Seleccionar Servicio</h4>
           <div className="space-y-2">
-            {servicios.map(s => (
+            {loadingServicios ? (
+              <div className="flex justify-center py-6">
+                <div className="w-6 h-6 border-2 border-[#0da766] border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : servicios.map(s => (
               <button
                 key={s.id}
                 onClick={() => setSelectedId(s.id)}
@@ -56,10 +87,10 @@ export default function ChatPage() {
                 }`}
               >
                 <span className="font-mono">#{s.id.slice(0, 8)}</span>
-                <span className="block text-xs opacity-70 truncate mt-0.5">{s.descripcion?.slice(0, 50)}</span>
+                <span className="block text-xs opacity-70 truncate mt-0.5">{s.titulo || s.descripcion?.slice(0, 50)}</span>
               </button>
             ))}
-            {servicios.length === 0 && (
+            {!loadingServicios && servicios.length === 0 && (
               <p className="text-gray-400 text-sm text-center py-4">No hay servicios disponibles</p>
             )}
           </div>
@@ -82,5 +113,13 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center py-10"><div className="w-8 h-8 border-4 border-[#0da766] border-t-transparent rounded-full animate-spin" /></div>}>
+      <ChatPageContent />
+    </Suspense>
   );
 }
