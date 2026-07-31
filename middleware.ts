@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifySessionToken } from '@/lib/session';
 
+const normalizar = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session')?.value;
@@ -12,7 +14,7 @@ export async function middleware(request: NextRequest) {
     if (sessionCookie) {
       const user = await verifySessionToken(sessionCookie);
       if (user) {
-        const dashboard = `/dashboard/${user.rol === 'Administrador' ? 'admin' : user.rol === 'Técnico' ? 'tecnico' : 'cliente'}`;
+        const dashboard = `/dashboard/${normalizar(user.rol) === 'administrador' ? 'admin' : normalizar(user.rol) === 'tecnico' ? 'tecnico' : 'cliente'}`;
         return NextResponse.redirect(new URL(dashboard, request.url));
       }
     }
@@ -29,13 +31,13 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    if (pathname.startsWith('/dashboard/admin') && user.rol !== 'Administrador') {
+    if (pathname.startsWith('/dashboard/admin') && normalizar(user.rol) !== 'administrador') {
       return NextResponse.redirect(new URL('/', request.url));
     }
-    if (pathname.startsWith('/dashboard/tecnico') && user.rol !== 'Técnico') {
+    if (pathname.startsWith('/dashboard/tecnico') && normalizar(user.rol) !== 'tecnico') {
       return NextResponse.redirect(new URL('/', request.url));
     }
-    if (pathname.startsWith('/dashboard/cliente') && user.rol !== 'Cliente') {
+    if (pathname.startsWith('/dashboard/cliente') && normalizar(user.rol) !== 'cliente') {
       return NextResponse.redirect(new URL('/', request.url));
     }
 

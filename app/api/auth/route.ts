@@ -37,6 +37,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Credenciales incorrectas o usuario no encontrado.' }, { status: 401 });
     }
 
+    if (typeof usuario.password_hash !== 'string' || !usuario.password_hash) {
+      return NextResponse.json(
+        { error: 'El usuario no tiene una contraseña válida. Verifica que el esquema de la base de datos y el seed.sql se hayan aplicado.' },
+        { status: 500 }
+      );
+    }
+
     const passwordValida = await comparePassword(password, usuario.password_hash);
     if (!passwordValida) {
       return NextResponse.json({ error: 'Credenciales incorrectas o usuario no encontrado.' }, { status: 401 });
@@ -45,7 +52,8 @@ export async function POST(request: Request) {
 type RoleRow = { nombre: string };
     const rolesData = usuario.roles as RoleRow;
     const rolUsuario = rolesData.nombre;
-    if (rolUsuario !== rol) {
+    const normalizar = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    if (normalizar(rolUsuario) !== normalizar(rol)) {
       return NextResponse.json({ error: `El rol seleccionado no coincide con el usuario.` }, { status: 403 });
     }
 
