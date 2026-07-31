@@ -42,8 +42,8 @@ export async function GET(request: Request) {
       estado: s.estado,
       fecha_creacion: s.fecha_creacion,
       cliente_id: s.cliente_id,
-      cliente_nombre: s.clientes?.nombre || 'Sin cliente',
-      tecnico_nombre: s.tecnicos?.nombre || 'Sin asignar',
+      cliente_nombre: (s.clientes as { nombre?: string } | null)?.nombre || 'Sin cliente',
+      tecnico_nombre: (s.tecnicos as { nombre?: string } | null)?.nombre || 'Sin asignar',
     }));
 
     return NextResponse.json({ data: servicios }, { status: 200 });

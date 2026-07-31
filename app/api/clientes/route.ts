@@ -21,7 +21,7 @@ export async function GET() {
     const clientes = data.map((c: Record<string, unknown>) => ({
       id: c.id,
       nombre: c.nombre,
-      email: c.usuarios?.email || '',
+      email: (c.usuarios as { email?: string } | null)?.email || '',
       telefono: c.telefono,
       direccion: c.direccion,
       estado: c.estado,
