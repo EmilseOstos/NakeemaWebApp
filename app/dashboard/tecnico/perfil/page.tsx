@@ -33,6 +33,8 @@ export default function MiPerfilPage() {
           setNombre(data.data.nombre || "");
           setTelefono(data.data.telefono || "");
           setEspecialidad(data.data.especialidad || "");
+        } else {
+          setLoadError(true);
         }
       })
       .catch(() => setLoadError(true));

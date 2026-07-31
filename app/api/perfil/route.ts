@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { verifySessionToken } from '@/lib/session';
 import { cookies } from 'next/headers';
 
+const normalizar = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -27,18 +29,25 @@ export async function GET() {
 
     let profile = null;
 
-    if (user.rol === 'Cliente') {
+    if (normalizar(user.rol) === 'cliente') {
       const { data } = await supabase
         .from('clientes')
         .select('*')
         .eq('usuario_id', user.id)
         .single();
       profile = data ? { ...data, email: user.email } : { email: user.email };
-    } else if (user.rol === 'Técnico') {
+    } else if (normalizar(user.rol) === 'tecnico') {
       const { data } = await supabase
         .from('tecnicos')
         .select('*')
         .eq('usuario_id', user.id)
+        .single();
+      profile = data ? { ...data, email: user.email } : { email: user.email };
+    } else if (normalizar(user.rol) === 'administrador') {
+      const { data } = await supabase
+        .from('usuarios')
+        .select('*')
+        .eq('id', user.id)
         .single();
       profile = data ? { ...data, email: user.email } : { email: user.email };
     }
@@ -76,7 +85,7 @@ export async function PUT(request: Request) {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (user.rol === 'Cliente') {
+    if (normalizar(user.rol) === 'cliente') {
       const updates: Record<string, unknown> = {};
       if (body.nombre !== undefined) updates.nombre = body.nombre;
       if (body.telefono !== undefined) updates.telefono = body.telefono;
@@ -88,7 +97,7 @@ export async function PUT(request: Request) {
         .eq('usuario_id', user.id);
 
       if (error) throw error;
-    } else if (user.rol === 'Técnico') {
+    } else if (normalizar(user.rol) === 'tecnico') {
       const updates: Record<string, unknown> = {};
       if (body.nombre !== undefined) updates.nombre = body.nombre;
       if (body.telefono !== undefined) updates.telefono = body.telefono;
