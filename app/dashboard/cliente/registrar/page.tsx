@@ -111,9 +111,10 @@ export default function RegistrarServicio() {
                     className="w-full px-4 py-3.5 bg-[#f4f6f8] text-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 border border-transparent appearance-none transition-all text-sm cursor-pointer"
                   >
                     <option value="">Seleccionar categoría...</option>
-                    <option value="Electrico">Eléctrico</option>
-                    <option value="Plomeria">Plomería</option>
-                    <option value="Mantenimiento">Mantenimiento General</option>
+                    <option value="Mantenimiento Preventivo">Mantenimiento Preventivo</option>
+                    <option value="Reparación Eléctrica">Reparación Eléctrica</option>
+                    <option value="Soporte Tecnológico">Soporte Tecnológico</option>
+                    <option value="Revisión General">Revisión General</option>
                   </select>
                   <span className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
